@@ -1,17 +1,24 @@
 package tgpr.forms.controller;
 
-import tgpr.forms.model.Form;
-import tgpr.forms.model.Instance;
-import tgpr.forms.model.User;
+import tgpr.forms.model.*;
 import tgpr.forms.model.Instance;
 import tgpr.forms.view.FormView;
 import tgpr.framework.Controller;
+
+import java.time.LocalDateTime;
 
 
 public class FormController extends Controller<FormView>{
 
     private Form form;
-    private FormView view = new FormView(this);
+
+    private FormView view;
+
+    public FormController(Form form) {
+        this.form= form;
+        view= new FormView(form, this);
+
+    }
 
     public FormView getView(){
         return view;
@@ -27,14 +34,37 @@ public class FormController extends Controller<FormView>{
         return form.getDescription();
     }
 
-    public User GetFormOwner(){
+    public User getFormOwner(){
 
         return form.getOwner();
     }
 
-    public Instance GetRecentInstance(){
+
+    public Instance getRecentInstance(){
 
         return form.getMostRecentInstance(form.getOwner());
+    }
+
+    public LocalDateTime getRecentInstanceDate(){
+        var instance = form.getMostRecentInstance(form.getOwner());
+
+        if(instance == null) {
+            return null;
+        }
+        return (form.getMostRecentInstance(form.getOwner())).getStarted();
+    }
+
+
+    public LocalDateTime getInstanceSubmission(){
+
+        var instance = getRecentInstance();
+
+        if(instance!=null && instance.getCompleted() == null) {
+            return null;
+        }
+
+        return (form.getMostRecentInstance(form.getOwner())).getCompleted();
+
     }
 
 
@@ -44,9 +74,10 @@ public class FormController extends Controller<FormView>{
 
 
 
+    public AccessType getAccessType(){
 
-
-
+        return form.getAccessType(form.getOwner());
+    }
 
 
 
