@@ -16,7 +16,7 @@ public class FormController extends Controller<FormView>{
 
     public FormController(Form form) {
         this.form= form;
-        view= new FormView(form, this);
+        view = new FormView(form, this);
 
     }
 
@@ -24,48 +24,6 @@ public class FormController extends Controller<FormView>{
         return view;
     }
 
-    public String getFormTitle(){
-
-        return form.getTitle();
-    }
-
-    public String getFormDescription(){
-
-        return form.getDescription();
-    }
-
-    public User getFormOwner(){
-
-        return form.getOwner();
-    }
-
-
-    public Instance getRecentInstance(){
-
-        return form.getMostRecentInstance(form.getOwner());
-    }
-
-    public LocalDateTime getRecentInstanceDate(){
-        var instance = form.getMostRecentInstance(form.getOwner());
-
-        if(instance == null) {
-            return null;
-        }
-        return (form.getMostRecentInstance(form.getOwner())).getStarted();
-    }
-
-
-    public LocalDateTime getInstanceSubmission(){
-
-        var instance = getRecentInstance();
-
-        if(instance!=null && instance.getCompleted() == null) {
-            return null;
-        }
-
-        return (form.getMostRecentInstance(form.getOwner())).getCompleted();
-
-    }
 
 
     public boolean hasNoQuestions(){
