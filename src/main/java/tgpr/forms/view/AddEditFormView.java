@@ -3,13 +3,11 @@ package tgpr.forms.view;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
-import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
-import tgpr.forms.controller.ControllerAddEditForm;
 
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class ViewAddEditForm extends BasicWindow {
+public class AddEditFormView extends BasicWindow {
 
     private final TextBox txtTitle;
     private final TextBox txtDescription;
@@ -17,7 +15,7 @@ public class ViewAddEditForm extends BasicWindow {
     private final Label errTitle;
     private final Label errDescription;
 
-    public ViewAddEditForm(){ //ControllerAddEditForm controller ?
+    public AddEditFormView(){ //ControllerAddEditForm controller ?
         setTitle("Add a form");
         setHints(List.of(Hint.CENTERED));
 

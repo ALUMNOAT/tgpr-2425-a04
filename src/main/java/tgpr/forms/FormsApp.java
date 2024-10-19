@@ -1,7 +1,6 @@
 package tgpr.forms;
 
-import tgpr.forms.controller.ControllerAddEditForm;
-import tgpr.forms.controller.TestController;
+import tgpr.forms.controller.AddEditFormController;
 import tgpr.framework.Controller;
 import tgpr.framework.Model;
 
@@ -13,7 +12,7 @@ public class FormsApp {
             Controller.abort("Database is not available!");
         else {
             //Controller.navigateTo(new TestController());
-            Controller.navigateTo(new ControllerAddEditForm());
+            Controller.navigateTo(new AddEditFormController());
         }
     }
 }
