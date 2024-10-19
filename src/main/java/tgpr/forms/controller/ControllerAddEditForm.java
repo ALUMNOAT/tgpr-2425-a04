@@ -1,4 +1,14 @@
 package tgpr.forms.controller;
 
-public class ControllerAddEditForm {
+import tgpr.forms.view.ViewAddEditForm;
+import tgpr.framework.Controller;
+
+
+public class ControllerAddEditForm extends Controller<ViewAddEditForm> {
+    private final ViewAddEditForm view = new ViewAddEditForm(this);
+
+    @Override
+    public ViewAddEditForm getView() {
+        return view;
+    }
 }
