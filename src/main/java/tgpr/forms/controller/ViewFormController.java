@@ -28,7 +28,6 @@ public class ViewFormController extends Controller<ViewFormView> {
             if(form.isSharedToUser()) {
                 if(askConfirmation("Are you sure you want to make this form public? " +
                         "This will delete all existing shares", "Confirmation")) {
-                    form.deleteAllUserAccesses();
                     form.togglePublic();
                 }
             }

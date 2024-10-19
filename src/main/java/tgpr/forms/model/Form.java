@@ -194,7 +194,7 @@ public class Form extends Model {
             Assert.isTrue(c == 1, "Something went wrong");
 
             if (isPublic && !obj.isPublic)
-                deleteAllAccesses();
+                deleteAllUserAccesses();
         }
         reload();   // reload to get default values
         return this;
