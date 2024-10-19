@@ -11,6 +11,7 @@ public class AddEditFormView extends BasicWindow {
 
     private final TextBox txtTitle;
     private final TextBox txtDescription;
+    private final CheckBox blnPublic;
 
     private final Label errTitle;
     private final Label errDescription;
@@ -37,13 +38,16 @@ public class AddEditFormView extends BasicWindow {
         new EmptySpace().addTo(root);
         errDescription = new Label("").addTo(root).setForegroundColor(TextColor.ANSI.RED);
 
+        new Label("Public:").addTo(root);
+        blnPublic = new CheckBox().addTo(root);
+        new EmptySpace().addTo(root);
         new EmptySpace().addTo(root);
 
         var buttons = new Panel().addTo(root).setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
         var btnUpdate = new Button("Update", this::update).addTo(buttons);
         var btnCancel = new Button("Cancel", this::close).addTo(buttons);
 
-        setFixedSize(new TerminalSize(60, 12));
+        setFixedSize(new TerminalSize(70, 10));
     }
 
 
