@@ -40,6 +40,7 @@ public class TestView extends DialogWindow {
                 .addTo(panel);
 
         tblUsers.setSelectAction(this::displayUser);
+        tblUsers.addSelectionChangeListener(this::selectionChanged);
 
         tblForms = new ObjectTable<>(
                 new ColumnSpec<>("Title", Form::getTitle)
@@ -48,6 +49,7 @@ public class TestView extends DialogWindow {
                 .addTo(panel);
 
         tblForms.setSelectAction(this::displayForm);
+        tblForms.addSelectionChangeListener(this::selectionChanged);
 
         return panel;
     }
@@ -59,6 +61,10 @@ public class TestView extends DialogWindow {
 
     private void displayForm() {
         controller.displayForm(tblForms.getSelected());
+    }
+
+    private void selectionChanged(int newIndex, int oldIndex, boolean byUser) {
+        System.out.println("Selection changed: oldIndex=" + oldIndex + ", newIndex=" + newIndex + ", byUser=" + byUser);
     }
 
     private void refresh() {
