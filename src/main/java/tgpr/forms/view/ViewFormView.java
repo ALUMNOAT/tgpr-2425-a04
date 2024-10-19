@@ -26,8 +26,8 @@ public class ViewFormView extends DialogWindow {
     private Panel pnlQuestions;
     private ObjectTable<Question> questionTable;
     private final Label lblNoQuestions = new Label("No questions");
+    private final Label lblReadOnly = new Label("");
     /*
-    private final Label lblRelationship = new Label("");
     private Button btnToggleFollow = null;
      */
 
@@ -44,11 +44,11 @@ public class ViewFormView extends DialogWindow {
         setComponent(root);
 
         createFields().addTo(root);
+        if(form.isUsed())
+            createReadOnlyLabel().addTo(root);
         createQuestionPanel().addTo(root);
         createButtonsPanel().addTo(root);
-        /*
-        createRelationshipLabel().addTo(root);
-         */
+
 
         refresh();
     }
@@ -71,12 +71,10 @@ public class ViewFormView extends DialogWindow {
         return panel;
     }
 
-    /*
-    private Label createRelationshipLabel() {
-        lblRelationship.setForegroundColor(TextColor.ANSI.GREEN_BRIGHT).center();
-        return lblRelationship;
+    private Label createReadOnlyLabel() {
+        lblReadOnly.setForegroundColor(TextColor.ANSI.BLUE_BRIGHT).center();
+        return lblReadOnly;
     }
-     */
 
     private Border createQuestionPanel() {
         var panel = pnlQuestions = new Panel().fill();
@@ -110,11 +108,22 @@ public class ViewFormView extends DialogWindow {
         var panel = new Panel()
                 .setLayoutManager(new LinearLayout(Direction.HORIZONTAL))
                 .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-        new Button("New Question", this::add).addTo(panel);
-        new Button("Edit Form", this::edit).addTo(panel);
+        if(!form.isUsed()) {
+            new Button("New Question", this::add).addTo(panel);
+            new Button("Edit Form", this::edit).addTo(panel);
+        }
         new Button("Delete Form", this::delete).addTo(panel);
+        if(form.isUsed()) {
+            if(form.getIsPublic())
+                new Button("Make Private", this::setPrivate).addTo(panel);
+            else
+                new Button("Make Public", this::setPublic).addTo(panel);
+        }
         new Button("Share", this::share).addTo(panel);
-        new Button("Reorder", this::reorder).addTo(panel);
+        if(!form.isUsed())
+            new Button("Reorder", this::reorder).addTo(panel);
+        else
+            new Button("Clear Instances", this::clear).addTo(panel);
         new Button("Analyze", this::analyze).addTo(panel);
         new Button("Close", this::close).addTo(panel);
 
@@ -144,9 +153,9 @@ public class ViewFormView extends DialogWindow {
             lblDescription.setText(form.getDescription());
             lblCreatedBy.setText(form.getOwner().getFullName());
             lblIsPublic.setText(form.getIsPublic() ? "true" : "false");
+            lblReadOnly.setText("This form is read only because it has already been answered (" + form.getInstances().size() + " instance(s)).");
             /*
             var rel = Security.getLoggedUser().getRelationshipType(member);
-            lblRelationship.setText(rel.toText());
             if (btnToggleFollow != null)
                 btnToggleFollow.setLabel(
                         rel == Member.RelationshipType.Unrelated || rel == Member.RelationshipType.Follower
@@ -189,6 +198,18 @@ public class ViewFormView extends DialogWindow {
 
     private void analyze() {
         //controller.analyze();
+    }
+
+    private void clear() {
+        //controller.clear();
+    }
+
+    private void setPrivate() {
+        //controller.setPrivate();
+    }
+
+    private void setPublic() {
+        //controller.setPublic();
     }
 
     /*
