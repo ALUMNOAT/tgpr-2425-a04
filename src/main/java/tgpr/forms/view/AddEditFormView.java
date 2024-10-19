@@ -39,15 +39,9 @@ public class AddEditFormView extends BasicWindow {
 
         new EmptySpace().addTo(root);
 
-        var btnCreate = new Button("Create", () -> {
-            System.out.println("Create");
-        }).addTo(root);
-
-        new EmptySpace().addTo(root);
-
-        var btnCancel = new Button("Cancel", () -> {
-            System.out.println("Cancel");
-        }).addTo(root);
+        var buttons = new Panel().addTo(root).setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+        var btnUpdate = new Button("Update", this::update).addTo(buttons);
+        var btnCancel = new Button("Cancel", this::close).addTo(buttons);
 
         setFixedSize(new TerminalSize(60, 12));
     }
@@ -57,5 +51,8 @@ public class AddEditFormView extends BasicWindow {
     private void validate() {
 
     }
+     private void update(){
+
+     }
 
 }
