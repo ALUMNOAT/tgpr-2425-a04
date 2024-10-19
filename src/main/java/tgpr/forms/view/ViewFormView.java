@@ -27,9 +27,7 @@ public class ViewFormView extends DialogWindow {
     private ObjectTable<Question> questionTable;
     private final Label lblNoQuestions = new Label("No questions");
     private final Label lblReadOnly = new Label("");
-    /*
-    private Button btnToggleFollow = null;
-     */
+    private Button btnTogglePublic = null;
 
     public ViewFormView(ViewFormController controller, Form form) {
         super("View Form Detail");
@@ -113,12 +111,8 @@ public class ViewFormView extends DialogWindow {
             new Button("Edit Form", this::edit).addTo(panel);
         }
         new Button("Delete Form", this::delete).addTo(panel);
-        if(form.isUsed()) {
-            if(form.getIsPublic())
-                new Button("Make Private", this::setPrivate).addTo(panel);
-            else
-                new Button("Make Public", this::setPublic).addTo(panel);
-        }
+        if(form.isUsed())
+            btnTogglePublic = new Button("", this::togglePublic).addTo(panel);
         new Button("Share", this::share).addTo(panel);
         if(!form.isUsed())
             new Button("Reorder", this::reorder).addTo(panel);
@@ -154,14 +148,10 @@ public class ViewFormView extends DialogWindow {
             lblCreatedBy.setText(form.getOwner().getFullName());
             lblIsPublic.setText(form.getIsPublic() ? "true" : "false");
             lblReadOnly.setText("This form is read only because it has already been answered (" + form.getInstances().size() + " instance(s)).");
+            if (btnTogglePublic != null)
+                btnTogglePublic.setLabel(form.getIsPublic() ? "Make Private" : "Make Public");
             /*
             var rel = Security.getLoggedUser().getRelationshipType(member);
-            if (btnToggleFollow != null)
-                btnToggleFollow.setLabel(
-                        rel == Member.RelationshipType.Unrelated || rel == Member.RelationshipType.Follower
-                                ? "Follow"
-                                : "Unfollow"
-                );
              */
 
             var questions = controller.getQuestions();
@@ -204,12 +194,9 @@ public class ViewFormView extends DialogWindow {
         //controller.clear();
     }
 
-    private void setPrivate() {
-        //controller.setPrivate();
-    }
-
-    private void setPublic() {
-        //controller.setPublic();
+    private void togglePublic() {
+        controller.togglePublic();
+        refresh();
     }
 
     /*
