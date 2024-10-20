@@ -53,8 +53,7 @@ public class ViewFormView extends DialogWindow {
         setComponent(root);
 
         createFields().addTo(root);
-        if(form.isUsed())
-            createReadOnlyLabel().addTo(root);
+        createReadOnlyLabel().addTo(root);
         createQuestionPanel().addTo(root);
         createButtonsPanel().addTo(root);
 
@@ -163,7 +162,12 @@ public class ViewFormView extends DialogWindow {
         lblDescription.setText(form.getDescription());
         lblCreatedBy.setText(form.getOwner().getFullName());
         lblIsPublic.setText(form.getIsPublic() ? "true" : "false");
-        lblReadOnly.setText("This form is read only because it has already been answered (" + form.getInstances().size() + " instance(s)).");
+        if(form.isUsed()) {
+            lblReadOnly.setText("This form is read only because it has already been answered (" + form.getInstances().size() + " instance(s)).");
+            lblReadOnly.setVisible(true);
+        }
+        else
+            lblReadOnly.setVisible(false);
     }
 
     private void refreshQuestions() {
