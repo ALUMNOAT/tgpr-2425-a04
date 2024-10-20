@@ -18,16 +18,27 @@ public class ViewFormView extends DialogWindow {
 
     private final ViewFormController controller;
     private Form form;
+    private boolean reorderMode = false;
 
     private final Label lblTitle = new Label("");
     private final Label lblDescription = new Label("");
     private final Label lblCreatedBy = new Label("");
     private final Label lblIsPublic = new Label("");
-    private Panel pnlQuestions;
-    private ObjectTable<Question> questionTable;
     private final Label lblNoQuestions = new Label("No questions");
     private final Label lblReadOnly = new Label("");
-    private Button btnTogglePublic = null;
+    private Panel pnlQuestions;
+    private ObjectTable<Question> questionTable;
+    private Button btnAdd;
+    private Button btnEdit;
+    private Button btnDelete;
+    private Button btnTogglePublic;
+    private Button btnShare;
+    private Button btnReorder;
+    private Button btnClear;
+    private Button btnAnalyze;
+    private Button btnClose;
+    private Button btnSave;
+    private Button btnCancel;
 
     public ViewFormView(ViewFormController controller, Form form) {
         super("View Form Detail");
@@ -106,20 +117,18 @@ public class ViewFormView extends DialogWindow {
         var panel = new Panel()
                 .setLayoutManager(new LinearLayout(Direction.HORIZONTAL))
                 .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-        if(!form.isUsed()) {
-            new Button("New Question", this::add).addTo(panel);
-            new Button("Edit Form", this::edit).addTo(panel);
-        }
-        new Button("Delete Form", this::delete).addTo(panel);
-        if(form.isUsed())
-            btnTogglePublic = new Button("", this::togglePublic).addTo(panel);
-        new Button("Share", this::share).addTo(panel);
-        if(!form.isUsed())
-            new Button("Reorder", this::reorder).addTo(panel);
-        else
-            new Button("Clear Instances", this::clear).addTo(panel);
-        new Button("Analyze", this::analyze).addTo(panel);
-        new Button("Close", this::close).addTo(panel);
+
+        btnAdd =  new Button("New Question", this::add).addTo(panel);
+        btnEdit = new Button("Edit Form", this::edit).addTo(panel);
+        btnDelete = new Button("Delete Form", this::delete).addTo(panel);
+        btnTogglePublic = new Button("", this::togglePublic).addTo(panel);
+        btnShare = new Button("Share", this::share).addTo(panel);
+        btnReorder = new Button("Reorder", this::reorder).addTo(panel);
+        btnClear = new Button("Clear Instances", this::clear).addTo(panel);
+        btnAnalyze = new Button("Analyze", this::analyze).addTo(panel);
+        btnClose = new Button("Close", this::close).addTo(panel);
+        btnSave = new Button("Save Order", this::save).addTo(panel);
+        btnCancel = new Button("Cancel", this::cancel).addTo(panel);
 
         /*
         if (!Security.isLoggedUser(member)) {
@@ -143,26 +152,73 @@ public class ViewFormView extends DialogWindow {
 
     private void refresh() {
         if (form != null) {
-            lblTitle.setText(form.getTitle());
-            lblDescription.setText(form.getDescription());
-            lblCreatedBy.setText(form.getOwner().getFullName());
-            lblIsPublic.setText(form.getIsPublic() ? "true" : "false");
-            lblReadOnly.setText("This form is read only because it has already been answered (" + form.getInstances().size() + " instance(s)).");
-            if (btnTogglePublic != null)
-                btnTogglePublic.setLabel(form.getIsPublic() ? "Make Private" : "Make Public");
-            /*
-            var rel = Security.getLoggedUser().getRelationshipType(member);
-             */
+            refreshFields();
+            refreshQuestions();
+            refreshButtons();
+        }
+    }
 
-            var questions = controller.getQuestions();
-            pnlQuestions.removeAllComponents();
-            if (questions.isEmpty()) {
-                pnlQuestions.addComponent(lblNoQuestions);
-            } else {
-                pnlQuestions.addComponent(questionTable);
-                questionTable.clear();
-                questionTable.add(questions);
+    private void refreshFields() {
+        lblTitle.setText(form.getTitle());
+        lblDescription.setText(form.getDescription());
+        lblCreatedBy.setText(form.getOwner().getFullName());
+        lblIsPublic.setText(form.getIsPublic() ? "true" : "false");
+        lblReadOnly.setText("This form is read only because it has already been answered (" + form.getInstances().size() + " instance(s)).");
+    }
+
+    private void refreshQuestions() {
+        var questions = controller.getQuestions();
+        pnlQuestions.removeAllComponents();
+        if (questions.isEmpty()) {
+            pnlQuestions.addComponent(lblNoQuestions);
+        } else {
+            pnlQuestions.addComponent(questionTable);
+            questionTable.clear();
+            questionTable.add(questions);
+        }
+    }
+
+    private void refreshButtons() {
+        btnTogglePublic.setLabel(form.getIsPublic() ? "Make Private" : "Make Public");
+        if(reorderMode) {
+            btnAdd.setVisible(false);
+            btnEdit.setVisible(false);
+            btnDelete.setVisible(false);
+            btnTogglePublic.setVisible(false);
+            btnShare.setVisible(false);
+            btnReorder.setVisible(false);
+            btnClear.setVisible(false);
+            btnAnalyze.setVisible(false);
+            btnClose.setVisible(false);
+            btnSave.setVisible(true);
+            btnCancel.setVisible(true);
+            btnSave.takeFocus();
+        }
+        else {
+            if(form.isUsed()) {
+                btnAdd.setVisible(false);
+                btnEdit.setVisible(false);
+                btnDelete.setVisible(true);
+                btnTogglePublic.setVisible(true);
+                btnShare.setVisible(true);
+                btnReorder.setVisible(false);
+                btnClear.setVisible(true);
+                btnDelete.takeFocus();
             }
+            else {
+                btnAdd.setVisible(true);
+                btnEdit.setVisible(true);
+                btnDelete.setVisible(true);
+                btnTogglePublic.setVisible(false);
+                btnShare.setVisible(true);
+                btnReorder.setVisible(true);
+                btnClear.setVisible(false);
+                btnAdd.takeFocus();
+            }
+            btnAnalyze.setVisible(true);
+            btnClose.setVisible(true);
+            btnSave.setVisible(false);
+            btnCancel.setVisible(false);
         }
     }
 
@@ -183,6 +239,8 @@ public class ViewFormView extends DialogWindow {
     }
 
     private void reorder() {
+        reorderMode = true;
+        refresh();
         //controller.reorder();
     }
 
@@ -199,27 +257,23 @@ public class ViewFormView extends DialogWindow {
         refresh();
     }
 
+    private void save() {
+        reorderMode = false;
+        refresh();
+        //controller.save();
+    }
+
+    private void cancel() {
+        reorderMode = false;
+        refresh();
+        //controller.cancel();
+    }
+
     /*
     private void displayQuestion() {
         var question = questionTable.getSelected();
         if (question == null) return;
         if (controller.displayQuestion(question) == null)
             refresh();
-    }
-
-    private void update() {
-        form = controller.update();
-        refresh();
-    }
-
-    private void toggleFollow() {
-        controller.toggleFollow();
-        refresh();
-    }
-
-    private void post() {
-        controller.postMessage();
-        refresh();
-    }
      */
 }
