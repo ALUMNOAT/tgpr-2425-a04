@@ -35,6 +35,10 @@ public class ViewFormController extends Controller<ViewFormView> {
                 form.togglePublic();
     }
 
+    public void save(List<Question> questions) {
+       form.reorderQuestions(questions);
+    }
+
     @Override
     public ViewFormView getView() {
         return view;

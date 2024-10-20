@@ -180,6 +180,10 @@ public class ViewFormView extends DialogWindow {
             questionTable.clear();
             questionTable.add(questions);
         }
+        if(reorderMode)
+            questionTable.setSelectAction(this::reorderSelected);
+        else
+            questionTable.setSelectAction(null);
     }
 
     private void refreshButtons() {
@@ -196,7 +200,6 @@ public class ViewFormView extends DialogWindow {
             btnClose.setVisible(false);
             btnSave.setVisible(true);
             btnCancel.setVisible(true);
-            btnSave.takeFocus();
         }
         else {
             if(form.isUsed()) {
@@ -207,7 +210,6 @@ public class ViewFormView extends DialogWindow {
                 btnShare.setVisible(true);
                 btnReorder.setVisible(false);
                 btnClear.setVisible(true);
-                btnDelete.takeFocus();
             }
             else {
                 btnAdd.setVisible(true);
@@ -217,7 +219,6 @@ public class ViewFormView extends DialogWindow {
                 btnShare.setVisible(true);
                 btnReorder.setVisible(true);
                 btnClear.setVisible(false);
-                btnAdd.takeFocus();
             }
             btnAnalyze.setVisible(true);
             btnClose.setVisible(true);
@@ -245,7 +246,7 @@ public class ViewFormView extends DialogWindow {
     private void reorder() {
         reorderMode = true;
         refresh();
-        //controller.reorder();
+        btnSave.takeFocus();
     }
 
     private void analyze() {
@@ -263,14 +264,33 @@ public class ViewFormView extends DialogWindow {
 
     private void save() {
         reorderMode = false;
+        controller.save(questionTable.getItems());
         refresh();
-        //controller.save();
+        btnReorder.takeFocus();
     }
 
     private void cancel() {
         reorderMode = false;
         refresh();
-        //controller.cancel();
+        btnReorder.takeFocus();
+    }
+
+    private void reorderSelected() {
+        questionTable.addSelectionChangeListener(this::reorderMoving);
+        questionTable.setSelectAction(this::reorderPlaced);
+    }
+
+    private void reorderMoving(int oldIndex, int newIndex, boolean byUser) {
+        var tmp = questionTable.getItem(newIndex);
+        questionTable.setItem(newIndex, questionTable.getItem(oldIndex));
+        questionTable.setItem(oldIndex, tmp);
+
+        questionTable.refresh();
+    }
+
+    private void reorderPlaced() {
+        questionTable.addSelectionChangeListener(null);
+        questionTable.setSelectAction(this::reorderSelected);
     }
 
     /*
