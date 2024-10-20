@@ -7,6 +7,8 @@ import tgpr.forms.controller.FormController;
 import tgpr.forms.model.AccessType;
 import tgpr.forms.model.Form;
 
+import java.util.List;
+
 public class FormView extends BasicWindow {
 
     private final FormController controller;
@@ -24,9 +26,9 @@ public class FormView extends BasicWindow {
 
 
         Panel root = new Panel();
-        root.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+        root.setLayoutManager(new LinearLayout(Direction.VERTICAL)).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));;
         root.withBorder(Borders.singleLine());
-
+        setHints(List.of(Hint.CENTERED));
         setComponent(root);
 
         createFormDescription().addTo(root);
@@ -39,7 +41,7 @@ public class FormView extends BasicWindow {
     private Panel createFormDescription(){
 
         Panel descriptionsPanel = new Panel();
-        descriptionsPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+        descriptionsPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL)).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));;
 
         lblTitle.setText(form.getTitle());
         lblTitle.setForegroundColor(TextColor.ANSI.BLUE);
@@ -57,7 +59,7 @@ public class FormView extends BasicWindow {
     private Panel createFormInstances(){
 
         Panel instancesPanel = new Panel();
-        instancesPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+        instancesPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL)).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));;
 
 
         lblOwner.setText("Created by " + form.getOwner().getFullName());
@@ -93,18 +95,18 @@ public class FormView extends BasicWindow {
 
     private Panel createFormButtons(){
 
-        Panel buttonsPanel = new Panel().setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+        Panel buttonsPanel = new Panel().setLayoutManager(new LinearLayout(Direction.HORIZONTAL)).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));;
 
         if(!form.getQuestions().isEmpty()){
             Button open = new Button("Open").addTo(buttonsPanel);
-            open.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+            //open.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
             open.setEnabled(true);
 
         }
 
         if(form.getAccessType(form.getOwner())== AccessType.Editor){
             Button manage = new Button("Manage").addTo(buttonsPanel);
-            manage.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+            //manage.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
             manage.setEnabled(true);
         }
 
