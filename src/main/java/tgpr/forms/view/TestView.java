@@ -57,10 +57,12 @@ public class TestView extends DialogWindow {
 
     private void displayUser() {
         controller.displayUser(tblUsers.getSelected());
+        refresh();
     }
 
     private void displayForm() {
         controller.displayForm(tblForms.getSelected());
+        refresh();
     }
 
     private void selectionChanged(int newIndex, int oldIndex, boolean byUser) {
