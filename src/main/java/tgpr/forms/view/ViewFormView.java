@@ -4,16 +4,12 @@ import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
-import com.googlecode.lanterna.input.KeyStroke;
 import tgpr.forms.controller.ViewFormController;
 import tgpr.forms.model.Form;
 import tgpr.forms.model.Question;
 import tgpr.framework.Tools;
 
 import java.util.List;
-
-import static tgpr.framework.Tools.asString;
-import static tgpr.framework.Tools.ifNull;
 
 public class ViewFormView extends DialogWindow {
 
@@ -25,7 +21,7 @@ public class ViewFormView extends DialogWindow {
     private final Label lblDescription = new Label("");
     private final Label lblCreatedBy = new Label("");
     private final Label lblIsPublic = new Label("");
-    private final Label lblNoQuestions = new Label("No questions");
+    private final Label lblNoQuestions = new Label("No question yet!");
     private final Label lblReadOnly = new Label("");
     private Panel pnlQuestions;
     private ObjectTable<Question> questionTable;
@@ -81,32 +77,20 @@ public class ViewFormView extends DialogWindow {
     }
 
     private Label createReadOnlyLabel() {
-        lblReadOnly.setForegroundColor(TextColor.ANSI.BLUE_BRIGHT).center();
+        lblReadOnly.setForegroundColor(TextColor.ANSI.BLUE_BRIGHT).addStyle(SGR.BOLD).center();
         return lblReadOnly;
     }
 
     private Panel createQuestionPanel() {
-        var panel = pnlQuestions = new Panel().fill();
+        var panel = pnlQuestions = new Panel();
         questionTable = new ObjectTable<>(
-                new ColumnSpec<>("Index", Question::getIdx),
-                new ColumnSpec<>("Title", Question::getTitle),
-                new ColumnSpec<>("Type", Question::getType),
+                new ColumnSpec<>("Index", Question::getIdx).setWidth(5).alignRight(),
+                new ColumnSpec<>("Title", Question::getTitle).setWidth(30).setOverflowHandling(ColumnSpec.OverflowHandling.Wrap),
+                new ColumnSpec<>("Type", Question::getType).setWidth(10),
                 new ColumnSpec<>("Required", Question::getRequired),
-                new ColumnSpec<>("Option List", m -> Tools.ifNull(m.getOptionList(), ""))
+                new ColumnSpec<Question>("Option List", m -> Tools.ifNull(m.getOptionList(), "")).setWidth(25)
         ).addTo(panel);
-        /*
-        questionTable.setSelectAction(this::displayQuestion);
-        questionTable.setKeyStrokeHandler(ks -> {
-            if (ks.equals(KeyStroke.fromString("<del>")))
-                if (controller.deleteQuestion(questionTable.getSelected())) {
-                    // met le focus sur qqch de visible avant le refresh pour éviter une exception
-                    btnToggleFollow.takeFocus();
-                    refresh();
-                    // remet le focus sur la liste des messages
-                    questionTable.takeFocus();
-                }
-        });
-        */
+
         lblNoQuestions.setForegroundColor(TextColor.ANSI.RED).addTo(panel);
 
         return panel;
@@ -117,9 +101,9 @@ public class ViewFormView extends DialogWindow {
                 .setLayoutManager(new LinearLayout(Direction.HORIZONTAL))
                 .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
 
-        btnAdd =  new Button("New Question", this::add).addTo(panel);
-        btnEdit = new Button("Edit Form", this::edit).addTo(panel);
-        btnDelete = new Button("Delete Form", this::delete).addTo(panel);
+        btnAdd =  new Button("New Question", this::addQuestion).addTo(panel);
+        btnEdit = new Button("Edit Form", this::editForm).addTo(panel);
+        btnDelete = new Button("Delete Form", this::deleteForm).addTo(panel);
         btnTogglePublic = new Button("", this::togglePublic).addTo(panel);
         btnShare = new Button("Share", this::share).addTo(panel);
         btnReorder = new Button("Reorder", this::reorder).addTo(panel);
@@ -128,23 +112,6 @@ public class ViewFormView extends DialogWindow {
         btnClose = new Button("Close", this::close).addTo(panel);
         btnSave = new Button("Save Order", this::save).addTo(panel);
         btnCancel = new Button("Cancel", this::cancel).addTo(panel);
-
-        /*
-        if (!Security.isLoggedUser(member)) {
-            btnToggleFollow = new Button("", this::toggleFollow).addTo(panel);
-        }
-
-        // Le membre connecté ne peut modifier que ses données ou celles des autres s'il est admin
-        if (Security.isAdmin() || Security.isLoggedUser(member)) {
-            var btnUpdate = new Button("Update", this::update).addTo(panel);
-            addShortcut(btnUpdate, KeyStroke.fromString("<A-u>"));
-        }
-        // Seul un admin peut supprimer un membre
-        if (Security.isAdmin()) {
-            var btnDelete = new Button("Delete", this::delete).addTo(panel);
-            addShortcut(btnDelete, KeyStroke.fromString("<A-d>"));
-        }
-         */
 
         return panel;
     }
@@ -183,7 +150,10 @@ public class ViewFormView extends DialogWindow {
         if(reorderMode)
             questionTable.setSelectAction(this::reorderSelected);
         else
-            questionTable.setSelectAction(null);
+            if(form.isUsed())
+                questionTable.setSelectAction(null);
+            else
+                questionTable.setSelectAction(this::editQuestion);
     }
 
     private void refreshButtons() {
@@ -227,16 +197,18 @@ public class ViewFormView extends DialogWindow {
         }
     }
 
-    private void add() {
+    private void addQuestion() {
         //controller.add();
+        refresh();
     }
 
-    private void edit() {
+    private void editForm() {
         //controller.edit();
+        refresh();
     }
 
-    private void delete() {
-        controller.delete();
+    private void deleteForm() {
+        controller.deleteForm();
     }
 
     private void share() {
@@ -255,6 +227,7 @@ public class ViewFormView extends DialogWindow {
 
     private void clear() {
         //controller.clear();
+        refresh();
     }
 
     private void togglePublic() {
@@ -275,6 +248,11 @@ public class ViewFormView extends DialogWindow {
         btnReorder.takeFocus();
     }
 
+    private void editQuestion() {
+        //controller.editQuestion();
+        refresh();
+    }
+
     private void reorderSelected() {
         questionTable.addSelectionChangeListener(this::reorderMoving);
         questionTable.setSelectAction(this::reorderPlaced);
@@ -292,12 +270,4 @@ public class ViewFormView extends DialogWindow {
         questionTable.addSelectionChangeListener(null);
         questionTable.setSelectAction(this::reorderSelected);
     }
-
-    /*
-    private void displayQuestion() {
-        var question = questionTable.getSelected();
-        if (question == null) return;
-        if (controller.displayQuestion(question) == null)
-            refresh();
-     */
 }
