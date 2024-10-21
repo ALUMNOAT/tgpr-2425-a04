@@ -187,7 +187,7 @@ public class ViewFormView extends DialogWindow {
                 btnDelete.setVisible(true);
                 btnTogglePublic.setVisible(false);
                 btnShare.setVisible(true);
-                btnReorder.setVisible(true);
+                btnReorder.setVisible(!form.getQuestions().isEmpty());
                 btnClear.setVisible(false);
             }
             btnAnalyze.setVisible(true);
