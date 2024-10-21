@@ -48,17 +48,20 @@ public class AddEditFormView extends BasicWindow {
         new EmptySpace().addTo(root);
 
         var buttons = new Panel().addTo(root).setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
-        var btnUpdate = new Button("Update", this::create).addTo(buttons);
+        var btnUpdate = new Button("Update", this::createUpdate).addTo(buttons);
         var btnCancel = new Button("Cancel", this::close).addTo(buttons);
 
         setFixedSize(new TerminalSize(70, 10));
     }
 
     private void validate() {
+        var errors = controller.validate(
+            txtTitle.getText()
+        );
 
     }
     private void createUpdate(){
-        controller.setForm(
+        controller.createUpdate(
                 txtTitle.getText(),
                 txtDescription.getText(),
                 blnPublic.isChecked()

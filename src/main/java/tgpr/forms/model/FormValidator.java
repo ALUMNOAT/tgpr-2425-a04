@@ -1,4 +1,22 @@
 package tgpr.forms.model;
 
-public class FormValidator {
+import tgpr.framework.Error;
+import tgpr.framework.ErrorList;
+
+import java.util.regex.Pattern;
+
+public abstract class FormValidator {
+    public static Error isValidTitle(String title){
+        if(title == null)
+            return Error.NOERROR;
+        if(!Pattern.matches("[a-zA-Z\\d][a-z\\d]{0,21}", title))
+            return new Error("Invalid title format", Form.Fields.Title);
+        return Error.NOERROR;
+    }
+
+    public static Error isNotTakenTitle(String title){
+        if(Form.getByTitleAndUser(title, Security.getLoggedUser()) != null)
+            return new Error("This title is already taken", Form.Fields.Title);
+        return Error.NOERROR;
+    }
 }
