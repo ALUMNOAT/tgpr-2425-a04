@@ -110,7 +110,7 @@ public class LoginView extends BasicWindow{
     }
 
     private void signup() {
-        // TODO: Add signup feature
+        // TODO: Add 'Controller.navigateTo(new SignupController());'
     }
 
     private void logAsDefaultAdmin() {

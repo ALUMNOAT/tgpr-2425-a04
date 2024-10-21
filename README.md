@@ -20,7 +20,7 @@
 
 ### Liste des bugs connus
 
-  * Pour l'instant aucun
+  * Quand on utilise le bouton 'Reset Database', la database s'affiche en console aussi
 
 ### Liste des fonctionnalités supplémentaires
 
