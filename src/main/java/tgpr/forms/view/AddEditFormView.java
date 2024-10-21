@@ -6,6 +6,8 @@ import com.googlecode.lanterna.gui2.*;
 
 import java.util.List;
 import java.util.regex.Pattern;
+import tgpr.forms.controller.AddEditFormController;
+
 
 public class AddEditFormView extends BasicWindow {
 
@@ -15,10 +17,12 @@ public class AddEditFormView extends BasicWindow {
 
     private final Label errTitle;
     private final Label errDescription;
+    private final AddEditFormController controller;
 
-    public AddEditFormView(){ //ControllerAddEditForm controller ?
+    public AddEditFormView(AddEditFormController controller){
         setTitle("Add a form");
         setHints(List.of(Hint.CENTERED));
+        this.controller = controller;
 
         Panel root = new Panel();
         root.setLayoutManager(new GridLayout(2).setTopMarginSize(1));
@@ -44,19 +48,21 @@ public class AddEditFormView extends BasicWindow {
         new EmptySpace().addTo(root);
 
         var buttons = new Panel().addTo(root).setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
-        var btnUpdate = new Button("Update", this::update).addTo(buttons);
+        var btnUpdate = new Button("Update", this::create).addTo(buttons);
         var btnCancel = new Button("Cancel", this::close).addTo(buttons);
 
         setFixedSize(new TerminalSize(70, 10));
     }
 
-
-
     private void validate() {
 
     }
-     private void update(){
-
-     }
+    private void create(){
+        controller.setForm(
+                txtTitle.getText(),
+                txtDescription.getText(),
+                blnPublic.isChecked()
+        );
+    }
 
 }
