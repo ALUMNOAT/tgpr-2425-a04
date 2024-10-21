@@ -7,9 +7,15 @@ import tgpr.forms.model.Form;
 
 
 public class AddEditFormController extends Controller<AddEditFormView> {
-    private final AddEditFormView view = new AddEditFormView(this); //this?
 
+    private final AddEditFormView view = new AddEditFormView(this); //this?
     private Form form;
+    private boolean isNewForm;
+
+    public AddEditFormController(Form form){
+        this.form = form;
+        isNewForm = form == null;
+    }
 
     @Override
     public AddEditFormView getView() {
