@@ -8,6 +8,7 @@ import com.googlecode.lanterna.input.KeyStroke;
 import tgpr.forms.controller.ViewFormController;
 import tgpr.forms.model.Form;
 import tgpr.forms.model.Question;
+import tgpr.framework.Tools;
 
 import java.util.List;
 
@@ -84,15 +85,14 @@ public class ViewFormView extends DialogWindow {
         return lblReadOnly;
     }
 
-    private Border createQuestionPanel() {
+    private Panel createQuestionPanel() {
         var panel = pnlQuestions = new Panel().fill();
-        Border border = panel.withBorder(Borders.singleLine(" Questions "));
         questionTable = new ObjectTable<>(
                 new ColumnSpec<>("Index", Question::getIdx),
                 new ColumnSpec<>("Title", Question::getTitle),
                 new ColumnSpec<>("Type", Question::getType),
                 new ColumnSpec<>("Required", Question::getRequired),
-                new ColumnSpec<>("Option List", Question::getOptionList)
+                new ColumnSpec<>("Option List", m -> Tools.ifNull(m.getOptionList(), ""))
         ).addTo(panel);
         /*
         questionTable.setSelectAction(this::displayQuestion);
@@ -109,7 +109,7 @@ public class ViewFormView extends DialogWindow {
         */
         lblNoQuestions.setForegroundColor(TextColor.ANSI.RED).addTo(panel);
 
-        return border;
+        return panel;
     }
 
     private Panel createButtonsPanel() {
@@ -236,7 +236,7 @@ public class ViewFormView extends DialogWindow {
     }
 
     private void delete() {
-        //controller.delete();
+        controller.delete();
     }
 
     private void share() {

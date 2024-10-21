@@ -1,5 +1,6 @@
 package tgpr.forms.controller;
 
+import tgpr.forms.view.TestView;
 import tgpr.framework.Controller;
 import tgpr.framework.Model;
 import tgpr.forms.model.Form;
@@ -37,6 +38,13 @@ public class ViewFormController extends Controller<ViewFormView> {
 
     public void save(List<Question> questions) {
        form.reorderQuestions(questions);
+    }
+
+    public void delete() {
+        if(askConfirmation("Are you sure you want to delete this form?", "Delete Form")) {
+            form.delete();
+            view.close();
+        }
     }
 
     @Override
