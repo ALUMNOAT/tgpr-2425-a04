@@ -57,7 +57,7 @@ public class AddEditFormView extends BasicWindow {
     private void validate() {
 
     }
-    private void create(){
+    private void createUpdate(){
         controller.setForm(
                 txtTitle.getText(),
                 txtDescription.getText(),
