@@ -17,12 +17,13 @@ public class ViewFormsView extends BasicWindow {
 
     private ObjectTable<Form> tblForms;
 
-    private final MenuBar menuBar;
-    private final Menu menuFile;
-    private final Menu menuParameters;
-    private final MenuItem ViewProfile;
-    private final MenuItem logOut;
-    private final MenuItem Exit;
+    private final MenuBar menuBar = new MenuBar();
+    private final Menu menuFile = new Menu("File");
+    private final Menu menuParameters = new Menu("Parameters");
+
+    private final MenuItem ViewProfile = new MenuItem("View Profile");
+    private final MenuItem logOut = new MenuItem("Log out");
+    private final MenuItem Exit = new MenuItem("Exit");
 
 
     public ViewFormsView(User user) {
@@ -35,22 +36,25 @@ public class ViewFormsView extends BasicWindow {
         Panel root = new Panel();
         setComponent(root);
 
-        menuBar = new MenuBar().addTo(root);
+        createMenuBar().addTo(root);
 
-        menuFile = new Menu("File");
+
+    }
+
+    private Panel createMenuBar(){
+
+        Panel menu = new Panel();
+
         menuBar.add(menuFile);
-
-        menuParameters = new Menu("Parameters");
         menuBar.add(menuParameters);
 
-        ViewProfile = new MenuItem("View Profile");
         menuFile.add(ViewProfile);
-
-        logOut = new MenuItem("Log out");
         menuFile.add(logOut);
-
-        Exit = new MenuItem("Exit");
         menuFile.add(Exit);
+
+        menuBar.addTo(menu);
+
+        return menu;
     }
 
     private String getTitleWithUser() {
