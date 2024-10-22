@@ -3,6 +3,7 @@ package tgpr.forms.controller;
 import tgpr.forms.model.*;
 import tgpr.forms.model.Instance;
 import tgpr.forms.view.FormView;
+import tgpr.forms.view.ViewFormsView;
 import tgpr.framework.Controller;
 
 import java.time.LocalDateTime;
