@@ -1,5 +1,6 @@
 package tgpr.forms.controller;
 
+import tgpr.forms.model.Form;
 import tgpr.forms.model.User;
 import tgpr.forms.view.TestView;
 import tgpr.framework.Controller;
@@ -20,5 +21,13 @@ public class TestController extends Controller<TestView> {
 
     public void displayUser(User user) {
         showInfo("You selected: " + user.getFullName());
+    }
+
+    public List<Form> getForms() {
+        return Form.getAll();
+    }
+
+    public void displayForm(Form form) {
+        navigateTo(new ViewFormController(form));
     }
 }

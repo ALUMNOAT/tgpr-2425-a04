@@ -40,7 +40,7 @@ values (1, 'Data sheet', 'This form is intended to collect your administrative i
        (2, 'Form 01', 'Test form 1', 1, 0),
        (3, 'Form 02', 'Test form 2', 2, 0),
        (4, 'Form 03', 'Test form 3', 1, 0),
-       (5, 'Form 04', 'Test form 4', 1, 0),
+       (5, 'Form 04.1', 'Test form 4', 1, 0),
        (6, 'Form 05', 'Test form 5', 1, 0),
        (7, 'Form 06', 'Test form 6', 1, 0),
        (8, 'Form 07', 'Test form 7', 1, 0),
@@ -72,6 +72,10 @@ values (2, 2, 'editor'),
        (3, 4, 'editor'),
        (3, 6, 'user'),
        (3, 8, 'user'),
+       (5,2,'editor'),
+       (5,6,'editor'),
+       (5,7,'user'),
+       (5,8,'user'),
        (14, 2, 'editor'),
        (14, 4, 'user');
 
@@ -430,7 +434,8 @@ values (1, 15, 1, '2024-07-31 15:06:24', '2024-07-31 15:06:48'),
        (7, 15, 9, '2024-07-31 15:09:01', '2024-07-31 15:09:26'),
        (8, 1, 1, '2024-07-31 15:11:04', null),
        (9, 1, 9, '2024-07-31 15:21:00', null),
-       (10, 1, 9, '2024-07-31 15:21:00', '2024-07-31 15:31:00');
+       (10, 1, 9, '2024-07-31 15:21:00', '2024-07-31 15:31:00'),
+       (11,5,1,'2024-10-19 15:21:00',null);
 
 CREATE TABLE answers
 (
@@ -528,4 +533,6 @@ CREATE TABLE distlist_form_accesses
 );
 
 insert into distlist_form_accesses (distlist, form, access_type)
-values (1, 14, 'user');
+values (1, 14, 'user'),
+       (2,5,'user'),
+       (3,5,'editor');
