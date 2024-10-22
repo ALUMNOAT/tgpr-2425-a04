@@ -45,6 +45,30 @@ public class ViewFormController extends Controller<ViewFormView> {
         }
     }
 
+    public void addQuestion() {
+        //TODO: add_edit_question
+    }
+
+    public void editQuestion() {
+        //TODO: add_edit_question
+    }
+
+    public void editForm() {
+        //TODO: add_edit_form
+    }
+
+    public void share() {
+        //TODO: manage_shares
+    }
+
+    public void analyze() {
+        //TODO: analyze
+    }
+
+    public void clear() {
+        //TODO: view_instances
+    }
+
     @Override
     public ViewFormView getView() {
         return view;

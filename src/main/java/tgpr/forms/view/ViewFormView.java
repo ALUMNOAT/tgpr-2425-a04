@@ -85,10 +85,12 @@ public class ViewFormView extends DialogWindow {
         var panel = pnlQuestions = new Panel();
         questionTable = new ObjectTable<>(
                 new ColumnSpec<>("Index", Question::getIdx).setWidth(5).alignRight(),
-                new ColumnSpec<>("Title", Question::getTitle).setWidth(30).setOverflowHandling(ColumnSpec.OverflowHandling.Wrap),
+                new ColumnSpec<>("Title", Question::getTitle).setWidth(30)
+                        .setOverflowHandling(ColumnSpec.OverflowHandling.Wrap),
                 new ColumnSpec<>("Type", Question::getType).setWidth(10),
                 new ColumnSpec<>("Required", Question::getRequired),
-                new ColumnSpec<Question>("Option List", m -> Tools.ifNull(m.getOptionList(), "")).setWidth(25)
+                new ColumnSpec<Question>("Option List", m ->
+                        Tools.ifNull(m.getOptionList(), "")).setWidth(25)
         ).addTo(panel);
 
         lblNoQuestions.setForegroundColor(TextColor.ANSI.RED).addTo(panel);
@@ -130,7 +132,8 @@ public class ViewFormView extends DialogWindow {
         lblCreatedBy.setText(form.getOwner().getFullName());
         lblIsPublic.setText(form.getIsPublic() ? "true" : "false");
         if(form.isUsed()) {
-            lblReadOnly.setText("This form is read only because it has already been answered (" + form.getInstances().size() + " instance(s)).");
+            lblReadOnly.setText("This form is read only because it has already been answered ("
+                    + form.getInstances().size() + " instance(s)).");
             lblReadOnly.setVisible(true);
         }
         else
@@ -198,12 +201,12 @@ public class ViewFormView extends DialogWindow {
     }
 
     private void addQuestion() {
-        //controller.add();
+        controller.addQuestion();
         refresh();
     }
 
     private void editForm() {
-        //controller.edit();
+        controller.editForm();
         refresh();
     }
 
@@ -212,7 +215,8 @@ public class ViewFormView extends DialogWindow {
     }
 
     private void share() {
-        //controller.share();
+        controller.share();
+        refresh();
     }
 
     private void reorder() {
@@ -222,11 +226,12 @@ public class ViewFormView extends DialogWindow {
     }
 
     private void analyze() {
-        //controller.analyze();
+        controller.analyze();
+        refresh();
     }
 
     private void clear() {
-        //controller.clear();
+        controller.clear();
         refresh();
     }
 
@@ -249,7 +254,7 @@ public class ViewFormView extends DialogWindow {
     }
 
     private void editQuestion() {
-        //controller.editQuestion();
+        controller.editQuestion();
         refresh();
     }
 
