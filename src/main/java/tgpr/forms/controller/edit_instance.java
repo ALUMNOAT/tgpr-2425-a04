@@ -1,23 +1,32 @@
 package tgpr.forms.controller;
 
+import tgpr.forms.model.Form;
+import tgpr.forms.model.Instance;
+import tgpr.forms.model.User;
 import tgpr.forms.view.view_edit_instance;
 import tgpr.framework.Controller;
 
+import static tgpr.forms.model.Answer.Fields.Instance;
+
 public class edit_instance extends Controller<view_edit_instance> {
 
-    public boolean isCompleted = true;
+    public User u = User.getByKey(9);
+    public Form f = Form.getByKey(15);
+    public Instance i = f.getCurrentOrCreateInstance(u);
 
-    public String description = "Test";
+    public boolean isCompleted = i.isCompleted();
+
+    public String description = f.getDescription();
     public String getDescription() {
         return description;
     }
 
-    public String date = "Test/Test/Test";
+    public String date = i.getStarted().toString();
     public String getDate() {
         return date;
     }
 
-    public String title = "Test";
+    public String title = f.getTitle();
     public String getTitle() {
         return title;
     }
