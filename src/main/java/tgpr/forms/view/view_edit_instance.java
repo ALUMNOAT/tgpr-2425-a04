@@ -2,6 +2,8 @@ package tgpr.forms.view;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.forms.controller.edit_instance;
+import tgpr.forms.model.Question;
+import tgpr.framework.Controller;
 
 import java.util.List;
 
@@ -9,15 +11,17 @@ public class view_edit_instance extends DialogWindow {
 
     private final Label txtBody = new Label("You have already answered this form."+System.lineSeparator()+"You can view your submission or submit again."+System.lineSeparator()+"What would you like to do?");
     private Label txtBodyform;
+    private edit_instance controller;
 
     public view_edit_instance(edit_instance controller) {
         super("Open a form");
+        this.controller = controller;
 
         setHints(List.of(Hint.CENTERED, Hint.MODAL));
         this.txtBodyform = new Label(" Title:"+controller.getTitle() + System.lineSeparator()
                 +" Description:"+controller.getDescription()+System.lineSeparator()
                 +" Started on:"+controller.getDate());
-        if(controller.isCompleted){
+        if(controller.isCompleted()){
             confirmationPanel();
         } else{
             instancePanel();
@@ -29,7 +33,7 @@ public class view_edit_instance extends DialogWindow {
         setComponent(root);
         formTextPanel().setLayoutData(BorderLayout.Location.TOP).addTo(root);
         root.addEmpty();
-        QuizPanel().setLayoutData(BorderLayout.Location.CENTER).withBorder(Borders.singleLine("Question")).addTo(root);
+        QuizPanel().setLayoutData(BorderLayout.Location.CENTER).withBorder(Borders.singleLine()).addTo(root);
         root.addEmpty();
         formButtonsPanel().setLayoutData(BorderLayout.Location.BOTTOM).addTo(root);
         refresh();
@@ -70,6 +74,9 @@ public class view_edit_instance extends DialogWindow {
 
     private Panel QuizPanel(){
         Panel panel = Panel.horizontalPanel();
+        Question q = controller.getQuestion();
+        Label quest = new Label(q.getTitle());
+        quest.addTo(panel);
         return panel;
     }
 
@@ -77,13 +84,25 @@ public class view_edit_instance extends DialogWindow {
         Panel panel = Panel.horizontalPanel(1).center();
 
         Button btnClose = new Button("Close").addTo(panel);
-        Button btnPrev = new Button("Previous").addTo(panel);
-        Button btnnext = new Button("Next").addTo(panel);
+        if(controller.getQuestion().getIdx() > 1){
+            Button btnPrev = new Button("Previous", this::previous).addTo(panel);
+        } if(controller.getQuestion().getIdx() < 16){
+            Button btnnext = new Button("Next", this::next).addTo(panel);
+        }
         Button btnExit = new Button("Cancel", this::close).addTo(panel);
 
         return panel;
     }
 
+    private void previous(){
+        controller.previousQuestion();
+        instancePanel();
+    }
+
+    private void next(){
+        controller.nextQuestion();
+        instancePanel();
+    }
     private Panel createPanel() {
         var panel = Panel.gridPanel(1);
         return panel;
