@@ -15,7 +15,7 @@ import java.util.List;
 public class ViewFormsView extends BasicWindow {
 
     private Form form;
-    private User user;
+    private final User user;
 
     private final FormController formController;
 
@@ -71,14 +71,26 @@ public class ViewFormsView extends BasicWindow {
     }
 
     private String getTitleWithUser() {
-
-        return "MyForms (" + Security.getLoggedUser().getEmail() + " - " + (Security.isGuest() ? "User" : "Guest") + ")";
+        String title;
+        
+        if(Security.getLoggedUser()==null){
+            title = "MyForms (Guest)";
+        } else if (Security.isAdmin()) {
+            title = "MyForms (" + Security.getLoggedUser().getEmail() + " - Admin";
+        } else {
+            title = "MyForms (" + Security.getLoggedUser().getEmail() + " - User";
+        }
+        return title;
     }
 
     private Panel createFilterPanel() {
         Panel filterPanel = new Panel();
 
+        lblFilter.addTo(filterPanel);
+
         txtFilter.setTextChangeListener((txt, byUser) -> reloadData());
+
+        txtFilter.addTo(filterPanel);
 
         return filterPanel;
     }
@@ -102,13 +114,22 @@ public class ViewFormsView extends BasicWindow {
             lblNoMatch.setForegroundColor(TextColor.ANSI.RED);
             lblNoMatch.addTo(formsPanel);
         } else {
-
-            for(Form form : formsList) {
-
-            }
+            createFormCards(formsList);
         }
 
     }
+
+    private void createFormCards(List<Form> formsList) {
+
+        for(Form form : formsList) {
+
+            FormController formToAdd = new FormController(form);
+            formToAdd.getFormCard().addTo(formsPanel);
+
+        }
+
+    }
+
 
     private void pageChanged(Integer integer) {
         currentPage++;

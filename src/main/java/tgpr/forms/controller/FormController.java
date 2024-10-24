@@ -1,5 +1,6 @@
 package tgpr.forms.controller;
 
+import com.googlecode.lanterna.gui2.Panel;
 import tgpr.forms.model.*;
 import tgpr.forms.model.Instance;
 import tgpr.forms.view.FormView;
@@ -23,6 +24,10 @@ public class FormController extends Controller<FormView>{
 
     public FormView getView(){
         return view;
+    }
+
+    public Panel getFormCard(){
+        return view.getFormCard();
     }
 
 

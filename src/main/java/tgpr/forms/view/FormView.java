@@ -14,6 +14,7 @@ public class FormView extends BasicWindow {
     private final FormController controller;
     private final Form form;
 
+    private final Panel formCard = new Panel();
     private final Label lblTitle = new Label("");
     private final Label lblDescription = new Label("No description");;
     private final Label lblOwner = new Label("");;
@@ -25,15 +26,14 @@ public class FormView extends BasicWindow {
         this.controller = controller;
 
 
-        Panel root = new Panel();
-        root.setLayoutManager(new LinearLayout(Direction.VERTICAL)).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));;
-        root.withBorder(Borders.singleLine());
+        formCard.setLayoutManager(new LinearLayout(Direction.VERTICAL)).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));;
+        formCard.withBorder(Borders.singleLine());
         setHints(List.of(Hint.CENTERED));
-        setComponent(root);
+        setComponent(formCard);
 
-        createFormDescription().addTo(root);
-        createFormInstances().addTo(root);
-        createFormButtons().addTo(root);
+        createFormDescription().addTo(formCard);
+        createFormInstances().addTo(formCard);
+        createFormButtons().addTo(formCard);
 
     }
 
@@ -113,6 +113,10 @@ public class FormView extends BasicWindow {
         return buttonsPanel;
 
 
+    }
+
+    public Panel getFormCard() {
+        return formCard;
     }
 
 
