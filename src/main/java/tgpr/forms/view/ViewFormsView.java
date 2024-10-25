@@ -4,6 +4,7 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.menu.*;
 import tgpr.forms.controller.FormController;
+import tgpr.forms.controller.ViewFormsController;
 import tgpr.forms.model.Form;
 import tgpr.forms.model.Security;
 import tgpr.forms.model.User;
@@ -17,7 +18,7 @@ public class ViewFormsView extends BasicWindow {
     private Form form;
     private final User user;
 
-    private final FormController formController;
+    private final ViewFormsController controller;
 
     private final MenuBar menuBar = new MenuBar();
     private final Menu menuFile = new Menu("File");
@@ -30,17 +31,16 @@ public class ViewFormsView extends BasicWindow {
     private final Label lblFilter = new Label("Filter: ");
     private final TextBox txtFilter = new TextBox();
 
-    private int currentPage = 0;
+    private int currentPage = 1;
     private final int nbFormsPerPage = 9;
 
     private final Panel formsPanel = new Panel();
 
     Paginator paginator = new Paginator(this,9,this::pageChanged);
 
-    public ViewFormsView(User user, FormController controller) {
+    public ViewFormsView(User user, ViewFormsController controller ) {
         this.user = user;
-        this.formController = controller;
-
+        this.controller = controller;
 
         setTitle(getTitleWithUser());
         setHints(List.of(Hint.EXPANDED));
@@ -50,8 +50,10 @@ public class ViewFormsView extends BasicWindow {
         setComponent(root);
 
         createMenuBar().addTo(root);
-
-
+        createFilterPanel().addTo(root);
+        formsPanel.addTo(root);
+        createButtonsPanel().addTo(root);
+        reloadData();
     }
 
     private Panel createMenuBar(){
@@ -76,9 +78,9 @@ public class ViewFormsView extends BasicWindow {
         if(Security.getLoggedUser()==null){
             title = "MyForms (Guest)";
         } else if (Security.isAdmin()) {
-            title = "MyForms (" + Security.getLoggedUser().getEmail() + " - Admin";
+            title = "MyForms (" + Security.getLoggedUser().getEmail() + " - Admin)";
         } else {
-            title = "MyForms (" + Security.getLoggedUser().getEmail() + " - User";
+            title = "MyForms (" + Security.getLoggedUser().getEmail() + " - User)";
         }
         return title;
     }
@@ -108,6 +110,8 @@ public class ViewFormsView extends BasicWindow {
          */
 
         List<Form> formsList = user.getMyForms(txtFilter.getText(),(currentPage) * nbFormsPerPage,nbFormsPerPage);
+        
+        paginator.setCount(formsList.size());
 
         if(formsList.isEmpty()) {
             Label lblNoMatch = new Label("No form found");
@@ -133,7 +137,34 @@ public class ViewFormsView extends BasicWindow {
 
     private void pageChanged(Integer integer) {
         currentPage++;
+        reloadData();
 
+    }
+
+    private Panel createButtonsPanel(){
+        Panel buttonsPanel = new Panel().setLayoutManager(new BorderLayout());
+
+        Button createForm = new Button("Create a new form");
+        buttonsPanel.addComponent(createForm,BorderLayout.Location.LEFT);
+
+        /*Button firstPage = new Button("First");
+        buttonsPanel.addComponent(firstPage,BorderLayout.Location.RIGHT);
+
+        Button previous = new Button("Previous");
+        buttonsPanel.addComponent(previous,BorderLayout.Location.RIGHT);
+
+
+        Button next = new Button("Next");
+        buttonsPanel.addComponent(next,BorderLayout.Location.RIGHT);
+
+        Button last = new Button("Last");
+        buttonsPanel.addComponent(last,BorderLayout.Location.RIGHT);
+        paginator.addTo(buttonsPanel);*/
+
+        buttonsPanel.addComponent(paginator,BorderLayout.Location.RIGHT);
+
+
+        return buttonsPanel;
     }
 
 }

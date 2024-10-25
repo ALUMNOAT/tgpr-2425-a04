@@ -13,6 +13,7 @@ public class TestView extends DialogWindow {
     private final TestController controller;
 
     private Form form;
+    private User user;
 
     public TestView(TestController controller) {
         super("Test");
@@ -21,8 +22,12 @@ public class TestView extends DialogWindow {
 
         setHints(List.of(Hint.EXPANDED));
 
-        form =controller.getForm();
-        controller.viewForm(form);
+        //form =controller.getForm();
+        //controller.viewForm(form);
+
+        user = controller.getUser();
+        controller.viewForms(user);
+
     }
 
 
