@@ -1,6 +1,8 @@
 package tgpr.forms.view;
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
+import com.googlecode.lanterna.input.KeyStroke;
 import tgpr.forms.controller.edit_instance;
 import tgpr.forms.model.Question;
 import tgpr.framework.Controller;
@@ -33,7 +35,7 @@ public class view_edit_instance extends DialogWindow {
         setComponent(root);
         formTextPanel().setLayoutData(BorderLayout.Location.TOP).addTo(root);
         root.addEmpty();
-        QuizPanel().setLayoutData(BorderLayout.Location.CENTER).withBorder(Borders.singleLine()).addTo(root);
+        QuizPanel().setLayoutData(BorderLayout.Location.CENTER).withBorder(Borders.singleLine("Question " + controller.getQuestion().getIdx() + " of " + controller.numQuestions())).addTo(root);
         root.addEmpty();
         formButtonsPanel().setLayoutData(BorderLayout.Location.BOTTOM).addTo(root);
         refresh();
@@ -69,6 +71,7 @@ public class view_edit_instance extends DialogWindow {
         Button btnSubmit = new Button("Submit again", this::instancePanel).addTo(panel);
         Button btnExit = new Button("Cancel", this::close).addTo(panel);
 
+
         return panel;
     }
 
@@ -76,7 +79,11 @@ public class view_edit_instance extends DialogWindow {
         Panel panel = Panel.horizontalPanel();
         Question q = controller.getQuestion();
         Label quest = new Label(q.getTitle());
-        quest.addTo(panel);
+        if (q.getRequired()){
+            Label req = new Label("(*)");
+            req.setForegroundColor(TextColor.ANSI.RED).addTo(panel);
+        }
+        quest.setForegroundColor(TextColor.ANSI.BLACK_BRIGHT).addTo(panel);
         return panel;
     }
 
@@ -86,8 +93,8 @@ public class view_edit_instance extends DialogWindow {
         Button btnClose = new Button("Close").addTo(panel);
         if(controller.getQuestion().getIdx() > 1){
             Button btnPrev = new Button("Previous", this::previous).addTo(panel);
-        } if(controller.getQuestion().getIdx() < 16){
-            Button btnnext = new Button("Next", this::next).addTo(panel);
+        } if(controller.getQuestion().getIdx() < controller.numQuestions()){
+            Button btnNext = new Button("Next", this::next).addTo(panel);
         }
         Button btnExit = new Button("Cancel", this::close).addTo(panel);
 
