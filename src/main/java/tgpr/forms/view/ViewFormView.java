@@ -254,7 +254,7 @@ public class ViewFormView extends DialogWindow {
     }
 
     private void editQuestion() {
-        controller.editQuestion();
+        controller.editQuestion(questionTable.getSelected());
         refresh();
     }
 

@@ -46,11 +46,11 @@ public class ViewFormController extends Controller<ViewFormView> {
     }
 
     public void addQuestion() {
-        //TODO: add_edit_question
+        navigateTo(new AddEditQuestionController());
     }
 
-    public void editQuestion() {
-        //TODO: add_edit_question
+    public void editQuestion(Question question) {
+        navigateTo(new AddEditQuestionController(question));
     }
 
     public void editForm() {
