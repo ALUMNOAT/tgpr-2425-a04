@@ -7,6 +7,7 @@ import tgpr.forms.controller.edit_instance;
 import tgpr.forms.model.Question;
 import tgpr.framework.Controller;
 
+import javax.swing.plaf.basic.BasicBorders;
 import java.util.List;
 
 public class view_edit_instance extends DialogWindow {
@@ -35,7 +36,7 @@ public class view_edit_instance extends DialogWindow {
         setComponent(root);
         formTextPanel().setLayoutData(BorderLayout.Location.TOP).addTo(root);
         root.addEmpty();
-        QuizPanel().setLayoutData(BorderLayout.Location.CENTER).withBorder(Borders.singleLine("Question " + controller.getQuestion().getIdx() + " of " + controller.numQuestions())).addTo(root);
+        QuestionPanel().setLayoutData(BorderLayout.Location.CENTER).withBorder(Borders.singleLine("Question " + controller.getQuestion().getIdx() + " of " + controller.numQuestions())).addTo(root);
         root.addEmpty();
         formButtonsPanel().setLayoutData(BorderLayout.Location.BOTTOM).addTo(root);
         refresh();
@@ -75,7 +76,17 @@ public class view_edit_instance extends DialogWindow {
         return panel;
     }
 
-    private Panel QuizPanel(){
+    private Panel QuestionPanel(){
+        Panel panel = createPanel();
+        Question q = controller.getQuestion();
+        panel.addEmpty();
+        titlePanel().addTo(panel);
+        panel.addEmpty();
+        QuizPanel().addTo(panel);
+        return panel;
+    }
+
+    private Panel titlePanel(){
         Panel panel = Panel.horizontalPanel();
         Question q = controller.getQuestion();
         Label quest = new Label(q.getTitle());
@@ -84,6 +95,33 @@ public class view_edit_instance extends DialogWindow {
             req.setForegroundColor(TextColor.ANSI.RED).addTo(panel);
         }
         quest.setForegroundColor(TextColor.ANSI.BLACK_BRIGHT).addTo(panel);
+        return panel;
+    }
+    private Panel QuizPanel(){
+        Panel panel = Panel.horizontalPanel();
+        Question q = controller.getQuestion();
+        if (q.getType() == Question.Type.Short){
+            TextBox rep = new TextBox().sizeTo(100);
+            rep.addTo(panel);
+        } else if (q.getType() == Question.Type.Long){
+            TextBox rep = new TextBox().sizeTo(100, 8);
+            rep.addTo(panel);
+        } else if (q.getType() == Question.Type.Email){
+            TextBox rep = new TextBox().sizeTo(100);
+            rep.addTo(panel);
+        } else if (q.getType() == Question.Type.Date){
+            TextBox rep = new TextBox().sizeTo(100);
+            rep.addTo(panel);
+        } else if (q.getType() == Question.Type.Check){
+            CheckBox rep = new CheckBox();
+            rep.addTo(panel);
+        } else if (q.getType() == Question.Type.Radio){
+            RadioBoxList rep = new RadioBoxList();
+            rep.addTo(panel);
+        } else if (q.getType() == Question.Type.Combo){
+            ComboBox rep = new ComboBox();
+            rep.addTo(panel);
+        }
         return panel;
     }
 
@@ -95,6 +133,8 @@ public class view_edit_instance extends DialogWindow {
             Button btnPrev = new Button("Previous", this::previous).addTo(panel);
         } if(controller.getQuestion().getIdx() < controller.numQuestions()){
             Button btnNext = new Button("Next", this::next).addTo(panel);
+        } else  {
+            Button btnSubmit = new Button("Submit").addTo(panel);
         }
         Button btnExit = new Button("Cancel", this::close).addTo(panel);
 
