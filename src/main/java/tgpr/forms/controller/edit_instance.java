@@ -1,9 +1,6 @@
 package tgpr.forms.controller;
 
-import tgpr.forms.model.Form;
-import tgpr.forms.model.Instance;
-import tgpr.forms.model.Question;
-import tgpr.forms.model.User;
+import tgpr.forms.model.*;
 import tgpr.forms.view.view_edit_instance;
 import tgpr.framework.Controller;
 
@@ -12,8 +9,8 @@ import static tgpr.forms.model.Answer.Fields.Instance;
 public class edit_instance extends Controller<view_edit_instance> {
 
     public User u = User.getByKey(9);
-    public Form f = Form.getByKey(1);
-    public Instance i = f.getInstances().get(2);
+    public Form f = Form.getByKey(15);
+    public Instance i = f.getInstances().get(0);
     public int numQuestion = 0;
 
     public boolean isCompleted = i.isCompleted();
@@ -40,6 +37,10 @@ public class edit_instance extends Controller<view_edit_instance> {
 
     public Question getQuestion() {
         return f.getQuestions().get(numQuestion);
+    }
+
+    public Answer getAnswer() {
+        return i.getAnswers().get(numQuestion);
     }
 
     public int numQuestions() {
