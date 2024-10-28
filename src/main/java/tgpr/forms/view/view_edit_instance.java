@@ -2,19 +2,17 @@ package tgpr.forms.view;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
-import com.googlecode.lanterna.input.KeyStroke;
 import tgpr.forms.controller.edit_instance;
 import tgpr.forms.model.Question;
-import tgpr.framework.Controller;
 
-import javax.swing.plaf.basic.BasicBorders;
 import java.util.List;
 
 public class view_edit_instance extends DialogWindow {
 
     private final Label txtBody = new Label("You have already answered this form."+System.lineSeparator()+"You can view your submission or submit again."+System.lineSeparator()+"What would you like to do?");
-    private Label txtBodyform;
-    private edit_instance controller;
+    private final Label txtBodyform;
+    private final edit_instance controller;
+    private boolean review=false;
 
     public view_edit_instance(edit_instance controller) {
         super("Open a form");
@@ -31,20 +29,20 @@ public class view_edit_instance extends DialogWindow {
         }
     }
 
-    private Panel instancePanel(){
+    private void instancePanel(){
         var root = createPanel().sizeTo(80,20).setLayoutManager(new BorderLayout());
         setComponent(root);
         formTextPanel().setLayoutData(BorderLayout.Location.TOP).addTo(root);
         root.addEmpty();
-        QuestionPanel().setLayoutData(BorderLayout.Location.CENTER).withBorder(Borders.singleLine("Question " + controller.getQuestion().getIdx() + " of " + controller.numQuestions())).addTo(root);
+        QuestionPanel(review).setLayoutData(BorderLayout.Location.CENTER).withBorder(Borders.singleLine("Question " + controller.getQuestion().getIdx() + " of " + controller.numQuestions())).addTo(root);
         root.addEmpty();
-        formButtonsPanel().setLayoutData(BorderLayout.Location.BOTTOM).addTo(root);
+        formButtonsPanel(review).setLayoutData(BorderLayout.Location.BOTTOM).addTo(root);
         refresh();
         super.setTitle("Answer the Form");
-        return root;
     }
 
-    private Panel confirmationPanel(){
+
+    private void confirmationPanel(){
         var root = createPanel();
         setComponent(root);
         root.addEmpty();
@@ -52,7 +50,6 @@ public class view_edit_instance extends DialogWindow {
         root.addEmpty();
         confirmationButtonsPanel().addTo(root);
         refresh();
-        return root;
     }
 
     private Panel confirmationTextPanel() {
@@ -68,23 +65,26 @@ public class view_edit_instance extends DialogWindow {
     private Panel confirmationButtonsPanel() {
         Panel panel = Panel.horizontalPanel(1).center();
 
-        Button btnView = new Button("View Submission").addTo(panel);
+        Button btnView = new Button("View Submission", this::review).addTo(panel);
         Button btnSubmit = new Button("Submit again", this::instancePanel).addTo(panel);
         Button btnExit = new Button("Cancel", this::close).addTo(panel);
 
-
         return panel;
     }
 
-    private Panel QuestionPanel(){
+    private Panel QuestionPanel(boolean review){
         Panel panel = createPanel();
-        Question q = controller.getQuestion();
         panel.addEmpty();
         titlePanel().addTo(panel);
         panel.addEmpty();
-        QuizPanel().addTo(panel);
+        if(review){
+            reviewQuizPanel().addTo(panel);
+        } else {
+            QuizPanel().addTo(panel);
+        }
         return panel;
     }
+
 
     private Panel titlePanel(){
         Panel panel = Panel.horizontalPanel();
@@ -113,19 +113,43 @@ public class view_edit_instance extends DialogWindow {
             TextBox rep = new TextBox().sizeTo(100);
             rep.addTo(panel);
         } else if (q.getType() == Question.Type.Check){
-            CheckBox rep = new CheckBox();
+            CheckBoxList rep = new CheckBoxList();
+            for (Object i : q.getOptionList().getOptionValues()){
+                rep.addItem(i);
+            }
             rep.addTo(panel);
         } else if (q.getType() == Question.Type.Radio){
             RadioBoxList rep = new RadioBoxList();
+            for (Object i : q.getOptionList().getOptionValues()){
+                rep.addItem(i);
+            }
             rep.addTo(panel);
         } else if (q.getType() == Question.Type.Combo){
             ComboBox rep = new ComboBox();
+            for (Object i : q.getOptionList().getOptionValues()){
+                rep.addItem(i);
+            }
             rep.addTo(panel);
         }
         return panel;
     }
 
-    private Panel formButtonsPanel() {
+    private Panel reviewQuizPanel(){
+        Panel panel = createPanel();
+        Question q = controller.getQuestion();
+        if(q.getType() == Question.Type.Check){
+            for (Object i : q.getAnswerValues(controller.i)){
+                Label rep = new Label(i.toString());
+                rep.addTo(panel);
+            }
+        } else {
+            Label rep = new Label(q.getAnswerValueAsString(controller.i));
+            rep.addTo(panel);
+        }
+        return panel;
+    }
+
+    private Panel formButtonsPanel(boolean review) {
         Panel panel = Panel.horizontalPanel(1).center();
 
         Button btnClose = new Button("Close").addTo(panel);
@@ -134,10 +158,12 @@ public class view_edit_instance extends DialogWindow {
         } if(controller.getQuestion().getIdx() < controller.numQuestions()){
             Button btnNext = new Button("Next", this::next).addTo(panel);
         } else  {
-            Button btnSubmit = new Button("Submit").addTo(panel);
+            if(!review){
+                Button btnSubmit = new Button("Submit").addTo(panel);
+            }
         }
-        Button btnExit = new Button("Cancel", this::close).addTo(panel);
-
+        if(!review){
+            Button btnExit = new Button("Cancel", this::close).addTo(panel);}
         return panel;
     }
 
@@ -150,9 +176,14 @@ public class view_edit_instance extends DialogWindow {
         controller.nextQuestion();
         instancePanel();
     }
+
+    private void review(){
+        this.review = true;
+        instancePanel();
+    }
+
     private Panel createPanel() {
-        var panel = Panel.gridPanel(1);
-        return panel;
+        return Panel.gridPanel(1);
     }
 
 
