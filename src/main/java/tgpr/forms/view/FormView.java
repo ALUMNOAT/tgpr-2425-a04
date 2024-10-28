@@ -27,9 +27,9 @@ public class FormView extends BasicWindow {
 
 
         formCard.setLayoutManager(new LinearLayout(Direction.VERTICAL)).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));;
-        formCard.withBorder(Borders.singleLine());
+
         setHints(List.of(Hint.CENTERED));
-        setComponent(formCard);
+        setComponent(formCard.withBorder(Borders.singleLine()));
 
         createFormDescription().addTo(formCard);
         createFormInstances().addTo(formCard);
@@ -49,8 +49,10 @@ public class FormView extends BasicWindow {
         lblTitle.addTo(descriptionsPanel);
 
         lblDescription.setText(form.getDescription());
-        lblDescription.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        lblDescription.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center,LinearLayout.GrowPolicy.CanGrow ));
         lblDescription.addTo(descriptionsPanel);
+
+        descriptionsPanel.addEmpty();
 
         return descriptionsPanel;
     }
@@ -89,6 +91,8 @@ public class FormView extends BasicWindow {
 
         lblInstanceStart.addTo(instancesPanel);
         lblInstanceEnd.addTo(instancesPanel);
+
+        instancesPanel.addEmpty();
 
         return instancesPanel;
     }

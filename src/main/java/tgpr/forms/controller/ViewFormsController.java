@@ -13,7 +13,7 @@ public class ViewFormsController extends Controller<ViewFormsView> {
 
     public ViewFormsController(User user) {
         this.user = user;
-        Security.login(user);
+        //Security.login(user);
         view = new ViewFormsView(user, this);
 
     }

@@ -1,8 +1,10 @@
 package tgpr.forms.view;
 
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.menu.*;
+import com.googlecode.lanterna.input.KeyStroke;
 import tgpr.forms.controller.FormController;
 import tgpr.forms.controller.ViewFormsController;
 import tgpr.forms.model.Form;
@@ -29,9 +31,9 @@ public class ViewFormsView extends BasicWindow {
     private final MenuItem Exit = new MenuItem("Exit");
 
     private final Label lblFilter = new Label("Filter: ");
-    private final TextBox txtFilter = new TextBox();
+    private final TextBox txtFilter = new TextBox(new TerminalSize(30,1));
 
-    private int currentPage = 1;
+    private int currentPage = 0;
     private final int nbFormsPerPage = 9;
 
     private final Panel formsPanel = new Panel();
@@ -46,14 +48,22 @@ public class ViewFormsView extends BasicWindow {
         setHints(List.of(Hint.EXPANDED));
 
 
-        Panel root = new Panel();
+        Panel root = new Panel().setLayoutManager(new LinearLayout(Direction.VERTICAL));
         setComponent(root);
 
         createMenuBar().addTo(root);
+
         createFilterPanel().addTo(root);
-        formsPanel.addTo(root);
-        createButtonsPanel().addTo(root);
+        //txtFilter.takeFocus();
+        root.addEmpty();
+
+        formsPanel.setLayoutManager(new GridLayout(3)).setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER));
+        formsPanel.setPreferredSize(new TerminalSize(300,300));
+
         reloadData();
+        formsPanel.addTo(root);
+        //root.addEmpty();
+        createButtonsPanel().addTo(root);
     }
 
     private Panel createMenuBar(){
@@ -68,6 +78,8 @@ public class ViewFormsView extends BasicWindow {
         menuFile.add(Exit);
 
         menuBar.addTo(menu);
+
+        menu.addEmpty();
 
         return menu;
     }
@@ -86,13 +98,15 @@ public class ViewFormsView extends BasicWindow {
     }
 
     private Panel createFilterPanel() {
-        Panel filterPanel = new Panel();
+        Panel filterPanel = new Panel().setLayoutManager(new LinearLayout(Direction.HORIZONTAL));;
 
         lblFilter.addTo(filterPanel);
 
         txtFilter.setTextChangeListener((txt, byUser) -> reloadData());
 
         txtFilter.addTo(filterPanel);
+        //addShortcut(txtFilter, KeyStroke.fromString("<pagedown>"));
+        //filterPanel.addEmpty();
 
         return filterPanel;
     }
@@ -110,8 +124,8 @@ public class ViewFormsView extends BasicWindow {
          */
 
         List<Form> formsList = user.getMyForms(txtFilter.getText(),(currentPage) * nbFormsPerPage,nbFormsPerPage);
-        
-        paginator.setCount(formsList.size());
+
+        paginator.setCount(user.countMyForms(txtFilter.getText()));
 
         if(formsList.isEmpty()) {
             Label lblNoMatch = new Label("No form found");
@@ -119,8 +133,10 @@ public class ViewFormsView extends BasicWindow {
             lblNoMatch.addTo(formsPanel);
         } else {
             createFormCards(formsList);
+            //formsPanel.addEmpty();
         }
 
+        txtFilter.takeFocus();
     }
 
     private void createFormCards(List<Form> formsList) {
@@ -128,7 +144,9 @@ public class ViewFormsView extends BasicWindow {
         for(Form form : formsList) {
 
             FormController formToAdd = new FormController(form);
-            formToAdd.getFormCard().addTo(formsPanel);
+            formToAdd.getFormCard().setPreferredSize(new TerminalSize(34, 8))
+                    .withBorder((Borders.singleLine()))
+                    .addTo(formsPanel);
 
         }
 
@@ -136,7 +154,8 @@ public class ViewFormsView extends BasicWindow {
 
 
     private void pageChanged(Integer integer) {
-        currentPage++;
+
+        currentPage = paginator.getPage();
         reloadData();
 
     }
@@ -145,24 +164,19 @@ public class ViewFormsView extends BasicWindow {
         Panel buttonsPanel = new Panel().setLayoutManager(new BorderLayout());
 
         Button createForm = new Button("Create a new form");
-        buttonsPanel.addComponent(createForm,BorderLayout.Location.LEFT);
 
-        /*Button firstPage = new Button("First");
-        buttonsPanel.addComponent(firstPage,BorderLayout.Location.RIGHT);
+        //buttonsPanel.addComponent(createForm,BorderLayout.Location.LEFT);
+        //buttonsPanel.addEmpty();
+        createForm.setLayoutData(BorderLayout.Location.LEFT);
+        (buttonsPanel).addComponent(createForm);
 
-        Button previous = new Button("Previous");
-        buttonsPanel.addComponent(previous,BorderLayout.Location.RIGHT);
+        Panel emptySpace = new Panel().setPreferredSize(new TerminalSize(50,1));
+        buttonsPanel.addComponent(emptySpace);
+        //buttonsPanel.addComponent(paginator,BorderLayout.Location.RIGHT);
 
 
-        Button next = new Button("Next");
-        buttonsPanel.addComponent(next,BorderLayout.Location.RIGHT);
-
-        Button last = new Button("Last");
-        buttonsPanel.addComponent(last,BorderLayout.Location.RIGHT);
-        paginator.addTo(buttonsPanel);*/
-
-        buttonsPanel.addComponent(paginator,BorderLayout.Location.RIGHT);
-
+        paginator.setLayoutData(BorderLayout.Location.RIGHT);
+        buttonsPanel.addComponent(paginator);
 
         return buttonsPanel;
     }

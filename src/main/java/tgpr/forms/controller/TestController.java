@@ -37,6 +37,6 @@ public class TestController extends Controller<TestView> {
         return User.getAll().get(1);
     }
     public void viewForms(User user) {
-        navigateTo(new ViewFormsController(user));
+        navigateTo(new ViewFormsController(getUser()));
     }
 }
