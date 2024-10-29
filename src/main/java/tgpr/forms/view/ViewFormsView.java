@@ -4,20 +4,16 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.menu.*;
-import com.googlecode.lanterna.input.KeyStroke;
 import tgpr.forms.controller.FormController;
 import tgpr.forms.controller.ViewFormsController;
 import tgpr.forms.model.Form;
 import tgpr.forms.model.Security;
 import tgpr.forms.model.User;
-import tgpr.framework.Controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ViewFormsView extends BasicWindow {
 
-    private Form form;
     private final User user;
 
     private final ViewFormsController controller;
@@ -30,7 +26,7 @@ public class ViewFormsView extends BasicWindow {
     private final MenuItem logOut = new MenuItem("Log out");
     private final MenuItem Exit = new MenuItem("Exit");
 
-    private final Label lblFilter = new Label("Filter: ");
+    private final Label lblFilter = new Label(" Filter: ");
     private final TextBox txtFilter = new TextBox(new TerminalSize(30,1));
 
     private int currentPage = 0;
@@ -54,16 +50,13 @@ public class ViewFormsView extends BasicWindow {
         createMenuBar().addTo(root);
 
         createFilterPanel().addTo(root);
-        //txtFilter.takeFocus();
-        root.addEmpty();
 
-        formsPanel.setLayoutManager(new GridLayout(3)).setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER));
-        formsPanel.setPreferredSize(new TerminalSize(300,300));
+        formsPanel.setLayoutManager(new GridLayout(3).setTopMarginSize(1));
+        formsPanel.setPreferredSize(new TerminalSize(140,40));
 
-        reloadData();
         formsPanel.addTo(root);
-        //root.addEmpty();
         createButtonsPanel().addTo(root);
+        reloadData();
     }
 
     private Panel createMenuBar(){
@@ -91,9 +84,12 @@ public class ViewFormsView extends BasicWindow {
             title = "MyForms (Guest)";
         } else if (Security.isAdmin()) {
             title = "MyForms (" + Security.getLoggedUser().getEmail() + " - Admin)";
+        } else if (!Security.isGuest()){
+            title = "MyForms (" + Security.getLoggedUser().getEmail() + " - " + Security.getLoggedUser().getRole()+")";
         } else {
-            title = "MyForms (" + Security.getLoggedUser().getEmail() + " - User)";
+            title = "MyForms (Guest)";
         }
+
         return title;
     }
 
@@ -161,22 +157,17 @@ public class ViewFormsView extends BasicWindow {
     }
 
     private Panel createButtonsPanel(){
-        Panel buttonsPanel = new Panel().setLayoutManager(new BorderLayout());
+        Panel buttonsPanel = new Panel().setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
 
         Button createForm = new Button("Create a new form");
 
-        //buttonsPanel.addComponent(createForm,BorderLayout.Location.LEFT);
-        //buttonsPanel.addEmpty();
-        createForm.setLayoutData(BorderLayout.Location.LEFT);
-        (buttonsPanel).addComponent(createForm);
+        createForm.addTo(buttonsPanel).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Beginning));
 
-        Panel emptySpace = new Panel().setPreferredSize(new TerminalSize(50,1));
+        Panel emptySpace = new Panel().setPreferredSize(new TerminalSize(43,1));
+
         buttonsPanel.addComponent(emptySpace);
-        //buttonsPanel.addComponent(paginator,BorderLayout.Location.RIGHT);
 
-
-        paginator.setLayoutData(BorderLayout.Location.RIGHT);
-        buttonsPanel.addComponent(paginator);
+        paginator.addTo(buttonsPanel).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.End));
 
         return buttonsPanel;
     }

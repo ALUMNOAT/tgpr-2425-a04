@@ -6,6 +6,7 @@ import com.googlecode.lanterna.gui2.*;
 import tgpr.forms.controller.FormController;
 import tgpr.forms.model.AccessType;
 import tgpr.forms.model.Form;
+import tgpr.forms.model.Security;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class FormView extends BasicWindow {
 
     private final FormController controller;
     private final Form form;
+
 
     private final Panel formCard = new Panel();
     private final Label lblTitle = new Label("");
@@ -26,13 +28,16 @@ public class FormView extends BasicWindow {
         this.controller = controller;
 
 
-        formCard.setLayoutManager(new LinearLayout(Direction.VERTICAL)).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));;
+        formCard.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 
         setHints(List.of(Hint.CENTERED));
         setComponent(formCard.withBorder(Borders.singleLine()));
 
-        createFormDescription().addTo(formCard);
-        createFormInstances().addTo(formCard);
+        createFormDescription().addTo(formCard).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center,
+                LinearLayout.GrowPolicy.CanGrow));
+        createFormInstances().addTo(formCard).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center,
+                LinearLayout.GrowPolicy.CanGrow));
+        //formCard.addEmpty();
         createFormButtons().addTo(formCard);
 
     }
@@ -49,6 +54,7 @@ public class FormView extends BasicWindow {
         lblTitle.addTo(descriptionsPanel);
 
         lblDescription.setText(form.getDescription());
+        lblDescription.addStyle(SGR.BOLD);
         lblDescription.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center,LinearLayout.GrowPolicy.CanGrow ));
         lblDescription.addTo(descriptionsPanel);
 
@@ -65,11 +71,10 @@ public class FormView extends BasicWindow {
 
 
         lblOwner.setText("Created by " + form.getOwner().getFullName());
-        lblOwner.addStyle(SGR.BOLD);
-        lblOwner.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        lblOwner.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center,LinearLayout.GrowPolicy.CanGrow));
         lblOwner.addTo(instancesPanel);
 
-        var instance = form.getMostRecentInstance(form.getOwner());
+        var instance = form.getMostRecentInstance(Security.getLoggedUser());
 
         if(instance == null) {
             lblInstanceStart.setText("Not Started");
@@ -83,11 +88,9 @@ public class FormView extends BasicWindow {
             }
         }
 
-        lblInstanceStart.addStyle(SGR.BOLD);
-        lblInstanceEnd.addStyle(SGR.BOLD);
 
-        lblInstanceStart.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-        lblInstanceEnd.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        lblInstanceStart.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center,LinearLayout.GrowPolicy.CanGrow));
+        lblInstanceEnd.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center,LinearLayout.GrowPolicy.CanGrow));
 
         lblInstanceStart.addTo(instancesPanel);
         lblInstanceEnd.addTo(instancesPanel);
@@ -103,14 +106,14 @@ public class FormView extends BasicWindow {
 
         if(!form.getQuestions().isEmpty()){
             Button open = new Button("Open").addTo(buttonsPanel);
-            //open.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+
             open.setEnabled(true);
 
         }
 
-        if(form.getAccessType(form.getOwner())== AccessType.Editor){
+        if(form.getAccessType(Security.getLoggedUser())== AccessType.Editor){
             Button manage = new Button("Manage").addTo(buttonsPanel);
-            //manage.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+
             manage.setEnabled(true);
         }
 

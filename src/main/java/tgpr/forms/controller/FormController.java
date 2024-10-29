@@ -31,19 +31,4 @@ public class FormController extends Controller<FormView>{
     }
 
 
-
-    public boolean hasNoQuestions(){
-        return (form.getQuestions()).isEmpty();
-    }
-
-
-
-    public AccessType getAccessType(){
-
-        return form.getAccessType(form.getOwner());
-    }
-
-
-
-
 }
