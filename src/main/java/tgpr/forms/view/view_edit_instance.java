@@ -3,6 +3,7 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.forms.controller.edit_instance;
+import tgpr.forms.model.Answer;
 import tgpr.forms.model.Question;
 
 import java.util.List;
@@ -11,8 +12,14 @@ public class view_edit_instance extends DialogWindow {
 
     private final Label txtBody = new Label("You have already answered this form."+System.lineSeparator()+"You can view your submission or submit again."+System.lineSeparator()+"What would you like to do?");
     private final Label txtBodyform;
+    private final Label error = new Label("");
     private final edit_instance controller;
     private boolean review=false;
+    private Answer answer;
+    private TextBox rep;
+    private CheckBoxList rep_check = new CheckBoxList();
+    private RadioBoxList rep_radio = new RadioBoxList();
+    private ComboBox rep_combo = new ComboBox();
 
     public view_edit_instance(edit_instance controller) {
         super("Open a form");
@@ -89,6 +96,7 @@ public class view_edit_instance extends DialogWindow {
     private Panel titlePanel(){
         Panel panel = Panel.horizontalPanel();
         Question q = controller.getQuestion();
+        answer = new Answer(controller.i, q, null);
         Label quest = new Label(q.getTitle());
         if (q.getRequired()){
             Label req = new Label("(*)");
@@ -98,39 +106,32 @@ public class view_edit_instance extends DialogWindow {
         return panel;
     }
     private Panel QuizPanel(){
-        Panel panel = Panel.horizontalPanel();
+        Panel panel = createPanel();
         Question q = controller.getQuestion();
-        if (q.getType() == Question.Type.Short){
-            TextBox rep = new TextBox().sizeTo(100);
+        if (q.getType() == Question.Type.Short || q.getType() == Question.Type.Email || q.getType() == Question.Type.Date){
+            rep = new TextBox().sizeTo(100);
             rep.addTo(panel);
         } else if (q.getType() == Question.Type.Long){
-            TextBox rep = new TextBox().sizeTo(100, 8);
-            rep.addTo(panel);
-        } else if (q.getType() == Question.Type.Email){
-            TextBox rep = new TextBox().sizeTo(100);
-            rep.addTo(panel);
-        } else if (q.getType() == Question.Type.Date){
-            TextBox rep = new TextBox().sizeTo(100);
+            rep = new TextBox().sizeTo(100, 8);
             rep.addTo(panel);
         } else if (q.getType() == Question.Type.Check){
-            CheckBoxList rep = new CheckBoxList();
             for (Object i : q.getOptionList().getOptionValues()){
-                rep.addItem(i);
+                rep_check.addItem(i);
             }
-            rep.addTo(panel);
+            rep_check.addTo(panel);
         } else if (q.getType() == Question.Type.Radio){
-            RadioBoxList rep = new RadioBoxList();
             for (Object i : q.getOptionList().getOptionValues()){
-                rep.addItem(i);
+                rep_radio.addItem(i);
             }
-            rep.addTo(panel);
+            rep_radio.addTo(panel);
         } else if (q.getType() == Question.Type.Combo){
-            ComboBox rep = new ComboBox();
             for (Object i : q.getOptionList().getOptionValues()){
-                rep.addItem(i);
+                rep_combo.addItem(i);
             }
-            rep.addTo(panel);
+            rep_combo.addTo(panel);
         }
+        panel.addEmpty();
+        error.addTo(panel);
         return panel;
     }
 
@@ -169,12 +170,46 @@ public class view_edit_instance extends DialogWindow {
 
     private void previous(){
         controller.previousQuestion();
+        rep_radio.clearItems();
+        rep_combo.clearItems();
+        rep_check.clearItems();
         instancePanel();
     }
 
     private void next(){
-        controller.nextQuestion();
-        instancePanel();
+        if (review){
+            controller.nextQuestion();
+            instancePanel();
+        }else {
+            verifAnswer();
+        }
+    }
+
+    private void verifAnswer(){
+        Question q = controller.getQuestion();
+        if (q.getType() == Question.Type.Short || q.getType() == Question.Type.Email || q.getType() == Question.Type.Date){
+            answer.setValue(rep.getText());
+        } if (q.getType() == Question.Type.Check){
+            answer.setValue(rep_check.getSelectedItem().toString());
+            rep_radio.clearItems();
+        } else if (q.getType() == Question.Type.Radio){
+            answer.setValue(rep_radio.getSelectedItem().toString());
+            rep_radio.clearItems();
+        } else if (q.getType() == Question.Type.Combo){
+            answer.setValue(rep_combo.getText());
+            rep_combo.clearItems();
+        }
+        if(!answer.isValid()){
+            error.setVisible(true);
+            error.setForegroundColor(TextColor.ANSI.RED);
+            error.setText("This question is required.");
+            instancePanel();
+        } else {
+            error.setVisible(false);
+            System.out.println(answer.getValue());
+            controller.nextQuestion();
+            instancePanel();
+        }
     }
 
     private void review(){
