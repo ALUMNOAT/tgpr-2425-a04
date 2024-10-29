@@ -6,6 +6,7 @@ import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import com.googlecode.lanterna.input.KeyStroke;
 import tgpr.forms.controller.AddEditQuestionController;
+import tgpr.forms.model.OptionList;
 import tgpr.forms.model.Question;
 
 import java.util.List;
@@ -57,7 +58,7 @@ public class AddEditQuestionView extends DialogWindow {
         var panel = Panel.gridPanel(2, Margin.of(1));
 
         new Label("Title:").addTo(panel);
-        txtTitle = new TextBox().sizeTo(11).addTo(panel)
+        txtTitle = new TextBox().sizeTo(45).addTo(panel)
                 //.setValidationPattern(Pattern.compile("[a-z][a-z\\d]{0,7}"))
                 .setTextChangeListener((txt, byUser) -> validate());
         panel.addEmpty();
@@ -65,16 +66,16 @@ public class AddEditQuestionView extends DialogWindow {
                 .setForegroundColor(TextColor.ANSI.RED);
 
         new Label("Description:").addTo(panel);
-        txtDescription = new TextBox().sizeTo(21).addTo(panel)
+        txtDescription = new TextBox().sizeTo(55, 3).addTo(panel)
                 .setTextChangeListener((txt, byUser) -> validate());
         panel.addEmpty();
         errDescription.addTo(panel).setForegroundColor(TextColor.ANSI.RED);
 
 
         new Label("Type:").addTo(panel);
-        cboType = new ComboBox<>("Short", "Long", "Radio", "Check", "Combo", "Date", "Email")
-                .sizeTo(11).addTo(panel);
-        cboType.setSelectedItem("Short");
+        cboType = new ComboBox<String>().sizeTo(11).addTo(panel);
+        for(var type : Question.Type.values())
+            cboType.addItem(type.toString());
         cboType.addListener((selectedIndex, previousSelection, changedByUserInteraction) -> validate());
         panel.addEmpty();
         errType.addTo(panel).setForegroundColor(TextColor.ANSI.RED);
@@ -85,9 +86,9 @@ public class AddEditQuestionView extends DialogWindow {
         errRequired.addTo(panel).setForegroundColor(TextColor.ANSI.RED);
 
         new Label("Options List:").addTo(panel);
-        cboOptionsList = new ComboBox<>("TODO")
-                .sizeTo(11).addTo(panel);
-        cboOptionsList.setSelectedItem("TODO");
+        cboOptionsList = new ComboBox<>("").sizeTo(30).addTo(panel);
+        for(var ol : OptionList.getAll())
+            cboOptionsList.addItem(ol.toString());
         cboOptionsList.addListener((selectedIndex, previousSelection, changedByUserInteraction) -> validate());
         panel.addEmpty();
         errOptionsList.addTo(panel).setForegroundColor(TextColor.ANSI.RED);
@@ -110,6 +111,10 @@ public class AddEditQuestionView extends DialogWindow {
         if (question != null) {
             txtTitle.setText(question.getTitle());
             txtDescription.setText(question.getDescription());
+            cboType.setSelectedItem(question.getType().toString());
+            chkRequired.setChecked(question.getRequired());
+            cboOptionsList.setSelectedItem(question.getOptionList() == null ?
+                    "" : question.getOptionList().toString());
             /*
             txtBirthDate.setText(asString(member.getBirthdate()));
             cboRole.setSelectedItem(member.isAdmin() ? "Admin" : "Member");
