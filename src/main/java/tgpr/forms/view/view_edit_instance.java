@@ -6,6 +6,7 @@ import tgpr.forms.controller.edit_instance;
 import tgpr.forms.model.Answer;
 import tgpr.forms.model.Question;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class view_edit_instance extends DialogWindow {
@@ -24,6 +25,7 @@ public class view_edit_instance extends DialogWindow {
     public view_edit_instance(edit_instance controller) {
         super("Open a form");
         this.controller = controller;
+        error.setForegroundColor(TextColor.ANSI.RED);
 
         setHints(List.of(Hint.CENTERED, Hint.MODAL));
         this.txtBodyform = new Label(" Title:"+controller.getTitle() + System.lineSeparator()
@@ -73,7 +75,7 @@ public class view_edit_instance extends DialogWindow {
         Panel panel = Panel.horizontalPanel(1).center();
 
         Button btnView = new Button("View Submission", this::review).addTo(panel);
-        Button btnSubmit = new Button("Submit again", this::instancePanel).addTo(panel);
+        Button btnSubmit = new Button("Submit again", this::submitAgain).addTo(panel);
         Button btnExit = new Button("Cancel", this::close).addTo(panel);
 
         return panel;
@@ -96,7 +98,7 @@ public class view_edit_instance extends DialogWindow {
     private Panel titlePanel(){
         Panel panel = Panel.horizontalPanel();
         Question q = controller.getQuestion();
-        answer = new Answer(controller.i, q, null);
+        answer = controller.i.getOrCreateAnswer(q);
         Label quest = new Label(q.getTitle());
         if (q.getRequired()){
             Label req = new Label("(*)");
@@ -110,23 +112,42 @@ public class view_edit_instance extends DialogWindow {
         Question q = controller.getQuestion();
         if (q.getType() == Question.Type.Short || q.getType() == Question.Type.Email || q.getType() == Question.Type.Date){
             rep = new TextBox().sizeTo(100);
+            if (answer.isValid()){
+                rep.setText(answer.getValue());
+            }
             rep.addTo(panel);
         } else if (q.getType() == Question.Type.Long){
             rep = new TextBox().sizeTo(100, 8);
+            if (answer.isValid()){
+                rep.setText(answer.getValue());
+            }
             rep.addTo(panel);
         } else if (q.getType() == Question.Type.Check){
             for (Object i : q.getOptionList().getOptionValues()){
                 rep_check.addItem(i);
+                if (answer.isValid()){
+                    if(i.toString().compareTo(answer.getValue())==0){
+                        rep_check.setChecked(i, true);}
+                    }
             }
             rep_check.addTo(panel);
         } else if (q.getType() == Question.Type.Radio){
             for (Object i : q.getOptionList().getOptionValues()){
                 rep_radio.addItem(i);
+                if (answer.isValid()){
+                    if(i.toString().compareTo(answer.getValue())==0){
+                        rep_radio.setCheckedItem(i);
+                    }
+                }
             }
             rep_radio.addTo(panel);
         } else if (q.getType() == Question.Type.Combo){
             for (Object i : q.getOptionList().getOptionValues()){
                 rep_combo.addItem(i);
+                if (answer.isValid()){
+                    if(i.toString().compareTo(answer.getValue())==0){
+                        rep_combo.setSelectedItem(i);}
+                }
             }
             rep_combo.addTo(panel);
         }
@@ -144,7 +165,7 @@ public class view_edit_instance extends DialogWindow {
                 rep.addTo(panel);
             }
         } else {
-            Label rep = new Label(q.getAnswerValueAsString(controller.i));
+            Label rep = new Label(q.getAnswerValue(controller.i));
             rep.addTo(panel);
         }
         return panel;
@@ -153,19 +174,25 @@ public class view_edit_instance extends DialogWindow {
     private Panel formButtonsPanel(boolean review) {
         Panel panel = Panel.horizontalPanel(1).center();
 
-        Button btnClose = new Button("Close").addTo(panel);
+        Button btnClose = new Button("Close", this::close).addTo(panel);
         if(controller.getQuestion().getIdx() > 1){
             Button btnPrev = new Button("Previous", this::previous).addTo(panel);
         } if(controller.getQuestion().getIdx() < controller.numQuestions()){
             Button btnNext = new Button("Next", this::next).addTo(panel);
         } else  {
             if(!review){
-                Button btnSubmit = new Button("Submit").addTo(panel);
+                Button btnSubmit = new Button("Submit", this::submit).addTo(panel);
             }
         }
         if(!review){
             Button btnExit = new Button("Cancel", this::close).addTo(panel);}
         return panel;
+    }
+
+    private void submit(){
+        answer.save();
+        controller.i.submit();
+        this.close();
     }
 
     private void previous(){
@@ -196,22 +223,26 @@ public class view_edit_instance extends DialogWindow {
             answer.setValue(rep_radio.getSelectedItem().toString());
             rep_radio.clearItems();
         } else if (q.getType() == Question.Type.Combo){
-            answer.setValue(rep_combo.getText());
+            answer.setValue(rep_combo.getSelectedItem().toString());
             rep_combo.clearItems();
         }
         if(!answer.isValid()){
             error.setVisible(true);
-            error.setForegroundColor(TextColor.ANSI.RED);
             error.setText("This question is required.");
             instancePanel();
         } else {
             error.setVisible(false);
+            answer.save();
             System.out.println(answer.getValue());
             controller.nextQuestion();
             instancePanel();
         }
     }
 
+    private void submitAgain(){
+        controller.i = controller.f.createInstance(controller.u);
+        instancePanel();
+    }
     private void review(){
         this.review = true;
         instancePanel();
