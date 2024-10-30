@@ -1,7 +1,9 @@
 package tgpr.forms.controller;
 
 import tgpr.forms.model.Form;
+
 import tgpr.forms.model.Security;
+
 import tgpr.forms.model.User;
 import tgpr.forms.view.TestView;
 import tgpr.framework.Controller;
@@ -24,6 +26,7 @@ public class TestController extends Controller<TestView> {
         showInfo("You selected: " + user.getFullName());
     }
 
+
     public Form getForm(){
         return Form.getAll().get(0);
     }
@@ -39,4 +42,14 @@ public class TestController extends Controller<TestView> {
     public void viewForms(User user) {
         navigateTo(new ViewFormsController(getUser()));
     }
+
+    public List<Form> getForms() {
+        return Form.getAll();
+    }
+
+    public void displayForm(Form form) {
+        navigateTo(new ViewFormController(form));
+
+    }
+
 }
