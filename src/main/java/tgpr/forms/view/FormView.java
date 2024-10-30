@@ -4,6 +4,7 @@ import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import tgpr.forms.controller.FormController;
+import tgpr.forms.controller.ViewFormsController;
 import tgpr.forms.model.AccessType;
 import tgpr.forms.model.Form;
 import tgpr.forms.model.Security;
@@ -112,7 +113,7 @@ public class FormView extends BasicWindow {
         }
 
         if(form.getAccessType(Security.getLoggedUser())== AccessType.Editor){
-            Button manage = new Button("Manage").addTo(buttonsPanel);
+            Button manage = new Button("Manage", this::manage).addTo(buttonsPanel);
 
             manage.setEnabled(true);
         }
@@ -120,6 +121,10 @@ public class FormView extends BasicWindow {
         return buttonsPanel;
 
 
+    }
+
+    public void manage() {
+        controller.manage();
     }
 
     public Panel getFormCard() {

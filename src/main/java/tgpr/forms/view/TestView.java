@@ -56,7 +56,7 @@ public class TestView extends DialogWindow {
         tblForms.setSelectAction(this::displayForm);
         tblForms.addSelectionChangeListener(this::selectionChanged);
 
-        return panel;
+        //return panel;
     }
 
 
