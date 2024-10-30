@@ -254,8 +254,11 @@ public class ViewFormView extends DialogWindow {
     }
 
     private void editQuestion() {
-        controller.editQuestion(questionTable.getSelected());
+        var selected = questionTable.getSelected();
+        controller.editQuestion(selected);
         refresh();
+        questionTable.takeFocus();
+        questionTable.setSelected(selected);
     }
 
     private void reorderSelected() {

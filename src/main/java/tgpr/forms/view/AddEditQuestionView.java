@@ -9,6 +9,7 @@ import com.googlecode.lanterna.input.KeyStroke;
 import tgpr.forms.controller.AddEditQuestionController;
 import tgpr.forms.model.OptionList;
 import tgpr.forms.model.Question;
+import tgpr.forms.model.Security;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -96,10 +97,12 @@ public class AddEditQuestionView extends DialogWindow {
 
         new Label("Options List:").addTo(panel);
         cboOptionsList = new ComboBox<>("").sizeTo(25).addTo(panel);
-        for(var ol : OptionList.getAll())
+        for(var ol : OptionList.getForUser(Security.getLoggedUser()))
             cboOptionsList.addItem(ol.toString());
-        cboOptionsList.addListener((selectedIndex, previousSelection, changedByUserInteraction) -> validate());
-        btnAddOptionList = new Button("Add", this::addOptionList).addTo(panel);
+        cboOptionsList.setEnabled(question != null && question.getType().requiresOptionList())
+                .addListener((selectedIndex, previousSelection, changedByUserInteraction) -> validate());
+        btnAddOptionList = new Button("Add", this::addOptionList).addTo(panel)
+                .setEnabled(question != null && question.getType().requiresOptionList());
         panel.addEmpty();
         errOptionsList.addTo(panel).setForegroundColor(TextColor.ANSI.RED);
 
@@ -111,7 +114,8 @@ public class AddEditQuestionView extends DialogWindow {
                 .setLayoutManager(new LinearLayout(Direction.HORIZONTAL))
                 .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.End));
 
-        btnCreateUpdate = new Button(question == null ? "Create" : "Update", this::addQuestion).addTo(panel).setEnabled(false);
+        btnDelete = new Button("Delete", this::deleteQuestion).setVisible(question != null).addTo(panel);
+        btnCreateUpdate = new Button(question == null ? "Create" : "Update", this::addQuestion).addTo(panel);
         new Button("Cancel", this::close).addTo(panel);
 
         //addShortcut(btnCreateUpdate, KeyStroke.fromString(question == null ? "<A-a>" : "<A-u>"));
@@ -147,6 +151,8 @@ public class AddEditQuestionView extends DialogWindow {
         );
          */
     }
+
+    private void deleteQuestion() {}
 
     private void addOptionList() {}
 
