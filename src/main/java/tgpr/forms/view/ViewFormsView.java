@@ -59,6 +59,22 @@ public class ViewFormsView extends BasicWindow {
         reloadData();
     }
 
+    private String getTitleWithUser() {
+        String title;
+
+        if(Security.getLoggedUser()==null){
+            title = "MyForms (Guest)";
+        } else if (Security.isAdmin()) {
+            title = "MyForms (" + Security.getLoggedUser().getEmail() + " - Admin)";
+        } else if (!Security.isGuest()){
+            title = "MyForms (" + Security.getLoggedUser().getEmail() + " - " + Security.getLoggedUser().getRole()+")";
+        } else {
+            title = "MyForms (Guest)";
+        }
+
+        return title;
+    }
+
     private Panel createMenuBar(){
 
         Panel menu = new Panel();
@@ -77,21 +93,6 @@ public class ViewFormsView extends BasicWindow {
         return menu;
     }
 
-    private String getTitleWithUser() {
-        String title;
-        
-        if(Security.getLoggedUser()==null){
-            title = "MyForms (Guest)";
-        } else if (Security.isAdmin()) {
-            title = "MyForms (" + Security.getLoggedUser().getEmail() + " - Admin)";
-        } else if (!Security.isGuest()){
-            title = "MyForms (" + Security.getLoggedUser().getEmail() + " - " + Security.getLoggedUser().getRole()+")";
-        } else {
-            title = "MyForms (Guest)";
-        }
-
-        return title;
-    }
 
     private Panel createFilterPanel() {
         Panel filterPanel = new Panel().setLayoutManager(new LinearLayout(Direction.HORIZONTAL));;
@@ -101,8 +102,6 @@ public class ViewFormsView extends BasicWindow {
         txtFilter.setTextChangeListener((txt, byUser) -> reloadData());
 
         txtFilter.addTo(filterPanel);
-        //addShortcut(txtFilter, KeyStroke.fromString("<pagedown>"));
-        //filterPanel.addEmpty();
 
         return filterPanel;
     }
@@ -112,7 +111,9 @@ public class ViewFormsView extends BasicWindow {
         formsPanel.removeAllComponents();
 
 
-        /* start donne le début d'index des résultats de la requete sql dans getMyForms
+        /*
+        count donne le n° de resultats de la requete sql dans getMyForms
+        start donne le début d'index des résultats de la requete sql dans getMyForms
         Page0  start=0 et count=10 la requete donne les formulaires de (0-8) , start = 0 * 9 = 0
         Page1  start=9 et count=10 la requete donne les formulaires (9-17), start = 1 * 9 = 9
         Page2  start=18 et count=10 la requete donne les formulaires (18-26), start = 2 * 9 = 18
@@ -129,7 +130,7 @@ public class ViewFormsView extends BasicWindow {
             lblNoMatch.addTo(formsPanel);
         } else {
             createFormCards(formsList);
-            //formsPanel.addEmpty();
+
         }
 
         txtFilter.takeFocus();
