@@ -8,19 +8,18 @@ import static tgpr.forms.model.Answer.Fields.Instance;
 
 public class edit_instance extends Controller<view_edit_instance> {
 
-    public User u = User.getByKey(9);
+    public User u = User.getByKey(2);
     public Form f = Form.getByKey(15);
-    public Instance i = f.getInstances().get(0);
+    public Instance i;
     public int numQuestion = 0;
 
-    public boolean isCompleted = i.isCompleted();
 
     public String description = f.getDescription();
     public String getDescription() {
         return description;
     }
 
-    public String date = i.getStarted().toString();
+    public String date;
     public String getDate() {
         return date;
     }
@@ -32,7 +31,7 @@ public class edit_instance extends Controller<view_edit_instance> {
 
 
     public boolean isCompleted() {
-        return isCompleted;
+        return i.isCompleted();
     }
 
     public Question getQuestion() {
@@ -58,6 +57,12 @@ public class edit_instance extends Controller<view_edit_instance> {
 
     @Override
     public view_edit_instance getView() {
+        if (u.isGuest()){
+            i = f.createInstance(u);
+        } else {
+            i = f.getMostRecentInstance(u);
+        }
+        date = i.getStarted().toString();
         return new view_edit_instance(this);
     }
 }
