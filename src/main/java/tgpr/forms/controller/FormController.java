@@ -22,9 +22,6 @@ public class FormController extends Controller<FormView>{
 
     }
 
-    public void manage() {
-        Controller.navigateTo(new ViewFormController(form));
-    }
 
     public FormView getView(){
         return view;

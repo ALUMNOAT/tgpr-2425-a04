@@ -38,8 +38,7 @@ public class FormView extends BasicWindow {
                 LinearLayout.GrowPolicy.CanGrow));
         createFormInstances().addTo(formCard).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center,
                 LinearLayout.GrowPolicy.CanGrow));
-        //formCard.addEmpty();
-        createFormButtons().addTo(formCard);
+
 
     }
 
@@ -101,31 +100,7 @@ public class FormView extends BasicWindow {
         return instancesPanel;
     }
 
-    private Panel createFormButtons(){
 
-        Panel buttonsPanel = new Panel().setLayoutManager(new LinearLayout(Direction.HORIZONTAL)).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));;
-
-        if(!form.getQuestions().isEmpty()){
-            Button open = new Button("Open").addTo(buttonsPanel);
-
-            open.setEnabled(true);
-
-        }
-
-        if(form.getAccessType(Security.getLoggedUser())== AccessType.Editor){
-            Button manage = new Button("Manage", this::manage).addTo(buttonsPanel);
-
-            manage.setEnabled(true);
-        }
-
-        return buttonsPanel;
-
-
-    }
-
-    public void manage() {
-        controller.manage();
-    }
 
     public Panel getFormCard() {
         return formCard;

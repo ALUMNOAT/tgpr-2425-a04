@@ -6,6 +6,7 @@ import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.menu.*;
 import tgpr.forms.controller.FormController;
 import tgpr.forms.controller.ViewFormsController;
+import tgpr.forms.model.AccessType;
 import tgpr.forms.model.Form;
 import tgpr.forms.model.Security;
 import tgpr.forms.model.User;
@@ -141,7 +142,8 @@ public class ViewFormsView extends BasicWindow {
         for(Form form : formsList) {
 
             FormController formToAdd = new FormController(form);
-            formToAdd.getFormCard().setPreferredSize(new TerminalSize(34, 8))
+            formToAdd.getFormCard().addComponent(createFormButtons(form))
+                    .setPreferredSize(new TerminalSize(34, 8))
                     .withBorder((Borders.singleLine()))
                     .addTo(formsPanel);
 
@@ -155,6 +157,27 @@ public class ViewFormsView extends BasicWindow {
         currentPage = paginator.getPage();
         reloadData();
 
+    }
+
+    private Panel createFormButtons(Form form) {
+
+        Panel buttonsPanel = new Panel().setLayoutManager(new LinearLayout(Direction.HORIZONTAL)).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        ;
+
+        if (!form.getQuestions().isEmpty()) {
+            Button open = new Button("Open").addTo(buttonsPanel);
+
+            open.setEnabled(true);
+
+        }
+
+        if (form.getAccessType(Security.getLoggedUser()) == AccessType.Editor) {
+            Button manage = new Button("Manage", this::manage).addTo(buttonsPanel);
+
+            manage.setEnabled(true);
+        }
+
+        return buttonsPanel;
     }
 
     private Panel createButtonsPanel(){
@@ -171,6 +194,11 @@ public class ViewFormsView extends BasicWindow {
         paginator.addTo(buttonsPanel).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.End));
 
         return buttonsPanel;
+    }
+
+
+    public void manage() {
+        controller.manage();
     }
 
 }
