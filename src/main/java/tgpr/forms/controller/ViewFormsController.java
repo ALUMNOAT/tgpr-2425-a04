@@ -9,7 +9,6 @@ import tgpr.framework.Controller;
 public class ViewFormsController extends Controller<ViewFormsView> {
 
     private User user;
-    private Form form;
     private ViewFormsView view;
 
 
@@ -25,7 +24,7 @@ public class ViewFormsController extends Controller<ViewFormsView> {
         return view;
     }
 
-    public void manage() {
+    public void manage(Form form) {
         Controller.navigateTo(new ViewFormController(form));
     }
 }

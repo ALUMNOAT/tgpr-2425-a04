@@ -172,7 +172,7 @@ public class ViewFormsView extends BasicWindow {
         }
 
         if (form.getAccessType(Security.getLoggedUser()) == AccessType.Editor) {
-            Button manage = new Button("Manage", this::manage).addTo(buttonsPanel);
+            Button manage = new Button("Manage", () -> manage(form)).addTo(buttonsPanel);
 
             manage.setEnabled(true);
         }
@@ -196,9 +196,9 @@ public class ViewFormsView extends BasicWindow {
         return buttonsPanel;
     }
 
-
-    public void manage() {
-        controller.manage();
+    public void manage(Form form) {
+        controller.manage(form);
+        reloadData();
     }
 
 }
