@@ -34,6 +34,10 @@ public class User extends Model {
         this.role = role;
     }
 
+    public static User createUser(String email, String fullName, String password, Role role) {
+        return new User(email, fullName, password, role);
+    }
+
     protected int id;
 
     public int getId() {
