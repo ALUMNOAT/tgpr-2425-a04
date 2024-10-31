@@ -78,8 +78,8 @@ public class AddEditQuestionView extends DialogWindow {
 
         new Label("Type:").addTo(panel);
         cboType = new ComboBox<String>().sizeTo(11).addTo(panel);
-        for(var type : Question.Type.values())
-            cboType.addItem(type.toString());
+        for(var type : Question.Type.getSortedTypeList())
+            cboType.addItem(type);
         cboType.addListener((selectedIndex, previousSelection, changedByUserInteraction) -> validate());
         panel.addEmpty();
         errType.addTo(panel).setForegroundColor(TextColor.ANSI.RED);
@@ -152,7 +152,9 @@ public class AddEditQuestionView extends DialogWindow {
          */
     }
 
-    private void deleteQuestion() {}
+    private void deleteQuestion() {
+        controller.deleteQuestion();
+    }
 
     private void addOptionList() {}
 

@@ -19,6 +19,13 @@ public class AddEditQuestionController extends Controller<AddEditQuestionView> {
         view = new AddEditQuestionView(this, question);
     }
 
+    public void deleteQuestion() {
+        if(askConfirmation("Are you sure you want to delete this question?", "Delete Question")) {
+            question.delete();
+            view.close();
+        }
+    }
+
     @Override
     public AddEditQuestionView getView() {
         return view;

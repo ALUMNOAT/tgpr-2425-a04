@@ -14,7 +14,7 @@ import java.util.List;
 public class ViewFormView extends DialogWindow {
 
     private final ViewFormController controller;
-    private Form form;
+    private final Form form;
     private boolean reorderMode = false;
 
     private final Label lblTitle = new Label("");
@@ -254,11 +254,11 @@ public class ViewFormView extends DialogWindow {
     }
 
     private void editQuestion() {
-        var selected = questionTable.getSelected();
-        controller.editQuestion(selected);
+        int selectedRow = questionTable.getSelectedRow();
+        controller.editQuestion(questionTable.getSelected());
         refresh();
         questionTable.takeFocus();
-        questionTable.setSelected(selected);
+        questionTable.setSelectedRow(selectedRow);
     }
 
     private void reorderSelected() {
