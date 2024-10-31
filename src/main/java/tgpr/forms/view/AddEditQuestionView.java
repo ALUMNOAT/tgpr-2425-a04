@@ -115,7 +115,7 @@ public class AddEditQuestionView extends DialogWindow {
                 .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.End));
 
         btnDelete = new Button("Delete", this::deleteQuestion).setVisible(question != null).addTo(panel);
-        btnCreateUpdate = new Button(question == null ? "Create" : "Update", this::addQuestion).addTo(panel);
+        btnCreateUpdate = new Button(question == null ? "Create" : "Update", this::saveQuestion).addTo(panel);
         new Button("Cancel", this::close).addTo(panel);
 
         //addShortcut(btnCreateUpdate, KeyStroke.fromString(question == null ? "<A-a>" : "<A-u>"));
@@ -139,17 +139,14 @@ public class AddEditQuestionView extends DialogWindow {
     }
 
 
-    private void addQuestion() {
-        /*
-        controller.save(
-                txtPseudo.getText(),
-                txtProfile.getText(),
-                txtPassword.getText(),
-                txtPasswordConfirm.getText(),
-                txtBirthDate.getText(),
-                cboRole.getText()
+    private void saveQuestion() {
+        controller.saveQuestion(
+                txtTitle.getText(),
+                txtDescription.getText(),
+                cboType.getText(),
+                chkRequired.isChecked(),
+                cboOptionsList.getText()
         );
-         */
     }
 
     private void deleteQuestion() {

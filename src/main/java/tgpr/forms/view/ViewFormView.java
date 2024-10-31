@@ -201,7 +201,7 @@ public class ViewFormView extends DialogWindow {
     }
 
     private void addQuestion() {
-        controller.addQuestion();
+        controller.addQuestion(form);
         refresh();
     }
 

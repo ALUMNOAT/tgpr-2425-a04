@@ -1,6 +1,9 @@
 package tgpr.forms.controller;
 
+import tgpr.forms.model.Form;
+import tgpr.forms.model.OptionList;
 import tgpr.forms.model.Question;
+import tgpr.forms.model.Security;
 import tgpr.forms.view.AddEditQuestionView;
 import tgpr.framework.Controller;
 
@@ -8,15 +11,32 @@ public class AddEditQuestionController extends Controller<AddEditQuestionView> {
     private final AddEditQuestionView view;
     private Question question;
     private final boolean isNew;
+    private final Form form;
 
-    public AddEditQuestionController() {
-        this(null);
+    public AddEditQuestionController(Form form) {
+        this(form, null);
     }
 
-    public AddEditQuestionController(Question question) {
+    public AddEditQuestionController(Form form, Question question) {
+        this.form = form;
         this.question = question;
         isNew = question == null;
         view = new AddEditQuestionView(this, question);
+    }
+
+    public void saveQuestion(String title, String description, String type, boolean required, String optionList) {
+        if(isNew) {
+            question.setFormId(form.getId());
+            question.setIdx(form.getNextIdx());
+        }
+        question.setTitle(title);
+        question.setDescription(description);
+        question.setType(Question.Type.valueOfIgnoreCase(type));
+        question.setRequired(required);
+        question.setOptionListId(optionList.isEmpty() ?
+                null : OptionList.getByNameAndUser(optionList, Security.getLoggedUser()).getId());
+        question.save();
+        view.close();
     }
 
     public void deleteQuestion() {
