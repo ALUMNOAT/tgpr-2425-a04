@@ -24,8 +24,9 @@ public class AddEditQuestionController extends Controller<AddEditQuestionView> {
         view = new AddEditQuestionView(this, question);
     }
 
-    public void saveQuestion(String title, String description, String type, boolean required, String optionList) {
+    public void saveQuestion(String title, String description, String type, boolean required, OptionList optionList) {
         if(isNew) {
+            question = new Question();
             question.setFormId(form.getId());
             question.setIdx(form.getNextIdx());
         }
@@ -33,8 +34,8 @@ public class AddEditQuestionController extends Controller<AddEditQuestionView> {
         question.setDescription(description);
         question.setType(Question.Type.valueOfIgnoreCase(type));
         question.setRequired(required);
-        question.setOptionListId(optionList.isEmpty() ?
-                null : OptionList.getByNameAndUser(optionList, Security.getLoggedUser()).getId());
+        question.setOptionListId(optionList == null ? null : optionList.getId());
+
         question.save();
         view.close();
     }

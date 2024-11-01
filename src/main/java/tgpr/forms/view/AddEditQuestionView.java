@@ -21,11 +21,13 @@ public class AddEditQuestionView extends DialogWindow {
     private final AddEditQuestionController controller;
     private final Question question;
 
+    private List<OptionList> optionLists;
+
     private TextBox txtTitle;
     private TextBox txtDescription;
     private ComboBox<String> cboType;
     private CheckBox chkRequired;
-    private ComboBox<String> cboOptionsList;
+    private ComboBox<String> cboOptionList;
     private final Label errTitle = new Label("");
     private final Label errDescription = new Label("");
     private final Label errType = new Label("");
@@ -96,10 +98,8 @@ public class AddEditQuestionView extends DialogWindow {
         var panel = Panel.gridPanel(3, Margin.of(1,0,1,1));
 
         new Label("Options List:").addTo(panel);
-        cboOptionsList = new ComboBox<>("").sizeTo(25).addTo(panel);
-        for(var ol : OptionList.getForUser(Security.getLoggedUser()))
-            cboOptionsList.addItem(ol.toString());
-        cboOptionsList.setEnabled(question != null && question.getType().requiresOptionList())
+        cboOptionList = new ComboBox<String>().sizeTo(25).addTo(panel);
+        cboOptionList.setEnabled(question != null && question.getType().requiresOptionList())
                 .addListener((selectedIndex, previousSelection, changedByUserInteraction) -> validate());
         btnAddOptionList = new Button("Add", this::addOptionList).addTo(panel)
                 .setEnabled(question != null && question.getType().requiresOptionList());
@@ -124,12 +124,18 @@ public class AddEditQuestionView extends DialogWindow {
     }
 
     private void refresh() {
+        optionLists = OptionList.getForUser(Security.getLoggedUser());
+        cboOptionList.clearItems();
+        cboOptionList.addItem("");
+        for(var ol : optionLists)
+            cboOptionList.addItem(ol.toString());
+
         if (question != null) {
             txtTitle.setText(question.getTitle());
             txtDescription.setText(question.getDescription());
             cboType.setSelectedItem(question.getType().toString());
             chkRequired.setChecked(question.getRequired());
-            cboOptionsList.setSelectedItem(question.getOptionList() == null ?
+            cboOptionList.setSelectedItem(question.getOptionList() == null ?
                     "" : question.getOptionList().toString());
             /*
             txtBirthDate.setText(asString(member.getBirthdate()));
@@ -140,12 +146,13 @@ public class AddEditQuestionView extends DialogWindow {
 
 
     private void saveQuestion() {
+        int optionListIdx = cboOptionList.getSelectedIndex();
         controller.saveQuestion(
                 txtTitle.getText(),
                 txtDescription.getText(),
                 cboType.getText(),
                 chkRequired.isChecked(),
-                cboOptionsList.getText()
+                optionListIdx == 0 ? null : optionLists.get(optionListIdx - 1)
         );
     }
 
