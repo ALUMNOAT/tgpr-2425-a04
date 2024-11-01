@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class Question extends Model {
     public enum Fields {
@@ -20,6 +22,15 @@ public class Question extends Model {
 
         public static Type valueOfIgnoreCase(String str) {
             return Arrays.stream(values()).filter(v -> v.name().equalsIgnoreCase(str)).findFirst().orElse(null);
+        }
+
+        public static List<String> getSortedTypeList() {
+            List<String> typeList = new ArrayList<>();
+            for(var type : values())
+                typeList.add(type.toString());
+            Collections.sort(typeList);
+
+            return typeList;
         }
 
         public boolean requiresOptionList() {
