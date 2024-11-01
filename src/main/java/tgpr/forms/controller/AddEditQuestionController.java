@@ -47,6 +47,11 @@ public class AddEditQuestionController extends Controller<AddEditQuestionView> {
         }
     }
 
+    public OptionList addOptionList() {
+        //TODO: add_edit_option_list
+        return null;
+    }
+
     @Override
     public AddEditQuestionView getView() {
         return view;

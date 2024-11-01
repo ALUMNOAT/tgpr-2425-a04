@@ -55,6 +55,7 @@ public class AddEditQuestionView extends DialogWindow {
         createButtonsPanel().addTo(root);
 
         refresh();
+        loadData();
 
         txtTitle.takeFocus();
     }
@@ -129,7 +130,9 @@ public class AddEditQuestionView extends DialogWindow {
         cboOptionList.addItem("");
         for(var ol : optionLists)
             cboOptionList.addItem(ol.toString());
+    }
 
+    private void loadData() {
         if (question != null) {
             txtTitle.setText(question.getTitle());
             txtDescription.setText(question.getDescription());
@@ -137,13 +140,10 @@ public class AddEditQuestionView extends DialogWindow {
             chkRequired.setChecked(question.getRequired());
             cboOptionList.setSelectedItem(question.getOptionList() == null ?
                     "" : question.getOptionList().toString());
-            /*
-            txtBirthDate.setText(asString(member.getBirthdate()));
-            cboRole.setSelectedItem(member.isAdmin() ? "Admin" : "Member");
-             */
         }
+        else
+            cboType.setSelectedItem("Short");
     }
-
 
     private void saveQuestion() {
         int optionListIdx = cboOptionList.getSelectedIndex();
@@ -160,7 +160,13 @@ public class AddEditQuestionView extends DialogWindow {
         controller.deleteQuestion();
     }
 
-    private void addOptionList() {}
+    private void addOptionList() {
+        var optionlist = controller.addOptionList();
+        if(optionlist != null) {
+            refresh();
+            cboOptionList.setSelectedItem(optionlist.toString());
+        }
+    }
 
     private void validate() {
         /*
