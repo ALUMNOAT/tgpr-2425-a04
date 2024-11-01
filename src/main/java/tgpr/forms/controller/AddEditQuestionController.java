@@ -3,9 +3,10 @@ package tgpr.forms.controller;
 import tgpr.forms.model.Form;
 import tgpr.forms.model.OptionList;
 import tgpr.forms.model.Question;
-import tgpr.forms.model.Security;
+import tgpr.forms.model.QuestionValidator;
 import tgpr.forms.view.AddEditQuestionView;
 import tgpr.framework.Controller;
+import tgpr.framework.ErrorList;
 
 public class AddEditQuestionController extends Controller<AddEditQuestionView> {
     private final AddEditQuestionView view;
@@ -50,6 +51,14 @@ public class AddEditQuestionController extends Controller<AddEditQuestionView> {
     public OptionList addOptionList() {
         //TODO: add_edit_option_list
         return null;
+    }
+
+    public ErrorList validate(String title, String description, String type, OptionList optionList) {
+
+        var errors = new ErrorList();
+        errors.addAll(QuestionValidator.validate(title, isNew ? null : question.getTitle(),
+                description, type, optionList, form));
+        return errors;
     }
 
     @Override

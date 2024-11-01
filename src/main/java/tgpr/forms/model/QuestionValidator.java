@@ -44,12 +44,14 @@ public abstract class QuestionValidator {
         return Error.NOERROR;
     }
 
-    public static List<Error> validate(Question question, String oldTitle) {
+    public static List<Error> validate(String newTitle, String oldTitle, String description,
+                                       String type, OptionList optionList, Form form) {
+
         var errors = new ErrorList();
 
-        errors.add(isValidAvailableTitle(question.getTitle(), oldTitle, question.getForm()));
-        errors.add(isValidDescription(question.getDescription()));
-        errors.add(isValidOptionList(question.getType().toString(), question.getOptionList()));
+        errors.add(isValidAvailableTitle(newTitle, oldTitle, form));
+        errors.add(isValidDescription(description));
+        errors.add(isValidOptionList(type, optionList));
 
         return errors;
     }
