@@ -6,59 +6,75 @@ import com.googlecode.lanterna.gui2.*;
 
 import java.util.List;
 import java.util.regex.Pattern;
+
+import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.forms.controller.AddEditFormController;
+import tgpr.forms.model.Form;
 
 
-public class AddEditFormView extends BasicWindow {
-
+public class AddEditFormView extends DialogWindow {
     private final TextBox txtTitle;
     private final TextBox txtDescription;
     private final CheckBox blnPublic;
-
     private final Label errTitle;
-    private final Label errDescription;
     private final AddEditFormController controller;
+    private final Button btnCreateUpdate;
+    private final Form form;
 
-    public AddEditFormView(AddEditFormController controller){
-        setTitle("Add a form");
-        setHints(List.of(Hint.CENTERED));
+    public AddEditFormView(AddEditFormController controller, Form form){
+        //# SETUP #
+        super((form == null ? "Create " : "Update ") + "a form");
+        this.form = form;
         this.controller = controller;
-
-        Panel root = new Panel();
-        root.setLayoutManager(new GridLayout(2).setTopMarginSize(1));
-
-        new Label("Title:").addTo(root);
-        txtTitle = new TextBox(new TerminalSize(21, 1)).addTo(root)
-                .setValidationPattern(Pattern.compile("[a-zA-Z\\d][a-z\\d]{0,21}"))
-                .setTextChangeListener((txt, byUser) -> validate());
-        new EmptySpace().addTo(root);
-        errTitle = new Label("").addTo(root)
-                .setForegroundColor(TextColor.ANSI.RED);
-        setComponent(root);
-
-        new Label("Description:").addTo(root);
-        txtDescription = new TextBox(new TerminalSize(50, 3)).addTo(root)
-                .setTextChangeListener((txt, byUser) -> validate());
-        new EmptySpace().addTo(root);
-        errDescription = new Label("").addTo(root).setForegroundColor(TextColor.ANSI.RED);
-
-        new Label("Public:").addTo(root);
-        blnPublic = new CheckBox().addTo(root);
-        new EmptySpace().addTo(root);
-        new EmptySpace().addTo(root);
-
-        var buttons = new Panel().addTo(root).setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
-        var btnUpdate = new Button("Update", this::createUpdate).addTo(buttons);
-        var btnCancel = new Button("Cancel", this::close).addTo(buttons);
-
+        setHints(List.of(Hint.CENTERED));
+        setCloseWindowWithEscape(true);
         setFixedSize(new TerminalSize(70, 10));
+
+        //## PANEL ROOT ##
+        Panel root = new Panel();
+
+        //### PANEL FORM_FORMALITIES ###
+        Panel formFormalities = new Panel().setLayoutManager(new GridLayout(2).setTopMarginSize(1)).addTo(root);
+
+        //#### TITLE ####
+        new Label("Title:").addTo(formFormalities);
+        txtTitle = new TextBox(new TerminalSize(21, 1)).addTo(formFormalities)
+                .setTextChangeListener((txt, byUser) -> validate());
+        new EmptySpace().addTo(formFormalities);
+        errTitle = new Label("").addTo(formFormalities)
+                .setForegroundColor(TextColor.ANSI.RED);
+
+        //#### DESCRIPTION ####
+        new Label("Description:").addTo(formFormalities);
+        txtDescription = new TextBox(new TerminalSize(50, 3)).addTo(formFormalities)
+                .setTextChangeListener((txt, byUser) -> validate());
+        new EmptySpace().addTo(formFormalities);
+        new EmptySpace().addTo(formFormalities);
+
+        //#### PUBLIC ####
+        new Label("Public:").addTo(formFormalities);
+        blnPublic = new CheckBox().addTo(formFormalities);
+        new EmptySpace().addTo(formFormalities);
+        new EmptySpace().addTo(formFormalities);
+
+        //### BUTTONS PANEL ###
+        Panel buttons = new Panel().setLayoutManager(new LinearLayout(Direction.HORIZONTAL)).addTo(root);
+        //#### BUTTON CREATE/UPDATE ####
+        btnCreateUpdate = new Button(form == null ? "Create" : "Update", this::createUpdate).addTo(buttons).setEnabled(false);
+        //#### BUTTON CANCEL ####
+        new Button("Cancel", this::close).addTo(buttons);
+
+        //# SETUP #
+        setComponent(root);
     }
 
     private void validate() {
         var errors = controller.validate(
             txtTitle.getText()
         );
+        errTitle.setText(errors.getFirstErrorMessage(Form.Fields.Title));
 
+        btnCreateUpdate.setEnabled(errors.isEmpty());
     }
     private void createUpdate(){
         controller.createUpdate(

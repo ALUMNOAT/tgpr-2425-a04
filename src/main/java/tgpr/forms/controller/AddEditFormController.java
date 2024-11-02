@@ -10,13 +10,11 @@ import tgpr.framework.ErrorList;
 
 public class AddEditFormController extends Controller<AddEditFormView> {
 
-    private final AddEditFormView view = new AddEditFormView(this); //this?
     private Form form;
-    private boolean isNewForm;
+    private final AddEditFormView view = new AddEditFormView(this, form); //this?
 
     public AddEditFormController(Form form){
         this.form = form;
-        isNewForm = form == null;
     }
 
     @Override
@@ -25,7 +23,6 @@ public class AddEditFormController extends Controller<AddEditFormView> {
     }
 
     public void createUpdate(String title, String description, boolean isPublic) {
-
         System.out.println("this works so far !");
         form = new Form(title, description, Security.getLoggedUser(), isPublic);
         form.save();
