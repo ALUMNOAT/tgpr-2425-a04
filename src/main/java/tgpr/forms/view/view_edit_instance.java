@@ -1,21 +1,30 @@
 package tgpr.forms.view;
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
+import com.googlecode.lanterna.input.KeyStroke;
 import tgpr.forms.controller.edit_instance;
 import tgpr.forms.model.Answer;
 import tgpr.forms.model.Question;
 
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import static tgpr.framework.Controller.askConfirmation;
 
 public class view_edit_instance extends DialogWindow {
 
     private final Label txtBody = new Label("You have already answered this form."+System.lineSeparator()+"You can view your submission or submit again."+System.lineSeparator()+"What would you like to do?");
-    private final Label txtBodyform;
     private final Label error = new Label("");
     private final edit_instance controller;
+    private final Label lblTitle = new Label("");
+    private final Label lblDescription = new Label("");
+    private final Label lblStart = new Label("");
+    private final Label lblSubmitted = new Label("");
+    private final Label lblUser = new Label("");
     private boolean review=false;
     private Answer answer;
     private TextBox rep;
@@ -29,9 +38,9 @@ public class view_edit_instance extends DialogWindow {
         error.setForegroundColor(TextColor.ANSI.RED);
 
         setHints(List.of(Hint.CENTERED, Hint.MODAL));
-        this.txtBodyform = new Label(" Title:"+controller.getTitle() + System.lineSeparator()
-                +" Description:"+controller.getDescription()+System.lineSeparator()
-                +" Started on:"+controller.getDate());
+        this.lblTitle.setText( controller.getTitle());
+        this.lblDescription.setText(controller.getDescription());
+        this.lblStart.setText(controller.getDate());
         if(controller.isCompleted()){
             confirmationPanel();
         } else{
@@ -47,7 +56,6 @@ public class view_edit_instance extends DialogWindow {
         QuestionPanel(review).setLayoutData(BorderLayout.Location.CENTER).withBorder(Borders.singleLine("Question " + controller.getQuestion().getIdx() + " of " + controller.numQuestions())).addTo(root);
         root.addEmpty();
         formButtonsPanel(review).setLayoutData(BorderLayout.Location.BOTTOM).addTo(root);
-        refresh();
         super.setTitle("Answer the Form");
     }
 
@@ -59,7 +67,6 @@ public class view_edit_instance extends DialogWindow {
         confirmationTextPanel().addTo(root);
         root.addEmpty();
         confirmationButtonsPanel().addTo(root);
-        refresh();
     }
 
     private Panel confirmationTextPanel() {
@@ -68,9 +75,22 @@ public class view_edit_instance extends DialogWindow {
         return panel;
     }
     private Panel formTextPanel() {
-        Panel panel = Panel.horizontalPanel();
-        txtBodyform.addTo(panel);
-        return panel;
+            Panel panel = Panel.gridPanel(2, Margin.of(1, 1, 1, 0));
+
+            new Label("Title:").addTo(panel);
+            lblTitle.addTo(panel).addStyle( SGR.BOLD);
+
+            new Label("Description:").addTo(panel);
+            lblDescription.addTo(panel).addStyle(SGR.BOLD);
+
+            new Label("Started on:").addTo(panel);
+            lblStart.addTo(panel).addStyle(SGR.BOLD);
+
+            if(review){
+                new Label("Submitted on:").addTo(panel);
+                lblSubmitted.addTo(panel).addStyle(SGR.BOLD);
+            }
+            return panel;
     }
     private Panel confirmationButtonsPanel() {
         Panel panel = Panel.horizontalPanel(1).center();
@@ -124,7 +144,7 @@ public class view_edit_instance extends DialogWindow {
             }
             rep.addTo(panel);
         } else if(q.getType() == Question.Type.Email ){
-            rep = new TextBox().sizeTo(100).setValidationPattern( Pattern.compile( "^[\\w!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" ) );
+            rep = new TextBox().sizeTo(100);
             if (answer.isValid()){
                 rep.setText(answer.getValue());
             }
@@ -188,13 +208,21 @@ public class view_edit_instance extends DialogWindow {
     }
 
     private Panel formButtonsPanel(boolean review) {
-        Panel panel = Panel.horizontalPanel(1).center();
+        Panel panel = Panel.horizontalPanel(1).fillCenter();
 
-        new Button( "Close" , this::close ).addTo( panel );
+        if(controller.u.isGuest()){
+            Button btnClose = new Button( "Close" , this::cancel ).addTo( panel );
+            addShortcut(btnClose, KeyStroke.fromString("<esc>" ));
+        }else{
+            Button btnClose = new Button( "Close" , this::close ).addTo( panel );
+            addShortcut(btnClose, KeyStroke.fromString("<esc>" ));
+        }
         if(controller.getQuestion().getIdx() > 1){
-            new Button( "Previous" , this::previous ).addTo( panel );
+            Button btnPrev = new Button( "Previous" , this::previous ).addTo( panel );
+            addShortcut(btnPrev, KeyStroke.fromString("<down>" ));
         } if(controller.getQuestion().getIdx() < controller.numQuestions()){
-            new Button( "Next" , this::next ).addTo( panel );
+            Button btnNext = new Button( "Next" , this::next ).addTo( panel );
+            addShortcut(btnNext, KeyStroke.fromString("<up>" ));
         } else  {
             if(!review){
                 new Button( "Submit" , this::submit ).addTo( panel );
@@ -207,14 +235,19 @@ public class view_edit_instance extends DialogWindow {
     }
 
     private void cancel(){
-        close();
-        controller.i.delete();
+        if (askConfirmation("You are about to delete this instance and its answers?", "Delete Instance")) {
+            controller.i.delete();
+            close();
+        }
     }
 
+
     private void submit(){
-        answer.save();
-        controller.i.submit();
-        this.close();
+        if(askConfirmation( "Are you sure you want to submit this form?", "Submit Form" )){
+            answer.save();
+            controller.i.submit();
+            this.close();
+        }
     }
 
     private void previous(){
@@ -272,6 +305,7 @@ public class view_edit_instance extends DialogWindow {
         instancePanel();
     }
     private void review(){
+        this.lblSubmitted.setText( controller.i.getCompleted().format( DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
         this.review = true;
         instancePanel();
     }
@@ -280,8 +314,5 @@ public class view_edit_instance extends DialogWindow {
         return Panel.gridPanel(1);
     }
 
-
-    private void refresh() {
-    }
 }
 

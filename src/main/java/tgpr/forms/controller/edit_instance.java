@@ -4,6 +4,8 @@ import tgpr.forms.model.*;
 import tgpr.forms.view.view_edit_instance;
 import tgpr.framework.Controller;
 
+import java.time.format.DateTimeFormatter;
+
 import static tgpr.forms.model.Answer.Fields.Instance;
 
 public class edit_instance extends Controller<view_edit_instance> {
@@ -65,7 +67,7 @@ public class edit_instance extends Controller<view_edit_instance> {
                 i = f.getCurrentOrCreateInstance(u);
             }
         }
-        date = i.getStarted().toString();
+        date = i.getStarted().format( DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss") );
         return new view_edit_instance(this);
     }
 }
