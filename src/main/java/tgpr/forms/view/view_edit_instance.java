@@ -8,6 +8,7 @@ import tgpr.forms.model.Question;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class view_edit_instance extends DialogWindow {
 
@@ -18,9 +19,9 @@ public class view_edit_instance extends DialogWindow {
     private boolean review=false;
     private Answer answer;
     private TextBox rep;
-    private CheckBoxList rep_check = new CheckBoxList();
-    private RadioBoxList rep_radio = new RadioBoxList();
-    private ComboBox rep_combo = new ComboBox();
+    private final CheckBoxList rep_check = new CheckBoxList();
+    private final RadioBoxList rep_radio = new RadioBoxList();
+    private final ComboBox rep_combo = new ComboBox();
 
     public view_edit_instance(edit_instance controller) {
         super("Open a form");
@@ -74,9 +75,9 @@ public class view_edit_instance extends DialogWindow {
     private Panel confirmationButtonsPanel() {
         Panel panel = Panel.horizontalPanel(1).center();
 
-        Button btnView = new Button("View Submission", this::review).addTo(panel);
-        Button btnSubmit = new Button("Submit again", this::submitAgain).addTo(panel);
-        Button btnExit = new Button("Cancel", this::close).addTo(panel);
+        new Button( "View Submission" , this::review ).addTo( panel );
+        new Button( "Submit again" , this::submitAgain ).addTo( panel );
+        new Button( "Cancel" , this::close ).addTo( panel );
 
         return panel;
     }
@@ -110,14 +111,26 @@ public class view_edit_instance extends DialogWindow {
     private Panel QuizPanel(){
         Panel panel = createPanel();
         Question q = controller.getQuestion();
-        if (q.getType() == Question.Type.Short || q.getType() == Question.Type.Email || q.getType() == Question.Type.Date){
+        if (q.getType() == Question.Type.Short){
             rep = new TextBox().sizeTo(100);
             if (answer.isValid()){
                 rep.setText(answer.getValue());
             }
             rep.addTo(panel);
-        } else if (q.getType() == Question.Type.Long){
-            rep = new TextBox().sizeTo(100, 8);
+        } else if(q.getType() == Question.Type.Date ){
+            rep = new TextBox().sizeTo(100).setValidationPattern( Pattern.compile( "[/\\d]{0,10}" ) );
+            if (answer.isValid()){
+                rep.setText(answer.getValue());
+            }
+            rep.addTo(panel);
+        } else if(q.getType() == Question.Type.Email ){
+            rep = new TextBox().sizeTo(100).setValidationPattern( Pattern.compile( "^[\\w!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" ) );
+            if (answer.isValid()){
+                rep.setText(answer.getValue());
+            }
+            rep.addTo(panel);
+        }else if (q.getType() == Question.Type.Long){
+            rep = new TextBox().setHorizontalFocusSwitching( true ).sizeTo( 100, 8 );
             if (answer.isValid()){
                 rep.setText(answer.getValue());
             }
@@ -126,7 +139,7 @@ public class view_edit_instance extends DialogWindow {
             for (Object i : q.getOptionList().getOptionValues()){
                 rep_check.addItem(i);
                 if (answer.isValid()){
-                    if(i.toString().compareTo(answer.getValue())==0){
+                    if(i.toString().compareTo(q.getAnswerValue( controller.i ))==0){
                         rep_check.setChecked(i, true);}
                     }
             }
@@ -135,17 +148,18 @@ public class view_edit_instance extends DialogWindow {
             for (Object i : q.getOptionList().getOptionValues()){
                 rep_radio.addItem(i);
                 if (answer.isValid()){
-                    if(i.toString().compareTo(answer.getValue())==0){
+                    if(i.toString().compareTo(q.getAnswerValueAsString( controller.i ))==0){
                         rep_radio.setCheckedItem(i);
                     }
                 }
             }
             rep_radio.addTo(panel);
         } else if (q.getType() == Question.Type.Combo){
+            rep_combo.addItem( "--- Please choose an option ---" );
             for (Object i : q.getOptionList().getOptionValues()){
                 rep_combo.addItem(i);
-                if (answer.isValid()){
-                    if(i.toString().compareTo(answer.getValue())==0){
+                if (answer.isValid() && answer.getValue().compareTo( "0" )!=0 && answer.getValue().compareTo( "" )!=0){
+                    if(i.toString().compareTo(q.getAnswerValueAsString( controller.i ))==0){
                         rep_combo.setSelectedItem(i);}
                 }
             }
@@ -165,8 +179,10 @@ public class view_edit_instance extends DialogWindow {
                 rep.addTo(panel);
             }
         } else {
-            Label rep = new Label(q.getAnswerValue(controller.i));
-            rep.addTo(panel);
+            if(answer.getValue().compareTo( "" )!=0){
+                Label rep = new Label(q.getAnswerValueAsString( controller.i ));
+                rep.addTo(panel);
+            }
         }
         return panel;
     }
@@ -174,19 +190,25 @@ public class view_edit_instance extends DialogWindow {
     private Panel formButtonsPanel(boolean review) {
         Panel panel = Panel.horizontalPanel(1).center();
 
-        Button btnClose = new Button("Close", this::close).addTo(panel);
+        new Button( "Close" , this::close ).addTo( panel );
         if(controller.getQuestion().getIdx() > 1){
-            Button btnPrev = new Button("Previous", this::previous).addTo(panel);
+            new Button( "Previous" , this::previous ).addTo( panel );
         } if(controller.getQuestion().getIdx() < controller.numQuestions()){
-            Button btnNext = new Button("Next", this::next).addTo(panel);
+            new Button( "Next" , this::next ).addTo( panel );
         } else  {
             if(!review){
-                Button btnSubmit = new Button("Submit", this::submit).addTo(panel);
+                new Button( "Submit" , this::submit ).addTo( panel );
             }
         }
         if(!review){
-            Button btnExit = new Button("Cancel", this::close).addTo(panel);}
+            new Button( "Cancel" , this::cancel ).addTo( panel );
+        }
         return panel;
+    }
+
+    private void cancel(){
+        close();
+        controller.i.delete();
     }
 
     private void submit(){
@@ -217,13 +239,19 @@ public class view_edit_instance extends DialogWindow {
         if (q.getType() == Question.Type.Short || q.getType() == Question.Type.Email || q.getType() == Question.Type.Date){
             answer.setValue(rep.getText());
         } if (q.getType() == Question.Type.Check){
-            answer.setValue(rep_check.getSelectedItem().toString());
+            answer.setValue(rep_check.getCheckedItems().getFirst().toString());
             rep_radio.clearItems();
         } else if (q.getType() == Question.Type.Radio){
-            answer.setValue(rep_radio.getSelectedItem().toString());
+            answer.setValue(""+rep_radio.getCheckedItemIndex());
+            if(answer.getValue().compareTo( "-1") == 0){
+                answer.setValue("");
+            }
             rep_radio.clearItems();
         } else if (q.getType() == Question.Type.Combo){
-            answer.setValue(rep_combo.getSelectedItem().toString());
+            answer.setValue(""+rep_combo.getSelectedIndex());
+            if(answer.getValue().compareTo( "0") == 0){
+                answer.setValue("");
+            }
             rep_combo.clearItems();
         }
         if(!answer.isValid()){

@@ -8,8 +8,8 @@ import static tgpr.forms.model.Answer.Fields.Instance;
 
 public class edit_instance extends Controller<view_edit_instance> {
 
-    public User u = User.getByKey(2);
-    public Form f = Form.getByKey(15);
+    public User u = User.getByKey(8);
+    public Form f = Form.getByKey(1);
     public Instance i;
     public int numQuestion = 0;
 
@@ -61,6 +61,9 @@ public class edit_instance extends Controller<view_edit_instance> {
             i = f.createInstance(u);
         } else {
             i = f.getMostRecentInstance(u);
+            if(i == null){
+                i = f.getCurrentOrCreateInstance(u);
+            }
         }
         date = i.getStarted().toString();
         return new view_edit_instance(this);
