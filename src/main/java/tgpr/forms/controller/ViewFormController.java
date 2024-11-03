@@ -54,7 +54,7 @@ public class ViewFormController extends Controller<ViewFormView> {
     }
 
     public void editForm() {
-        //TODO: add_edit_form
+        navigateTo(new AddEditFormController(form));
     }
 
     public void share() {
