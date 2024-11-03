@@ -6,9 +6,12 @@ import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import com.googlecode.lanterna.input.KeyStroke;
 import tgpr.forms.controller.edit_instance;
 import tgpr.forms.model.Answer;
+import tgpr.forms.model.OptionList;
+import tgpr.forms.model.OptionValue;
 import tgpr.forms.model.Question;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -245,8 +248,8 @@ public class view_edit_instance extends DialogWindow {
 
 
     private void submit(){
+        verifAnswer();
         if(askConfirmation( "Are you sure you want to submit this form?", "Submit Form" )){
-            answer.save();
             controller.i.submit();
             this.close();
         }
@@ -266,16 +269,18 @@ public class view_edit_instance extends DialogWindow {
         }
     }
 
+
+
     private void verifAnswer(){
         Question q = controller.getQuestion();
         if (q.getType() == Question.Type.Short || q.getType() == Question.Type.Email || q.getType() == Question.Type.Date){
             answer.setValue(rep.getText());
         } if (q.getType() == Question.Type.Check){
-            for(Object o: rep_check.getCheckedItems()){
-                answer.setValue(o.toString());
-                answer.save();
-                answer = controller.i.getOrCreateAnswer(q);
+            List answ = new ArrayList<>( );
+            for(Object o : rep_check.getCheckedItems()){
+                answ.add(rep_check.indexOf( o )+1);
             }
+            q.saveAnswer( controller.i, answ );
         } else if (q.getType() == Question.Type.Radio){
             if(!(rep_radio.getCheckedItemIndex() == -1)){
                 answer.setValue(""+(rep_radio.getCheckedItemIndex()+1));
@@ -291,10 +296,13 @@ public class view_edit_instance extends DialogWindow {
             instancePanel();
         } else {
             error.setVisible(false);
-            answer.save();
-            System.out.println(answer.getValue());
-            controller.nextQuestion();
-            instancePanel();
+            if(q.getType() != Question.Type.Check){
+                answer.save() ;
+            }
+            if (controller.numQuestion < controller.numQuestions()-1){
+                controller.nextQuestion();
+                instancePanel();
+            }
         }
     }
 
