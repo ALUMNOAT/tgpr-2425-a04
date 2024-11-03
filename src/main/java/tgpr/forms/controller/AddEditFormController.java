@@ -11,10 +11,11 @@ import tgpr.framework.ErrorList;
 public class AddEditFormController extends Controller<AddEditFormView> {
 
     private Form form;
-    private final AddEditFormView view = new AddEditFormView(this, form); //this?
+    private final AddEditFormView view; //this?
 
     public AddEditFormController(Form form){
         this.form = form;
+        view = new AddEditFormView(this, form);
     }
 
     @Override
@@ -32,7 +33,7 @@ public class AddEditFormController extends Controller<AddEditFormView> {
     public ErrorList validate(String title){
         var errors = new ErrorList();
         errors.add(FormValidator.isValidTitle(title));
-        errors.add(FormValidator.isNotTakenTitle(title));
+        errors.add(FormValidator.isNotTakenTitle(title, form));
         return errors;
     }
 }
