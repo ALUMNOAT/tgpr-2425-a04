@@ -5,7 +5,6 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.forms.controller.AddEditFormController;
@@ -66,6 +65,12 @@ public class AddEditFormView extends DialogWindow {
 
         //# SETUP #
         setComponent(root);
+
+        if (form != null) {
+            txtTitle.setText(form.getTitle());
+            txtDescription.setText(form.getDescription());
+            blnPublic.setChecked(form.getIsPublic());
+        }
     }
 
     private void validate() {
