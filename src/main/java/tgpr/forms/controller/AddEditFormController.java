@@ -24,19 +24,36 @@ public class AddEditFormController extends Controller<AddEditFormView> {
     }
     private void publicDeletesUserAccesses() {
         List<UserFormAccess> ls = form.getUserFormAccesses();
-        for(UserFormAccess user : ls) {
-            if(user.getAccessType() == AccessType.User)
-                user.delete();
+        for(UserFormAccess userFormAccess : ls) {
+            if(userFormAccess.getAccessType() == AccessType.User)
+                userFormAccess.delete();
         }
     }
 
+    public boolean askConfirmationPublic() {
+        return askConfirmation(
+                "Rendering the form public will delete accesses",
+                "Render the form public ?");
+    }
+
     public void createUpdate(String title, String description, boolean isPublic) {
-        form = new Form(title, description, Security.getLoggedUser(), isPublic);
-        form.save();
-        if(isPublic) {
-            publicDeletesUserAccesses();
+        //# NEW FORM #
+        if(form == null) {
+            form = new Form(title, description, Security.getLoggedUser(), isPublic);
+            form.save();
+            view.close();
         }
-        view.close();
+        //# UPDATE FORM #
+        else {
+            form.setTitle(title);
+            form.setDescription(description);
+            if(!isPublic || form.getUserFormAccesses().isEmpty() || askConfirmationPublic()) {
+                publicDeletesUserAccesses();
+                form.setIsPublic(isPublic);
+                form.save();
+                view.close();
+            }
+        }
     }
 
     public ErrorList validate(String title){
