@@ -11,7 +11,7 @@ import static tgpr.forms.model.Answer.Fields.Instance;
 public class edit_instance extends Controller<view_edit_instance> {
 
     public User u = User.getByKey(8);
-    public Form f = Form.getByKey(1);
+    public Form f = Form.getByKey(15);
     public Instance i;
     public int numQuestion = 0;
 

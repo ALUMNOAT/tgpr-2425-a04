@@ -9,7 +9,6 @@ import tgpr.forms.model.Answer;
 import tgpr.forms.model.Question;
 
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -156,25 +155,29 @@ public class view_edit_instance extends DialogWindow {
             }
             rep.addTo(panel);
         } else if (q.getType() == Question.Type.Check){
+            rep_check.clearItems();
             for (Object i : q.getOptionList().getOptionValues()){
                 rep_check.addItem(i);
                 if (answer.isValid()){
-                    if(i.toString().compareTo(q.getAnswerValue( controller.i ))==0){
-                        rep_check.setChecked(i, true);}
+                    for (Object o : q.getAnswerValues(controller.i)){
+                        rep_check.setChecked(o, true);
+                    }
                     }
             }
             rep_check.addTo(panel);
         } else if (q.getType() == Question.Type.Radio){
-            for (Object i : q.getOptionList().getOptionValues()){
+            rep_radio.clearItems();
+            for (var i : q.getOptionList().getOptionValues()){
                 rep_radio.addItem(i);
                 if (answer.isValid()){
-                    if(i.toString().compareTo(q.getAnswerValueAsString( controller.i ))==0){
+                    if(i.toString().compareTo(q.getAnswerValueAsString(controller.i))==0){
                         rep_radio.setCheckedItem(i);
                     }
                 }
             }
             rep_radio.addTo(panel);
         } else if (q.getType() == Question.Type.Combo){
+            rep_combo.clearItems();
             rep_combo.addItem( "--- Please choose an option ---" );
             for (Object i : q.getOptionList().getOptionValues()){
                 rep_combo.addItem(i);
@@ -199,7 +202,7 @@ public class view_edit_instance extends DialogWindow {
                 rep.addTo(panel);
             }
         } else {
-            if(answer.getValue().compareTo( "" )!=0){
+            if(answer.getValue().compareTo( "" )!=0 && answer.getValue()!=null){
                 Label rep = new Label(q.getAnswerValueAsString( controller.i ));
                 rep.addTo(panel);
             }
@@ -208,8 +211,7 @@ public class view_edit_instance extends DialogWindow {
     }
 
     private Panel formButtonsPanel(boolean review) {
-        Panel panel = Panel.horizontalPanel(1).fillCenter();
-
+        Panel panel = Panel.horizontalPanel(1 );
         if(controller.u.isGuest()){
             Button btnClose = new Button( "Close" , this::cancel ).addTo( panel );
             addShortcut(btnClose, KeyStroke.fromString("<esc>" ));
@@ -219,7 +221,7 @@ public class view_edit_instance extends DialogWindow {
         }
         if(controller.getQuestion().getIdx() > 1){
             Button btnPrev = new Button( "Previous" , this::previous ).addTo( panel );
-            addShortcut(btnPrev, KeyStroke.fromString("<down>" ));
+
         } if(controller.getQuestion().getIdx() < controller.numQuestions()){
             Button btnNext = new Button( "Next" , this::next ).addTo( panel );
             addShortcut(btnNext, KeyStroke.fromString("<up>" ));
@@ -252,9 +254,6 @@ public class view_edit_instance extends DialogWindow {
 
     private void previous(){
         controller.previousQuestion();
-        rep_radio.clearItems();
-        rep_combo.clearItems();
-        rep_check.clearItems();
         instancePanel();
     }
 
@@ -272,20 +271,19 @@ public class view_edit_instance extends DialogWindow {
         if (q.getType() == Question.Type.Short || q.getType() == Question.Type.Email || q.getType() == Question.Type.Date){
             answer.setValue(rep.getText());
         } if (q.getType() == Question.Type.Check){
-            answer.setValue(rep_check.getCheckedItems().getFirst().toString());
-            rep_radio.clearItems();
+            for(Object o: rep_check.getCheckedItems()){
+                answer.setValue(o.toString());
+                answer.save();
+                answer = controller.i.getOrCreateAnswer(q);
+            }
         } else if (q.getType() == Question.Type.Radio){
-            answer.setValue(""+rep_radio.getCheckedItemIndex());
-            if(answer.getValue().compareTo( "-1") == 0){
-                answer.setValue("");
+            if(!(rep_radio.getCheckedItemIndex() == -1)){
+                answer.setValue(""+(rep_radio.getCheckedItemIndex()+1));
             }
-            rep_radio.clearItems();
         } else if (q.getType() == Question.Type.Combo){
-            answer.setValue(""+rep_combo.getSelectedIndex());
-            if(answer.getValue().compareTo( "0") == 0){
-                answer.setValue("");
+            if(!(rep_combo.getSelectedIndex() == 0)){
+                answer.setValue(""+rep_combo.getSelectedIndex());
             }
-            rep_combo.clearItems();
         }
         if(!answer.isValid()){
             error.setVisible(true);
