@@ -14,8 +14,9 @@ public abstract class FormValidator {
         return Error.NOERROR;
     }
 
-    public static Error isNotTakenTitle(String title){
-        if(Form.getByTitleAndUser(title, Security.getLoggedUser()) != null)
+    public static Error isNotTakenTitle(String title, Form form){
+        Form dbForm = Form.getByTitleAndUser(title, Security.getLoggedUser());
+        if(dbForm != null && dbForm.getId() != form.getId())
             return new Error("This title is already taken", Form.Fields.Title);
         return Error.NOERROR;
     }
