@@ -1,11 +1,11 @@
 package tgpr.forms.controller;
 
-import tgpr.forms.model.FormValidator;
-import tgpr.forms.model.Security;
+import tgpr.forms.model.*;
 import tgpr.forms.view.AddEditFormView;
 import tgpr.framework.Controller;
-import tgpr.forms.model.Form;
 import tgpr.framework.ErrorList;
+
+import java.util.List;
 
 
 public class AddEditFormController extends Controller<AddEditFormView> {
@@ -22,11 +22,20 @@ public class AddEditFormController extends Controller<AddEditFormView> {
     public AddEditFormView getView() {
         return view;
     }
+    private void publicDeletesUserAccesses() {
+        List<UserFormAccess> ls = form.getUserFormAccesses();
+        for(UserFormAccess user : ls) {
+            if(user.getAccessType() == AccessType.User)
+                user.delete();
+        }
+    }
 
     public void createUpdate(String title, String description, boolean isPublic) {
-        System.out.println("this works so far !");
         form = new Form(title, description, Security.getLoggedUser(), isPublic);
         form.save();
+        if(isPublic) {
+            publicDeletesUserAccesses();
+        }
         view.close();
     }
 
