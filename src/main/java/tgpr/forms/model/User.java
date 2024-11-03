@@ -212,8 +212,8 @@ public class User extends Model {
         Assert.isTrue(c == 1, "Something went wrong");
     }
 
-    public static User checkCredentials(String mail, String password) {
-        var user = User.getByEmail(mail);
+    public static User checkCredentials(String email, String password) {
+        var user = User.getByEmail(email);
         if (user != null && user.password.equals(hash(password)))
             return user;
         return null;
