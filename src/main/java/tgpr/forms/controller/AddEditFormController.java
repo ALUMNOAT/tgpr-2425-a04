@@ -22,11 +22,16 @@ public class AddEditFormController extends Controller<AddEditFormView> {
     public AddEditFormView getView() {
         return view;
     }
-    private void publicDeletesUserAccesses() {
+    private void DeleteDistListAccesses() {
         List<UserFormAccess> ls = form.getUserFormAccesses();
         for(UserFormAccess userFormAccess : ls) {
             if(userFormAccess.getAccessType() == AccessType.User)
                 userFormAccess.delete();
+        }
+        List<DistListFormAccess> ls2 = form.getDistListFormAccesses();
+        for(DistListFormAccess distListFormAccess : ls2) {
+            if(distListFormAccess.getAccessType() == AccessType.User)
+                distListFormAccess.delete();
         }
     }
 
@@ -48,7 +53,7 @@ public class AddEditFormController extends Controller<AddEditFormView> {
             form.setTitle(title);
             form.setDescription(description);
             if(!isPublic || form.getUserFormAccesses().isEmpty() || askConfirmationPublic()) {
-                publicDeletesUserAccesses();
+                DeleteDistListAccesses();
                 form.setIsPublic(isPublic);
                 form.save();
                 view.close();
