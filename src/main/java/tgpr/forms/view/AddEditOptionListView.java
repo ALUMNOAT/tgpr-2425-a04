@@ -73,18 +73,18 @@ public class AddEditOptionListView extends DialogWindow {
     }
 
     private void reorder() {
-        System.out.println("it works !");
+        controller.reorder();
     }
 
     private void delete() {
-        System.out.println("it works too !");
+        controller.delete();
     }
 
     private void duplicate() {
-        System.out.println("it works ! it works !");
+        controller.duplicate();
     }
 
     private void save() {
-        System.out.println("doews it work ? yes");
+        controller.save();
     }
 }
