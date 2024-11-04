@@ -52,8 +52,13 @@ public class AddEditFormController extends Controller<AddEditFormView> {
         else {
             form.setTitle(title);
             form.setDescription(description);
-            if(!isPublic || form.getUserFormAccesses().isEmpty() || askConfirmationPublic()) {
-                DeleteDistListAccesses();
+            //Merci @Kamil pour avoir spotté l'erreur !
+            if (!isPublic || form.getIsPublic()|| !form.isSharedToUser()){
+                form.setIsPublic(isPublic);
+                form.save();
+                view.close();
+            }
+            else if(askConfirmationPublic()) {
                 form.setIsPublic(isPublic);
                 form.save();
                 view.close();
