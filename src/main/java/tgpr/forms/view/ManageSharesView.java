@@ -2,6 +2,7 @@ package tgpr.forms.view;
 
 
 import com.googlecode.lanterna.gui2.ColumnSpec;
+import com.googlecode.lanterna.gui2.ComboBox;
 import com.googlecode.lanterna.gui2.ObjectTable;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
@@ -14,70 +15,101 @@ import java.util.List;
 public class ManageSharesView extends DialogWindow {
 
     private final Form form;
-    private final User user;
 
-    private  ObjectTable<DistListFormAccess> sharesTable;
+    private  ObjectTable<Model> sharesTable;
 
-    public ManageSharesView(Form form, User user) {
+    private final ComboBox<String> potentialBeneficiaries = new ComboBox<>();
+    private final ComboBox<String> potentialBeneficiariesAccess = new ComboBox<>();;
+
+
+    public ManageSharesView(Form form) {
             super("Manage Shares");
             this.form = form;
-            this.user = user;
 
+            Panel root = new Panel();
 
     }
 
-    private void createFormShareLists(){
+    private Panel createFormShareLists(){
+
+        Panel formsSharesPanel = new Panel();
+        List<Model> beneficiaries = form.getAccesses();
+
+        sharesTable.add(beneficiaries);
 
         sharesTable = new ObjectTable<>(
-                    new ColumnSpec<>("Pseudo", (m) -> {int i=0; String pseudo= getBeneficiaries(i); ++i; return pseudo;}),
-                    new ColumnSpec<>("Type", (m) -> m.getDistList().getName() )
-        );
+                    new ColumnSpec<>("Pseudo", form::getBeneficiaryName),
+                    new ColumnSpec<>("Type", this::getBeneficiariesType),
+                    new ColumnSpec<>("Access Right", this::getBeneficiariesType)
+        ).addTo(formsSharesPanel);
 
-
+        return formsSharesPanel;
     }
 
 
-    private String getBeneficiaries(int i){
+    private String getBeneficiaries(Model beneficiary){
 
-        List<Model> beneficiaries = form.getAccesses();
+        return form.getBeneficiaryName(beneficiary);
+    }
 
-        List<String> beneficiariesNames = new ArrayList<>();
+    private String getBeneficiariesType(Model beneficiary){
 
-        for(Model model : beneficiaries){
-            beneficiariesNames.add(form.getBeneficiaryName(model));
+        if(beneficiary instanceof User){
+            return "User";
+        } else if(beneficiary instanceof DistList){
+            return "DistList";
+        }
+        return null;
+    }
+
+
+    private AccessType getBeneficiariesAccessType(Model beneficiary){
+
+
+        if(beneficiary instanceof UserFormAccess u){
+            return u.getAccessType();
+        } else if (beneficiary instanceof DistListFormAccess d) {
+            return d.getAccessType();
         }
 
-
-        return beneficiariesNames.get(i);
+        return null;
     }
 
-    private void getBeneficiariesType(){
-        List<Model> beneficiaries = form.getAccesses();
 
-        List<String> beneficiariesAcessType = new ArrayList<>();
+    private Panel createAddShares(){
 
-        for(Model model : beneficiaries){
-            if(model instanceof User){
-                beneficiariesAcessType.add("User");
-            } else if(model instanceof DistList){
-                beneficiariesAcessType.add("DistList");
+        Panel giveSharesPanel = new Panel();
+
+        createPotentialBeneficiariesComboBox();
+        potentialBeneficiaries.addTo(giveSharesPanel);
+
+        potentialBeneficiariesAccess.addItem("User");
+        potentialBeneficiariesAccess.addItem("Editor");
+        potentialBeneficiariesAccess.setSelectedItem("User");
+
+        potentialBeneficiariesAccess.addTo(giveSharesPanel);
+
+
+
+
+        return giveSharesPanel;
+
+    }
+
+    private void createPotentialBeneficiariesComboBox(){
+
+        List<Model> potentialBeneficiariesList = form.getPotentialBeneficiaries();
+
+        for(Model potentialBeneficiary : potentialBeneficiariesList){
+            if(potentialBeneficiary instanceof User u){
+                potentialBeneficiaries.addItem(u.getFullName());
+            } else if (potentialBeneficiary instanceof DistList l) {
+                potentialBeneficiaries.addItem(l.getName());
+
             }
+
         }
-    }
 
-
-    private void getBeneficiariesAccessType(){
-            List<Model> beneficiaries = form.getAccesses();
-
-            List<AccessType> beneficiariesAccessType = new ArrayList<>();
-
-            for(Model model : beneficiaries){
-                if(model instanceof UserFormAccess u){
-                    beneficiariesAccessType.add(u.getAccessType());
-                } else if (model instanceof DistListFormAccess d) {
-                    beneficiariesAccessType.add(d.getAccessType());
-                }
-            }
     }
 
 
