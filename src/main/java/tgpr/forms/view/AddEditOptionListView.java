@@ -39,7 +39,7 @@ public class AddEditOptionListView extends DialogWindow {
         Panel pnlOptionValues = new Panel().setLayoutManager(new GridLayout(1).setTopMarginSize(1).setRightMarginSize(4)).sizeTo(60, 11);
         table = new ObjectTable<>(
                 new ColumnSpec<>("Index ", OptionValue::getIdx),
-                new ColumnSpec<>("Label                                           ", OptionValue::getLabel)
+                new ColumnSpec<>("Label                                          ", OptionValue::getLabel)
         );
         pnlOptionValues.addComponent(table);
         root.addComponent(pnlOptionValues);
