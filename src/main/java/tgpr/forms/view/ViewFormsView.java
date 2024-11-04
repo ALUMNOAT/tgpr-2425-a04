@@ -5,13 +5,12 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.menu.*;
 import tgpr.forms.controller.FormController;
-import tgpr.forms.controller.LoginController;
 import tgpr.forms.controller.ViewFormsController;
 import tgpr.forms.model.AccessType;
 import tgpr.forms.model.Form;
 import tgpr.forms.model.Security;
 import tgpr.forms.model.User;
-import tgpr.forms.controller.edit_instance;
+import tgpr.forms.controller.ViewEditInstanceController;
 import tgpr.framework.Controller;
 
 import java.util.List;
@@ -205,7 +204,7 @@ public class ViewFormsView extends BasicWindow {
     }
 
     public void openInstance(Form form){
-        Controller.navigateTo(new edit_instance(user, form));
+        Controller.navigateTo(new ViewEditInstanceController(user, form));
     }
 
 }

@@ -6,7 +6,7 @@ import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.input.KeyStroke;
-import tgpr.forms.controller.edit_instance;
+import tgpr.forms.controller.ViewEditInstanceController;
 import tgpr.forms.model.Answer;
 import tgpr.forms.model.Question;
 
@@ -17,11 +17,11 @@ import java.util.regex.Pattern;
 
 import static tgpr.framework.Controller.askConfirmation;
 
-public class view_edit_instance extends DialogWindow {
+public class ViewEditInstanceView extends DialogWindow {
 
     private final Label txtBody = new Label("You have already answered this form."+System.lineSeparator()+"You can view your submission or submit again."+System.lineSeparator()+"What would you like to do?");
     private final Label errBody = new Label("");
-    private final edit_instance controller;
+    private final ViewEditInstanceController controller;
     private final Label lblTitle = new Label("");
     private final Label lblDescription = new Label("");
     private final Label lblStart = new Label("");
@@ -36,7 +36,7 @@ public class view_edit_instance extends DialogWindow {
     private final ComboBox comboBox = new ComboBox();
     public List<Integer> questionError = new ArrayList<>();
 
-    public view_edit_instance(edit_instance controller, boolean view_instance) {
+    public ViewEditInstanceView( ViewEditInstanceController controller, boolean view_instance) {
         super("Open a form");
         this.controller = controller;
         errBody.setForegroundColor(TextColor.ANSI.RED);

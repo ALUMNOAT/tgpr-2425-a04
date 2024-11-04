@@ -1,7 +1,7 @@
 package tgpr.forms.controller;
 
 import tgpr.forms.model.*;
-import tgpr.forms.view.view_edit_instance;
+import tgpr.forms.view.ViewEditInstanceView;
 import tgpr.framework.Controller;
 import tgpr.framework.Error;
 import tgpr.framework.ErrorList;
@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 import static tgpr.framework.LocaleFormats.INPUT_DATE_FORMATTER;
 
-public class edit_instance extends Controller<view_edit_instance> {
+public class ViewEditInstanceController extends Controller<ViewEditInstanceView> {
 
     public User u;
     public Form f;
@@ -22,12 +22,12 @@ public class edit_instance extends Controller<view_edit_instance> {
     public String description;
     public String title;
 
-    public edit_instance(User u, Form f) {
+    public ViewEditInstanceController( User u, Form f) {
         this.u = u;
         this.f = f;
     }
 
-    public edit_instance(Instance i) {
+    public ViewEditInstanceController( Instance i) {
         this.u = i.getUser();
         this.f = i.getForm();
         this.i = i;
@@ -106,12 +106,13 @@ public class edit_instance extends Controller<view_edit_instance> {
     }
 
     @Override
-    public view_edit_instance getView() {
+    public ViewEditInstanceView getView() {
+        System.out.println(f.getId() );
         if(!view_instance)
             getInstance();
         description = f.getDescription();
         title = f.getTitle();
         date = i.getStarted().format( DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss") );
-        return new view_edit_instance(this, this.view_instance);
+        return new ViewEditInstanceView(this, this.view_instance);
     }
 }
