@@ -107,7 +107,6 @@ public class ViewEditInstanceController extends Controller<ViewEditInstanceView>
 
     @Override
     public ViewEditInstanceView getView() {
-        System.out.println(f.getId() );
         if(!view_instance)
             getInstance();
         description = f.getDescription();

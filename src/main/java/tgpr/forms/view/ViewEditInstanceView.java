@@ -234,11 +234,12 @@ public class ViewEditInstanceView extends DialogWindow {
             addShortcut(btnClose, KeyStroke.fromString("<esc>" ));
         }
         if(controller.getQuestion().getIdx() > 1){
-            new Button( "Previous" , this::previous ).addTo( panel );
-
+            Button btnPrev =new Button( "Previous" , this::previous ).addTo( panel );
+            addShortcut(btnPrev, KeyStroke.fromString("<pagedown>" ));
 
         } if(controller.getQuestion().getIdx() < controller.numQuestions()){
-            new Button( "Next" , this::next ).addTo( panel );
+            Button btnNext =new Button( "Next" , this::next ).addTo( panel );
+            addShortcut(btnNext, KeyStroke.fromString("<pageup>" ));
         } else  {
             if(!review){
                 new Button( "Submit" , this::submit ).addTo( panel );
@@ -352,7 +353,7 @@ public class ViewEditInstanceView extends DialogWindow {
     private void validate() {
         String txt = "";
         if(controller.getQuestion().getType() == Question.Type.Check){
-            if( !checkBox.isEmpty()){
+            if(!checkBox.getCheckedItems().isEmpty()){
                 txt = "C'est bon";
             }
         } else if(controller.getQuestion().getType() == Question.Type.Radio){

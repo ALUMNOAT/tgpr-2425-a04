@@ -291,6 +291,9 @@ public class Question extends Model {
     public String getAnswerValueAsString(Instance instance) {
         var value = getAnswerValue(instance);
         if (getType().requiresOptionList()) {
+            if(value.isBlank()){
+                return "";
+            }
             return value == null ? null : getOptionList().getValue(Integer.parseInt(value)).getLabel();
         }
         return value;
