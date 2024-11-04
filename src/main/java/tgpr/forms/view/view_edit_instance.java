@@ -141,12 +141,13 @@ public class view_edit_instance extends DialogWindow {
         Question q = controller.getQuestion();
         if (q.getType() == Question.Type.Short || q.getType() == Question.Type.Email || q.getType() == Question.Type.Date){
             rep = new TextBox().sizeTo(100);
+            rep.setTextChangeListener((txt, byUser) -> validate());
             rep.setAfterLeaveFocusListener((txt, byUser) -> validate());
-            if (answer.isValid()){
-                rep.setText(answer.getValue());
-            }
             if(q.getType() == Question.Type.Date){
                 rep.setValidationPattern(Pattern.compile("[/\\d]{0,10}"));
+            }
+            if (answer.isValid()){
+                rep.setText(answer.getValue());
             }
             rep.addTo(panel);
         } else if (q.getType() == Question.Type.Long){
@@ -284,19 +285,19 @@ public class view_edit_instance extends DialogWindow {
     }
 
     private void next(){
-        validate();
-        Object o = controller.numQuestion;
-        if(!error.getText().isBlank()){
-            if(!questionError.contains( o ))
-                questionError.add( controller.numQuestion );
-        } else {
-            questionError.remove( o );
-        }
-        error.setText( "" );
         if (review){
             controller.nextQuestion();
             instancePanel();
         }else {
+            validate();
+            Object o = controller.numQuestion;
+            if(!error.getText().isBlank()){
+                if(!questionError.contains( o ))
+                    questionError.add( controller.numQuestion );
+            } else {
+                questionError.remove( o );
+            }
+            error.setText( "" );
             verifAnswer();
         }
     }
@@ -306,6 +307,7 @@ public class view_edit_instance extends DialogWindow {
     private void verifAnswer(){
         Question q = controller.getQuestion();
         if (q.getType() == Question.Type.Short || q.getType() == Question.Type.Email || q.getType() == Question.Type.Date){
+            System.out.println(rep.getText() );
             answer.setValue(rep.getText());
         } if (q.getType() == Question.Type.Check){
             List answ = new ArrayList<>( );
@@ -322,6 +324,7 @@ public class view_edit_instance extends DialogWindow {
                 answer.setValue(""+rep_combo.getSelectedIndex());
             }
         }
+        answer.save();
         if (controller.numQuestion < controller.numQuestions()-1){
             controller.nextQuestion();
             instancePanel();
@@ -356,8 +359,10 @@ public class view_edit_instance extends DialogWindow {
         }
         var errors = controller.validate( txt );
         if(!errors.isEmpty()){
+
             error.setText(errors.getFirst().getMessage());
-        }
+        }else
+            error.setText( "" );
     }
 
     private Panel createPanel() {
