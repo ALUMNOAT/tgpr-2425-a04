@@ -2,6 +2,7 @@ package tgpr.forms;
 
 import tgpr.forms.controller.LoginController;
 import tgpr.forms.controller.TestController;
+import tgpr.forms.controller.ViewInstanceController;
 import tgpr.framework.Controller;
 import tgpr.framework.Model;
 
@@ -12,8 +13,7 @@ public class FormsApp {
         if (!Model.checkDb(DATABASE_SCRIPT_FILE))
             Controller.abort("Database is not available!");
         else {
-            Controller.navigateTo(new LoginController());
-            Controller.navigateTo(new TestController());
+            Controller.navigateTo(new ViewInstanceController() );
         }
     }
 }
