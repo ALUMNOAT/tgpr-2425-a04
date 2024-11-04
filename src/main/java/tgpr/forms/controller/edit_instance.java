@@ -59,10 +59,6 @@ public class edit_instance extends Controller<view_edit_instance> {
         return f.getQuestions().get(numQuestion);
     }
 
-    public Answer getAnswer() {
-        return i.getAnswers().get(numQuestion);
-    }
-
     public int numQuestions() {
         return f.getQuestions().size();
     }

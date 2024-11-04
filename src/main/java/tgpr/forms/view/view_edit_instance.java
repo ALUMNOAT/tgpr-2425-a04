@@ -20,7 +20,7 @@ import static tgpr.framework.Controller.askConfirmation;
 public class view_edit_instance extends DialogWindow {
 
     private final Label txtBody = new Label("You have already answered this form."+System.lineSeparator()+"You can view your submission or submit again."+System.lineSeparator()+"What would you like to do?");
-    private final Label error = new Label("");
+    private final Label errBody = new Label("");
     private final edit_instance controller;
     private final Label lblTitle = new Label("");
     private final Label lblDescription = new Label("");
@@ -28,18 +28,18 @@ public class view_edit_instance extends DialogWindow {
     private final Label lblSubmitted = new Label("");
     private final Label lblUser = new Label("");
     private boolean review=false;
-    public boolean view_instance=false;
+    public boolean view_instance;
     private Answer answer;
-    private TextBox rep;
-    private final CheckBoxList rep_check = new CheckBoxList();
-    private final RadioBoxList rep_radio = new RadioBoxList();
-    private final ComboBox rep_combo = new ComboBox();
+    private TextBox textBox;
+    private final CheckBoxList checkBox = new CheckBoxList();
+    private final RadioBoxList radioBox = new RadioBoxList();
+    private final ComboBox comboBox = new ComboBox();
     public List<Integer> questionError = new ArrayList<>();
 
     public view_edit_instance(edit_instance controller, boolean view_instance) {
         super("Open a form");
         this.controller = controller;
-        error.setForegroundColor(TextColor.ANSI.RED);
+        errBody.setForegroundColor(TextColor.ANSI.RED);
 
         setHints(List.of(Hint.CENTERED, Hint.MODAL));
         this.lblTitle.setText( controller.getTitle());
@@ -58,18 +58,6 @@ public class view_edit_instance extends DialogWindow {
 
     }
 
-    private void instancePanel(){
-        var root = createPanel().sizeTo(85,25).setLayoutManager(new BorderLayout());
-        setComponent(root);
-        formTextPanel().setLayoutData(BorderLayout.Location.TOP).addTo(root);
-        root.addEmpty();
-        QuestionPanel(review).setLayoutData(BorderLayout.Location.CENTER).withBorder(Borders.singleLine("Question " + controller.getQuestion().getIdx() + " of " + controller.numQuestions())).addTo(root);
-        root.addEmpty();
-        formButtonsPanel(review).setLayoutData(BorderLayout.Location.BOTTOM).addTo(root);
-        super.setTitle("Answer the Form");
-    }
-
-
     private void confirmationPanel(){
         var root = createPanel();
         setComponent(root);
@@ -84,29 +72,7 @@ public class view_edit_instance extends DialogWindow {
         txtBody.addTo(panel);
         return panel;
     }
-    private Panel formTextPanel() {
-            Panel panel = Panel.gridPanel(2, Margin.of(1, 1, 1, 0));
 
-            new Label("Title:").addTo(panel);
-            lblTitle.addTo(panel).addStyle( SGR.BOLD);
-
-            new Label("Description:").addTo(panel);
-            lblDescription.addTo(panel).addStyle(SGR.BOLD);
-
-            new Label("Started on:").addTo(panel);
-            lblStart.addTo(panel).addStyle(SGR.BOLD);
-
-            if(review){
-                new Label("Submitted on:").addTo(panel);
-                lblSubmitted.addTo(panel).addStyle(SGR.BOLD);
-            }
-        if(view_instance){
-            this.lblUser.setText(controller.u.getName());
-            new Label("Submitted by:").addTo(panel);
-            lblUser.addTo(panel).addStyle(SGR.BOLD);
-        }
-            return panel;
-    }
     private Panel confirmationButtonsPanel() {
         Panel panel = Panel.horizontalPanel(1).center();
 
@@ -114,6 +80,41 @@ public class view_edit_instance extends DialogWindow {
         new Button( "Submit again" , this::submitAgain ).addTo( panel );
         new Button( "Cancel" , this::close ).addTo( panel );
 
+        return panel;
+    }
+
+    private void instancePanel(){
+        var root = createPanel().sizeTo(85,25).setLayoutManager(new BorderLayout());
+        setComponent(root);
+        formTextPanel().setLayoutData(BorderLayout.Location.TOP).addTo(root);
+        root.addEmpty();
+        QuestionPanel(review).setLayoutData(BorderLayout.Location.CENTER).withBorder(Borders.singleLine("Question " + controller.getQuestion().getIdx() + " of " + controller.numQuestions())).addTo(root);
+        root.addEmpty();
+        formButtonsPanel(review).setLayoutData(BorderLayout.Location.BOTTOM).addTo(root);
+        super.setTitle("Answer the Form");
+    }
+
+    private Panel formTextPanel() {
+        Panel panel = Panel.gridPanel(2, Margin.of(1, 1, 1, 0));
+
+        new Label("Title:").addTo(panel);
+        lblTitle.addTo(panel).addStyle( SGR.BOLD);
+
+        new Label("Description:").addTo(panel);
+        lblDescription.addTo(panel).addStyle(SGR.BOLD);
+
+        new Label("Started on:").addTo(panel);
+        lblStart.addTo(panel).addStyle(SGR.BOLD);
+
+        if(review){
+            new Label("Submitted on:").addTo(panel);
+            lblSubmitted.addTo(panel).addStyle(SGR.BOLD);
+        }
+        if(view_instance){
+            this.lblUser.setText(controller.u.getName());
+            new Label("Submitted by:").addTo(panel);
+            lblUser.addTo(panel).addStyle(SGR.BOLD);
+        }
         return panel;
     }
 
@@ -130,7 +131,6 @@ public class view_edit_instance extends DialogWindow {
         return panel;
     }
 
-
     private Panel titlePanel(){
         Panel panel = Panel.horizontalPanel();
         Question q = controller.getQuestion();
@@ -143,66 +143,67 @@ public class view_edit_instance extends DialogWindow {
         quest.setForegroundColor(TextColor.ANSI.BLACK_BRIGHT).addTo(panel);
         return panel;
     }
+
     private Panel QuizPanel(){
         Panel panel = createPanel();
         Question q = controller.getQuestion();
         if (q.getType() == Question.Type.Short || q.getType() == Question.Type.Email || q.getType() == Question.Type.Date){
-            rep = new TextBox().sizeTo(100);
-            rep.setTextChangeListener((txt, byUser) -> validate());
-            rep.setAfterLeaveFocusListener((txt, byUser) -> validate());
+            textBox = new TextBox().sizeTo(100);
+            textBox.setTextChangeListener(( txt, byUser) -> validate());
+            textBox.setAfterLeaveFocusListener(( txt, byUser) -> validate());
             if(q.getType() == Question.Type.Date){
-                rep.setValidationPattern(Pattern.compile("[/\\d]{0,10}"));
+                textBox.setValidationPattern(Pattern.compile("[/\\d]{0,10}"));
             }
             if (answer.isValid()){
-                rep.setText(answer.getValue());
+                textBox.setText(answer.getValue());
             }
-            rep.addTo(panel);
+            textBox.addTo(panel);
         } else if (q.getType() == Question.Type.Long){
-            rep = new TextBox("", TextBox.Style.MULTI_LINE).sizeTo( 100, 8 );
-            rep.setAfterLeaveFocusListener((txt, byUser) -> validate());
+            textBox = new TextBox("", TextBox.Style.MULTI_LINE).sizeTo( 100, 8 );
+            textBox.setAfterLeaveFocusListener(( txt, byUser) -> validate());
             if (answer.isValid()){
-                rep.setText(answer.getValue());
+                textBox.setText(answer.getValue());
             }
-            rep.addTo(panel);
+            textBox.addTo(panel);
         } else if (q.getType() == Question.Type.Check){
-            rep_check.clearItems();
+            checkBox.clearItems();
             for (Object i : q.getOptionList().getOptionValues()){
-                rep_check.addItem(i);
+                checkBox.addItem(i);
                 if (answer.isValid()){
                     for (Object o : q.getAnswerValues(controller.i)){
-                        rep_check.setChecked(o, true);
+                        checkBox.setChecked(o, true);
                     }
-                    }
+                }
             }
-            rep_check.setAfterLeaveFocusListener( (txt, byUser) -> validate() );
-            rep_check.addTo(panel);
+            checkBox.setAfterLeaveFocusListener( ( txt, byUser) -> validate() );
+            checkBox.addTo(panel);
         } else if (q.getType() == Question.Type.Radio){
-            rep_radio.clearItems();
+            radioBox.clearItems();
             for (var i : q.getOptionList().getOptionValues()){
-                rep_radio.addItem(i);
+                radioBox.addItem(i);
                 if (answer.isValid()){
                     if(i.toString().compareTo(q.getAnswerValueAsString(controller.i))==0){
-                        rep_radio.setCheckedItem(i);
+                        radioBox.setCheckedItem(i);
                     }
                 }
             }
-            rep_radio.setAfterLeaveFocusListener( (txt, byUser) -> validate() );
-            rep_radio.addTo(panel);
+            radioBox.setAfterLeaveFocusListener( ( txt, byUser) -> validate() );
+            radioBox.addTo(panel);
         } else if (q.getType() == Question.Type.Combo){
-            rep_combo.clearItems();
-            rep_combo.addItem( "--- Please choose an option ---" );
+            comboBox.clearItems();
+            comboBox.addItem( "--- Please choose an option ---" );
             for (Object i : q.getOptionList().getOptionValues()){
-                rep_combo.addItem(i);
+                comboBox.addItem(i);
                 if (answer.isValid() && answer.getValue().compareTo( "0" )!=0 && answer.getValue().compareTo( "" )!=0){
                     if(i.toString().compareTo(q.getAnswerValueAsString( controller.i ))==0){
-                        rep_combo.setSelectedItem(i);}
+                        comboBox.setSelectedItem(i);}
                 }
             }
-            rep_combo.setAfterLeaveFocusListener(  (txt, byUser) -> validate() );
-            rep_combo.addTo(panel);
+            comboBox.setAfterLeaveFocusListener(  ( txt, byUser) -> validate() );
+            comboBox.addTo(panel);
         }
         panel.addEmpty();
-        error.addTo(panel);
+        errBody.addTo(panel);
         return panel;
     }
 
@@ -257,10 +258,10 @@ public class view_edit_instance extends DialogWindow {
 
 
     private void submit(){
-        verifAnswer();
+        saveAnswer();
         validate();
         Object o = controller.numQuestion;
-        if(!error.getText().isBlank()){
+        if(!errBody.getText().isBlank()){
             if(!questionError.contains( o ))
                 questionError.add( controller.numQuestion );
         } else {
@@ -284,11 +285,10 @@ public class view_edit_instance extends DialogWindow {
             }
         }
 
-
     private void previous(){
         controller.previousQuestion();
         instancePanel();
-        error.setText( "" );
+        errBody.setText( "" );
     }
 
     private void next(){
@@ -298,38 +298,36 @@ public class view_edit_instance extends DialogWindow {
         }else {
             validate();
             Object o = controller.numQuestion;
-            if(!error.getText().isBlank()){
+            if(!errBody.getText().isBlank()){
                 if(!questionError.contains( o ))
                     questionError.add( controller.numQuestion );
             } else {
                 questionError.remove( o );
             }
-            error.setText( "" );
-            verifAnswer();
+            errBody.setText( "" );
+            saveAnswer();
         }
     }
 
-
-
-    private void verifAnswer(){
+    private void saveAnswer(){
         Question q = controller.getQuestion();
         if (q.getType() == Question.Type.Short || q.getType() == Question.Type.Email
                 || q.getType() == Question.Type.Date || q.getType() == Question.Type.Long){
-            answer.setValue(rep.getText());
+            answer.setValue( textBox.getText());
             answer.save();
         } if (q.getType() == Question.Type.Check){
-            List answ = new ArrayList<>( );
-            for(Object o : rep_check.getCheckedItems()){
-                answ.add(rep_check.indexOf( o )+1);
+            List answersList = new ArrayList<>( );
+            for(Object o : checkBox.getCheckedItems()){
+                answersList.add( checkBox.indexOf( o )+1);
             }
-            q.saveAnswer( controller.i, answ );
+            q.saveAnswer( controller.i, answersList );
         } else if (q.getType() == Question.Type.Radio){
-            if(!(rep_radio.getCheckedItemIndex() == -1)){
-                answer.setValue(""+(rep_radio.getCheckedItemIndex()+1));
+            if(!(radioBox.getCheckedItemIndex() == -1)){
+                answer.setValue(""+(radioBox.getCheckedItemIndex()+1));
             }answer.save();
         } else if (q.getType() == Question.Type.Combo){
-            if(!(rep_combo.getSelectedIndex() == 0)){
-                answer.setValue(""+rep_combo.getSelectedIndex());
+            if(!(comboBox.getSelectedIndex() == 0)){
+                answer.setValue(""+ comboBox.getSelectedIndex());
             }
             answer.save();
         }
@@ -343,6 +341,7 @@ public class view_edit_instance extends DialogWindow {
         controller.i = controller.f.createInstance(controller.u);
         instancePanel();
     }
+
     private void review(){
         this.lblSubmitted.setText( controller.i.getCompleted().format( DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
         this.review = true;
@@ -352,25 +351,25 @@ public class view_edit_instance extends DialogWindow {
     private void validate() {
         String txt = "";
         if(controller.getQuestion().getType() == Question.Type.Check){
-            if(rep_check.isEmpty())
+            if( checkBox.isEmpty())
                 txt = "C'est bon";
         } else if(controller.getQuestion().getType() == Question.Type.Radio){
-            if(rep_radio.getCheckedItemIndex() > -1){
-                txt = ""+(rep_radio.getCheckedItemIndex()+1);
+            if( radioBox.getCheckedItemIndex() > -1){
+                txt = ""+(radioBox.getCheckedItemIndex()+1);
             }
         }else if(controller.getQuestion().getType() == Question.Type.Combo){
-            if(rep_combo.getSelectedIndex() > 0){
-                txt = ""+rep_combo.getSelectedIndex();
+            if( comboBox.getSelectedIndex() > 0){
+                txt = ""+ comboBox.getSelectedIndex();
             }
         }else {
-            txt = rep.getText();
+            txt = textBox.getText();
         }
         var errors = controller.validate( txt );
         if(!errors.isEmpty()){
 
-            error.setText(errors.getFirst().getMessage());
+            errBody.setText(errors.getFirst().getMessage());
         }else
-            error.setText( "" );
+            errBody.setText( "" );
     }
 
     private Panel createPanel() {
