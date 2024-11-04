@@ -1,14 +1,11 @@
 package tgpr.forms.view;
 
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
-import tgpr.forms.controller.AddEditFormController;
 import tgpr.forms.controller.AddEditOptionListController;
 import tgpr.forms.model.OptionList;
 import tgpr.forms.model.OptionValue;
-import tgpr.framework.ViewManager;
 
 import java.util.List;
 
@@ -40,13 +37,13 @@ public class AddEditOptionListView extends DialogWindow {
         new EmptySpace().addTo(updateOptionListFormalities);
         //#### INDEX LABEL ####
         table = new ObjectTable<>(
+                new ColumnSpec<>("Label", optionValue -> {return optionValue.getIdx();}),
                 new ColumnSpec<>("Label", optionValue -> {return optionValue.getLabel();})
-                //new ColumnSpec<>("Label",OptionValue::getLabel)
         );
         System.out.println(optionList.getOptionValues());
 
         //# SETUP #
-        updateOptionListFormalities.addComponent(table);
+        root.addComponent(table);
         setComponent(root);
         reloadData();
 
@@ -55,11 +52,8 @@ public class AddEditOptionListView extends DialogWindow {
         }
     }
     public void reloadData() {
-        // vide le tableau
         table.clear();
-        // demande au contrôleur la liste des membres
         var values = controller.getValuesByOptionList(optionList.getId());
-        // ajoute l'ensemble des membres au tableau
         table.add(values);
     }
 }
