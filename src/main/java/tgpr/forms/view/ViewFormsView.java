@@ -5,11 +5,14 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.menu.*;
 import tgpr.forms.controller.FormController;
+import tgpr.forms.controller.LoginController;
 import tgpr.forms.controller.ViewFormsController;
 import tgpr.forms.model.AccessType;
 import tgpr.forms.model.Form;
 import tgpr.forms.model.Security;
 import tgpr.forms.model.User;
+import tgpr.forms.controller.edit_instance;
+import tgpr.framework.Controller;
 
 import java.util.List;
 
@@ -165,7 +168,7 @@ public class ViewFormsView extends BasicWindow {
         ;
 
         if (!form.getQuestions().isEmpty()) {
-            Button open = new Button("Open").addTo(buttonsPanel);
+            Button open = new Button("Open", () -> openInstance(form)).addTo(buttonsPanel);
 
             open.setEnabled(true);
 
@@ -199,6 +202,10 @@ public class ViewFormsView extends BasicWindow {
     public void manage(Form form) {
         controller.manage(form);
         reloadData();
+    }
+
+    public void openInstance(Form form){
+        Controller.navigateTo(new edit_instance(user, form));
     }
 
 }
