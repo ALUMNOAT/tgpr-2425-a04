@@ -12,6 +12,8 @@ import java.util.List;
 public class AddEditOptionListView extends DialogWindow {
     private final AddEditOptionListController controller;
     private final TextBox txtName;
+    private final TextBox txtAdd;
+    private final Button btnAdd;
     private final ObjectTable<OptionValue> table;
     private final OptionList optionList;
 
@@ -27,25 +29,31 @@ public class AddEditOptionListView extends DialogWindow {
         //## PANEL ROOT ##
         Panel root = new Panel();
 
-        //### PANEL FORMALITIES ###
-        Panel updateOptionListFormalities = new Panel().setLayoutManager(new GridLayout(2).setTopMarginSize(1)).addTo(root);
+        //### PANEL NAME ###
+        Panel pnlName = new Panel().setLayoutManager(new GridLayout(2).setTopMarginSize(1).setRightMarginSize(2));
+        new Label("Name:        ").addTo(pnlName);
+        txtName = new TextBox(new TerminalSize(52, 1)).addTo(pnlName);
+        root.addComponent(pnlName);
 
-        //#### NAME ####
-        new Label("Name:").addTo(updateOptionListFormalities);
-        txtName = new TextBox(new TerminalSize(50, 1)).addTo(updateOptionListFormalities);
-        new EmptySpace().addTo(updateOptionListFormalities);
-        new EmptySpace().addTo(updateOptionListFormalities);
-        //#### INDEX LABEL ####
+        //### PANEL INDEX LABEL ###
+        Panel pnlOptionValues = new Panel().setLayoutManager(new GridLayout(1).setTopMarginSize(1).setRightMarginSize(4)).sizeTo(60, 11);
         table = new ObjectTable<>(
-                new ColumnSpec<>("Index", OptionValue::getIdx),
-                new ColumnSpec<>("Label                                            ", OptionValue::getLabel)
+                new ColumnSpec<>("Index ", OptionValue::getIdx),
+                new ColumnSpec<>("Label                                           ", OptionValue::getLabel)
         );
+        pnlOptionValues.addComponent(table);
+        root.addComponent(pnlOptionValues);
+
+        //### PANEL ADD ###
+        Panel pnlAdd = new Panel().setLayoutManager(new GridLayout(2).setTopMarginSize(1).setRightMarginSize(2));
+        txtAdd = new TextBox(new TerminalSize(48, 1)).addTo(pnlAdd);
+        btnAdd = new Button("Add").addTo(pnlAdd);
+        root.addComponent(pnlAdd);
+
 
         //# SETUP #
-        root.addComponent(table);
         setComponent(root);
         reloadData();
-
         if (optionList != null) {
             txtName.setText(optionList.getName());
         }
