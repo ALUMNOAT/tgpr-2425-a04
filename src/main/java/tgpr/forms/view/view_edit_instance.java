@@ -236,6 +236,7 @@ public class view_edit_instance extends DialogWindow {
         if(controller.getQuestion().getIdx() > 1){
             new Button( "Previous" , this::previous ).addTo( panel );
 
+
         } if(controller.getQuestion().getIdx() < controller.numQuestions()){
             new Button( "Next" , this::next ).addTo( panel );
         } else  {
@@ -351,8 +352,9 @@ public class view_edit_instance extends DialogWindow {
     private void validate() {
         String txt = "";
         if(controller.getQuestion().getType() == Question.Type.Check){
-            if( checkBox.isEmpty())
+            if( !checkBox.isEmpty()){
                 txt = "C'est bon";
+            }
         } else if(controller.getQuestion().getType() == Question.Type.Radio){
             if( radioBox.getCheckedItemIndex() > -1){
                 txt = ""+(radioBox.getCheckedItemIndex()+1);
