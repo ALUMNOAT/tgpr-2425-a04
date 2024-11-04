@@ -6,17 +6,23 @@ import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.forms.controller.AddEditFormController;
 import tgpr.forms.controller.AddEditOptionListController;
+import tgpr.forms.model.OptionList;
+import tgpr.forms.model.OptionValue;
+import tgpr.framework.ViewManager;
 
 import java.util.List;
 
 public class AddEditOptionListView extends DialogWindow {
     private final AddEditOptionListController controller;
     private final TextBox txtName;
+    private final ObjectTable<OptionValue> table;
+    private final OptionList optionList;
 
-    public AddEditOptionListView(AddEditOptionListController controller) {
+    public AddEditOptionListView(AddEditOptionListController controller, OptionList optionList) {
         //# SETUP #
         super("Test");
         this.controller = controller;
+        this.optionList = optionList;
         setHints(List.of(Hint.CENTERED));
         setCloseWindowWithEscape(true);
         setFixedSize(new TerminalSize(60, 18));
@@ -29,11 +35,31 @@ public class AddEditOptionListView extends DialogWindow {
 
         //#### NAME ####
         new Label("Name:").addTo(updateOptionListFormalities);
-        txtName = new TextBox(new TerminalSize(21, 1)).addTo(updateOptionListFormalities);
+        txtName = new TextBox(new TerminalSize(50, 1)).addTo(updateOptionListFormalities);
         new EmptySpace().addTo(updateOptionListFormalities);
         new EmptySpace().addTo(updateOptionListFormalities);
+        //#### INDEX LABEL ####
+        table = new ObjectTable<>(
+                new ColumnSpec<>("Label", optionValue -> {return optionValue.getLabel();})
+                //new ColumnSpec<>("Label",OptionValue::getLabel)
+        );
+        System.out.println(optionList.getOptionValues());
 
         //# SETUP #
+        updateOptionListFormalities.addComponent(table);
         setComponent(root);
+        reloadData();
+
+        if (optionList != null) {
+            txtName.setText(optionList.getName());
+        }
+    }
+    public void reloadData() {
+        // vide le tableau
+        table.clear();
+        // demande au contrôleur la liste des membres
+        var values = controller.getValuesByOptionList(optionList.getId());
+        // ajoute l'ensemble des membres au tableau
+        table.add(values);
     }
 }
