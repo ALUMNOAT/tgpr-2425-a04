@@ -4,9 +4,6 @@ import tgpr.forms.model.OptionList;
 import tgpr.forms.model.Security;
 import tgpr.forms.view.ManageOptionListsView;
 import tgpr.framework.Controller;
-import tgpr.forms.model.Form;
-import tgpr.forms.model.Question;
-import tgpr.forms.view.ViewFormView;
 
 import java.util.List;
 
@@ -22,9 +19,14 @@ public class ManageOptionListsController extends Controller<ManageOptionListsVie
     }
 
     public void addOptionList() {
+        //TODO: edit_add_option_list
+        //navigateTo(new AddEditOptionListController())
     }
 
-    public void editOptionList(OptionList optionList) {}
+    public void editOptionList(OptionList optionList) {
+        //TODO: edit_add_option_list
+        //navigateTo(new AddEditOptionListController(optionList))
+    }
 
     @Override
     public ManageOptionListsView getView() {

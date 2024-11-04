@@ -1,14 +1,10 @@
 package tgpr.forms.view;
 
-import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.forms.controller.ManageOptionListsController;
-import tgpr.forms.controller.ViewFormController;
-import tgpr.forms.model.Form;
 import tgpr.forms.model.OptionList;
-import tgpr.forms.model.Question;
 import tgpr.framework.Tools;
 
 import java.util.List;
@@ -20,17 +16,6 @@ public class ManageOptionListsView extends DialogWindow {
     private final Label lblNoOptionLists = new Label("No option list found");
     private Panel pnlOptionLists;
     private ObjectTable<OptionList> optionListsTable;
-    private Button btnAdd;
-    private Button btnEdit;
-    private Button btnDelete;
-    private Button btnTogglePublic;
-    private Button btnShare;
-    private Button btnReorder;
-    private Button btnClear;
-    private Button btnAnalyze;
-    private Button btnClose;
-    private Button btnSave;
-    private Button btnCancel;
 
     public ManageOptionListsView(ManageOptionListsController controller) {
         super("Option Lists Management");
@@ -51,7 +36,7 @@ public class ManageOptionListsView extends DialogWindow {
     }
 
     private Panel createOptionListsPanel() {
-        var panel = pnlOptionLists = Panel.gridPanel(1, Margin.of(1));;
+        var panel = pnlOptionLists = Panel.gridPanel(1, Margin.of(1));
         optionListsTable = new ObjectTable<>(
                 new ColumnSpec<>("Name", OptionList::getName).setWidth(30)
                         .setOverflowHandling(ColumnSpec.OverflowHandling.Wrap),
@@ -70,8 +55,8 @@ public class ManageOptionListsView extends DialogWindow {
                 .setLayoutManager(new LinearLayout(Direction.HORIZONTAL))
                 .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
 
-        btnAdd =  new Button("New List", this::addOptionList).addTo(panel);
-        btnClose = new Button("Close", this::close).addTo(panel);
+        new Button("New List", this::addOptionList).addTo(panel);
+        new Button("Close", this::close).addTo(panel);
 
         return panel;
     }
