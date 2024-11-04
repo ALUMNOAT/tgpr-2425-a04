@@ -10,8 +10,8 @@ import java.util.List;
 public class AddEditOptionListController extends Controller<AddEditOptionListView> {
     private final AddEditOptionListView view;
 
-    public AddEditOptionListController(){
-        view = new AddEditOptionListView(this, OptionList.getByKey(1));
+    public AddEditOptionListController(OptionList optionList){
+        view = new AddEditOptionListView(this, optionList);
     }
 
     @Override
