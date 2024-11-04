@@ -50,6 +50,14 @@ public class AddEditOptionListView extends DialogWindow {
         btnAdd = new Button("Add").addTo(pnlAdd);
         root.addComponent(pnlAdd);
 
+        //### PANEL BUTTONS ###
+        Panel pnlButtons = new Panel(new LinearLayout(Direction.HORIZONTAL)).addTo(root);
+        new Button("Reorder", this::reorder).addTo(pnlButtons);
+        new Button("Delete", this::delete).addTo(pnlButtons);
+        new Button("Duplicate", this::duplicate).addTo(pnlButtons);
+        new Button("Save", this::save).addTo(pnlButtons);
+        new Button("Close", this::close).addTo(pnlButtons);
+
 
         //# SETUP #
         setComponent(root);
@@ -62,5 +70,21 @@ public class AddEditOptionListView extends DialogWindow {
         table.clear();
         var values = controller.getValuesByOptionList(optionList.getId());
         table.add(values);
+    }
+
+    private void reorder() {
+        System.out.println("it works !");
+    }
+
+    private void delete() {
+        System.out.println("it works too !");
+    }
+
+    private void duplicate() {
+        System.out.println("it works ! it works !");
+    }
+
+    private void save() {
+        System.out.println("doews it work ? yes");
     }
 }
