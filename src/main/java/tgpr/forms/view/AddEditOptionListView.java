@@ -17,7 +17,7 @@ public class AddEditOptionListView extends DialogWindow {
 
     public AddEditOptionListView(AddEditOptionListController controller, OptionList optionList) {
         //# SETUP #
-        super("Test");
+        super((optionList == null ? "Create" : "Update") + " Option List");
         this.controller = controller;
         this.optionList = optionList;
         setHints(List.of(Hint.CENTERED));
@@ -40,7 +40,6 @@ public class AddEditOptionListView extends DialogWindow {
                 new ColumnSpec<>("Index", OptionValue::getIdx),
                 new ColumnSpec<>("Label                                            ", OptionValue::getLabel)
         );
-        System.out.println(optionList.getOptionValues());
 
         //# SETUP #
         root.addComponent(table);
