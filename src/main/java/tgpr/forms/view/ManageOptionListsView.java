@@ -51,13 +51,13 @@ public class ManageOptionListsView extends DialogWindow {
     }
 
     private Panel createOptionListsPanel() {
-        var panel = pnlOptionLists = new Panel();
+        var panel = pnlOptionLists = Panel.gridPanel(1, Margin.of(1));;
         optionListsTable = new ObjectTable<>(
-                new ColumnSpec<>("Name", OptionList::getName).setWidth(5).alignRight(),
-                new ColumnSpec<>("Values", OptionList::getSize).setWidth(30)
+                new ColumnSpec<>("Name", OptionList::getName).setWidth(30)
                         .setOverflowHandling(ColumnSpec.OverflowHandling.Wrap),
-                new ColumnSpec<OptionList>("Type", m ->
-                        Tools.ifNull(m.getOwner(), "System")).setWidth(25)
+                new ColumnSpec<>("Values", OptionList::getSize).setWidth(7).alignRight(),
+                new ColumnSpec<OptionList>("Owner", m ->
+                        Tools.ifNull(m.getOwner(), "System")).setWidth(20)
         ).addTo(panel).setSelectAction(this::editOptionList);
 
         lblNoOptionLists.setForegroundColor(TextColor.ANSI.RED).addTo(panel);

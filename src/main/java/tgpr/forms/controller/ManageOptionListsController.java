@@ -1,6 +1,7 @@
 package tgpr.forms.controller;
 
 import tgpr.forms.model.OptionList;
+import tgpr.forms.model.Security;
 import tgpr.forms.view.ManageOptionListsView;
 import tgpr.framework.Controller;
 import tgpr.forms.model.Form;
@@ -17,7 +18,7 @@ public class ManageOptionListsController extends Controller<ManageOptionListsVie
     }
 
     public List<OptionList> getOptionLists() {
-        return OptionList.getAll();
+        return OptionList.getForUser(Security.getLoggedUser());
     }
 
     public void addOptionList() {
