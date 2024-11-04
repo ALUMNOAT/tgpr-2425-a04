@@ -22,4 +22,20 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
     public List<OptionValue> getValuesByOptionList(int optionListID) {
         return OptionValue.getAllByOptionList(optionListID);
     }
+
+    public void reorder() {
+        System.out.println("it works !");
+    }
+
+    public void delete() {
+        System.out.println("it works too !");
+    }
+
+    public void duplicate() {
+        System.out.println("it works ! it works !");
+    }
+
+    public void save() {
+        System.out.println("doews it work ? yes");
+    }
 }
