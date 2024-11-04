@@ -37,8 +37,8 @@ public class AddEditOptionListView extends DialogWindow {
         new EmptySpace().addTo(updateOptionListFormalities);
         //#### INDEX LABEL ####
         table = new ObjectTable<>(
-                new ColumnSpec<>("Label", optionValue -> {return optionValue.getIdx();}),
-                new ColumnSpec<>("Label", optionValue -> {return optionValue.getLabel();})
+                new ColumnSpec<>("Index", OptionValue::getIdx),
+                new ColumnSpec<>("Label                                            ", OptionValue::getLabel)
         );
         System.out.println(optionList.getOptionValues());
 
