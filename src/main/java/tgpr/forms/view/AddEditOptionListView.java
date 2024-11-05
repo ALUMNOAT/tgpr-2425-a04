@@ -1,6 +1,7 @@
 package tgpr.forms.view;
 
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.forms.controller.AddEditOptionListController;
@@ -11,9 +12,13 @@ import java.util.List;
 
 public class AddEditOptionListView extends DialogWindow {
     private final AddEditOptionListController controller;
+    private final Label errAdd;
     private final TextBox txtName;
     private final TextBox txtAdd;
     private final Button btnAdd;
+    private final Button btnReorder;
+    private final Button btnDelete;
+    private final Button btnSave;
     private final ObjectTable<OptionValue> table;
     private final OptionList optionList;
 
@@ -45,21 +50,28 @@ public class AddEditOptionListView extends DialogWindow {
         root.addComponent(pnlOptionValues);
 
         //### PANEL ADD ###
-        Panel pnlAdd = new Panel().setLayoutManager(new GridLayout(2).setTopMarginSize(1).setRightMarginSize(2).setBottomMarginSize(2));
-        txtAdd = new TextBox(new TerminalSize(48, 1)).addTo(pnlAdd);
-        btnAdd = new Button("Add").addTo(pnlAdd);
+        Panel pnlAdd = new Panel().setLayoutManager(new GridLayout(2).setRightMarginSize(2).setBottomMarginSize(2));
+        errAdd = new Label("test").addTo(pnlAdd).setForegroundColor(TextColor.ANSI.RED);
+        new EmptySpace().addTo(pnlAdd);
+        txtAdd = new TextBox(new TerminalSize(48, 1))
+                .addTo(pnlAdd).setTextChangeListener((txt, byUser) -> validate());
+        btnAdd = new Button("Add", this::addOptionValue).addTo(pnlAdd);
         root.addComponent(pnlAdd);
 
         //### PANEL BUTTONS ###
         Panel pnlButtons = new Panel(new LinearLayout(Direction.HORIZONTAL)).setLayoutData(Layouts.LINEAR_END).addTo(root); //Merci
-        if(optionList != null && optionList.getOwner() != null)
-            new Button("Reorder", this::reorder).addTo(pnlButtons);
-        if(optionList != null && !optionList.isUsed())
-            new Button("Delete", this::delete).addTo(pnlButtons).setEnabled(!optionList.isUsed());
+        btnReorder = new Button("Reorder", this::reorder);
+        btnDelete = new Button("Delete", this::delete);
         new Button("Duplicate", this::duplicate).addTo(pnlButtons);
-        if(optionList != null && optionList.getOwner() != null)
-            new Button("Save", this::save).addTo(pnlButtons);
+        btnSave = new Button("Save", this::save);
         new Button("Close", this::close).addTo(pnlButtons);
+
+        if(optionList != null && optionList.getOwner() != null)
+            btnSave.addTo(pnlButtons);
+        if(optionList != null && optionList.getOwner() != null)
+            btnReorder.addTo(pnlButtons);
+        if(optionList != null && !optionList.isUsed())
+            btnDelete.addTo(pnlButtons).setEnabled(!optionList.isUsed());
 
         //# SETUP #
         setComponent(root);
@@ -76,6 +88,15 @@ public class AddEditOptionListView extends DialogWindow {
         }
     }
 
+    private void validate() {
+        var errors = controller.validate(
+                txtAdd.getText()
+        );
+        errAdd.setText(errors.getFirstErrorMessage(OptionValue.Fields.Label));
+
+        btnAdd.setEnabled(errors.isEmpty());
+    }
+
     private void reorder() {
         controller.reorder();
     }
@@ -90,5 +111,9 @@ public class AddEditOptionListView extends DialogWindow {
 
     private void save() {
         controller.save();
+    }
+
+    private void addOptionValue() {
+        controller.addOptionValue();
     }
 }

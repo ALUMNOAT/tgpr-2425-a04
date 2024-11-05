@@ -2,8 +2,10 @@ package tgpr.forms.controller;
 
 import tgpr.forms.model.OptionList;
 import tgpr.forms.model.OptionValue;
+import tgpr.forms.model.OptionValueValidator;
 import tgpr.forms.view.AddEditOptionListView;
 import tgpr.framework.Controller;
+import tgpr.framework.ErrorList;
 
 import java.util.List;
 
@@ -44,9 +46,19 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
         System.out.println("doews it work ? yes");
     }
 
+    public void addOptionValue() {
+
+    }
+
     public boolean askConfirmationDelete() {
         return askConfirmation(
                 "Are you sure you want to delete this option list?",
                 "Delete");
+    }
+
+    public ErrorList validate(String label){
+        var errors = new ErrorList();
+        errors.add(OptionValueValidator.isValidLabel(label));
+        return errors;
     }
 }
