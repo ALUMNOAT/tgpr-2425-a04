@@ -9,9 +9,11 @@ import java.util.List;
 
 public class AddEditOptionListController extends Controller<AddEditOptionListView> {
     private final AddEditOptionListView view;
+    private final OptionList optionList;
 
     public AddEditOptionListController(OptionList optionList){
         view = new AddEditOptionListView(this, optionList);
+        this.optionList = optionList;
     }
 
     @Override
@@ -28,7 +30,10 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
     }
 
     public void delete() {
-        System.out.println("it works too !");
+        if(!optionList.isUsed() && askConfirmationDelete()) {
+            optionList.delete();
+            view.close();
+        }
     }
 
     public void duplicate() {
@@ -37,5 +42,11 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
 
     public void save() {
         System.out.println("doews it work ? yes");
+    }
+
+    public boolean askConfirmationDelete() {
+        return askConfirmation(
+                "Are you sure you want to delete this option list?",
+                "Delete");
     }
 }
