@@ -52,10 +52,13 @@ public class AddEditOptionListView extends DialogWindow {
 
         //### PANEL BUTTONS ###
         Panel pnlButtons = new Panel(new LinearLayout(Direction.HORIZONTAL)).setLayoutData(Layouts.LINEAR_END).addTo(root); //Merci
-        new Button("Reorder", this::reorder).addTo(pnlButtons);
-        new Button("Delete", this::delete).addTo(pnlButtons);
+        if(optionList != null && optionList.getOwner() != null)
+            new Button("Reorder", this::reorder).addTo(pnlButtons);
+        if(optionList != null && !optionList.isUsed())
+            new Button("Delete", this::delete).addTo(pnlButtons).setEnabled(!optionList.isUsed());
         new Button("Duplicate", this::duplicate).addTo(pnlButtons);
-        new Button("Save", this::save).addTo(pnlButtons);
+        if(optionList != null && optionList.getOwner() != null)
+            new Button("Save", this::save).addTo(pnlButtons);
         new Button("Close", this::close).addTo(pnlButtons);
 
         //# SETUP #
@@ -66,9 +69,11 @@ public class AddEditOptionListView extends DialogWindow {
         }
     }
     public void reloadData() {
-        table.clear();
-        var values = controller.getValuesByOptionList(optionList.getId());
-        table.add(values);
+        if(optionList != null) {
+            table.clear();
+            var values = controller.getValuesByOptionList(optionList.getId());
+            table.add(values);
+        }
     }
 
     private void reorder() {
