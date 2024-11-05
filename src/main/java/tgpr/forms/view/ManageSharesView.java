@@ -1,15 +1,11 @@
 package tgpr.forms.view;
 
 
-import com.googlecode.lanterna.gui2.ColumnSpec;
-import com.googlecode.lanterna.gui2.ComboBox;
-import com.googlecode.lanterna.gui2.ObjectTable;
-import com.googlecode.lanterna.gui2.Panel;
+import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.forms.model.*;
 import tgpr.framework.Model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ManageSharesView extends DialogWindow {
@@ -18,8 +14,11 @@ public class ManageSharesView extends DialogWindow {
 
     private  ObjectTable<Model> sharesTable;
 
-    private final ComboBox<String> potentialBeneficiaries = new ComboBox<>();
-    private final ComboBox<String> potentialBeneficiariesAccess = new ComboBox<>();;
+    private final ComboBox<Model> potentialBeneficiaries = new ComboBox<>();
+    private final ComboBox<AccessType> potentialBeneficiariesAccessType = new ComboBox<>();;
+
+    private Button btnAddShare;
+    private Button btnClose;
 
 
     public ManageSharesView(Form form) {
@@ -28,10 +27,17 @@ public class ManageSharesView extends DialogWindow {
 
             Panel root = new Panel();
 
+
+            createFormAccessLists().addTo(root);
+            addAccessPanel().addTo(root);
+
+
+            btnClose = new Button("Close", this::close).addTo(root);
+
     }
 
-    private Panel createFormShareLists(){
-
+    private Panel createFormAccessLists(){
+        // TODO: put the formats and background blue color on the comboBox
         Panel formsSharesPanel = new Panel();
         List<Model> beneficiaries = form.getAccesses();
 
@@ -40,7 +46,7 @@ public class ManageSharesView extends DialogWindow {
         sharesTable = new ObjectTable<>(
                     new ColumnSpec<>("Pseudo", form::getBeneficiaryName),
                     new ColumnSpec<>("Type", this::getBeneficiariesType),
-                    new ColumnSpec<>("Access Right", this::getBeneficiariesType)
+                    new ColumnSpec<>("Access Right", this::getBeneficiariesAccessType)
         ).addTo(formsSharesPanel);
 
         return formsSharesPanel;
@@ -76,45 +82,74 @@ public class ManageSharesView extends DialogWindow {
     }
 
 
-    private Panel createAddShares(){
+    private Panel addAccessPanel(){
 
-        Panel giveSharesPanel = new Panel();
+        Panel addAccessPanel = new Panel();
 
-        createPotentialBeneficiariesComboBox();
-        potentialBeneficiaries.addTo(giveSharesPanel);
+        // TODO: put the formats on the panel and background blue color on the comboBox
 
-        potentialBeneficiariesAccess.addItem("User");
-        potentialBeneficiariesAccess.addItem("Editor");
-        potentialBeneficiariesAccess.setSelectedItem("User");
+        createPotentialBeneficiariesCboBox();
+        potentialBeneficiaries.addTo(addAccessPanel);
 
-        potentialBeneficiariesAccess.addTo(giveSharesPanel);
-
+        createPotentialBeneficiariesAccessTypeCboBox();
+        potentialBeneficiariesAccessType.addTo(addAccessPanel);
 
 
+        btnAddShare = new Button("Add Share", this::addFormAccess).addTo(addAccessPanel);
 
-        return giveSharesPanel;
+        return addAccessPanel;
 
     }
 
-    private void createPotentialBeneficiariesComboBox(){
+    private void createPotentialBeneficiariesCboBox(){
 
         List<Model> potentialBeneficiariesList = form.getPotentialBeneficiaries();
 
         for(Model potentialBeneficiary : potentialBeneficiariesList){
             if(potentialBeneficiary instanceof User u){
-                potentialBeneficiaries.addItem(u.getFullName());
+                potentialBeneficiaries.addItem(u);
             } else if (potentialBeneficiary instanceof DistList l) {
-                potentialBeneficiaries.addItem(l.getName());
+                potentialBeneficiaries.addItem(l);
 
             }
 
         }
 
+        potentialBeneficiaries.addListener((selectedIndex, previousSelection, changedByUserInteraction) -> {potentialBeneficiaries.setSelectedIndex(selectedIndex);});
+
+    }
+
+    private void createPotentialBeneficiariesAccessTypeCboBox(){
+
+        potentialBeneficiariesAccessType.addItem(AccessType.Editor);
+
+        if(form.getIsPublic()) {
+            potentialBeneficiariesAccessType.addItem(AccessType.User);
+            potentialBeneficiariesAccessType.setSelectedItem(AccessType.User);
+        }
+
+        potentialBeneficiariesAccessType.addListener((selectedIndex, previousSelection, changedByUserInteraction) -> {potentialBeneficiariesAccessType.setSelectedIndex(selectedIndex);});
+
     }
 
 
+    private void addFormAccess(){
 
+        Model beneficiaryToAdd = potentialBeneficiaries.getSelectedItem();
 
+        AccessType beneficiaryAccessTypeToAdd = potentialBeneficiariesAccessType.getSelectedItem();
+
+        if(beneficiaryToAdd != null) {
+            if (beneficiaryToAdd instanceof User u) {
+
+                form.addAccess(u, beneficiaryAccessTypeToAdd);
+            } else if (beneficiaryToAdd instanceof DistList l) {
+
+                form.addAccess(l, beneficiaryAccessTypeToAdd);
+            }
+        }
+
+    }
 
 
 }
