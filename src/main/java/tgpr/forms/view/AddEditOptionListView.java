@@ -36,28 +36,27 @@ public class AddEditOptionListView extends DialogWindow {
         root.addComponent(pnlName);
 
         //### PANEL INDEX LABEL ###
-        Panel pnlOptionValues = new Panel().setLayoutManager(new GridLayout(1).setTopMarginSize(1).setRightMarginSize(4)).sizeTo(60, 11);
+        Panel pnlOptionValues = new Panel().setLayoutManager(new GridLayout(1).setTopMarginSize(1).setRightMarginSize(4)).sizeTo(59, 11);
         table = new ObjectTable<>(
                 new ColumnSpec<>("Index ", OptionValue::getIdx),
-                new ColumnSpec<>("Label                                          ", OptionValue::getLabel)
+                new ColumnSpec<>("Label                                         ", OptionValue::getLabel)
         );
         pnlOptionValues.addComponent(table);
         root.addComponent(pnlOptionValues);
 
         //### PANEL ADD ###
-        Panel pnlAdd = new Panel().setLayoutManager(new GridLayout(2).setTopMarginSize(1).setRightMarginSize(2));
+        Panel pnlAdd = new Panel().setLayoutManager(new GridLayout(2).setTopMarginSize(1).setRightMarginSize(2).setBottomMarginSize(2));
         txtAdd = new TextBox(new TerminalSize(48, 1)).addTo(pnlAdd);
         btnAdd = new Button("Add").addTo(pnlAdd);
         root.addComponent(pnlAdd);
 
         //### PANEL BUTTONS ###
-        Panel pnlButtons = new Panel(new LinearLayout(Direction.HORIZONTAL)).addTo(root);
+        Panel pnlButtons = new Panel(new LinearLayout(Direction.HORIZONTAL)).setLayoutData(Layouts.LINEAR_END).addTo(root); //Merci
         new Button("Reorder", this::reorder).addTo(pnlButtons);
         new Button("Delete", this::delete).addTo(pnlButtons);
         new Button("Duplicate", this::duplicate).addTo(pnlButtons);
         new Button("Save", this::save).addTo(pnlButtons);
         new Button("Close", this::close).addTo(pnlButtons);
-
 
         //# SETUP #
         setComponent(root);
