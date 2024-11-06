@@ -3,12 +3,17 @@ package tgpr.forms.view;
 
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
+import tgpr.forms.controller.ManageSharesController;
 import tgpr.forms.model.*;
 import tgpr.framework.Model;
 
 import java.util.List;
 
 public class ManageSharesView extends DialogWindow {
+
+    private final ManageSharesController controller;
 
     private final Form form;
 
@@ -21,9 +26,10 @@ public class ManageSharesView extends DialogWindow {
     private Button btnClose;
 
 
-    public ManageSharesView(Form form) {
+    public ManageSharesView(ManageSharesController controller, Form form) {
             super("Manage Shares");
-            this.form = form;
+        this.controller = controller;
+        this.form = form;
 
             Panel root = new Panel();
 
@@ -60,9 +66,9 @@ public class ManageSharesView extends DialogWindow {
 
     private String getBeneficiariesType(Model beneficiary){
 
-        if(beneficiary instanceof User){
+        if(beneficiary instanceof UserFormAccess ua){
             return "User";
-        } else if(beneficiary instanceof DistList){
+        } else if(beneficiary instanceof DistListFormAccess da){
             return "DistList";
         }
         return null;
@@ -150,6 +156,50 @@ public class ManageSharesView extends DialogWindow {
         }
 
     }
+
+    private void changeAccessList(){
+
+        sharesTable.setSelectAction(() -> {
+
+            var selectedList = sharesTable.getSelected();
+
+            if(!form.getIsPublic() && selectedList!=null){
+                if(selectedList instanceof UserFormAccess ua){
+                    if(ua.getAccessType() == AccessType.Editor){
+                        ua.setAccessType(AccessType.User);
+                    } else if(ua.getAccessType() == AccessType.User){
+                        ua.setAccessType(AccessType.Editor);
+                    }
+                } else if(selectedList instanceof DistListFormAccess d) {
+                    if(d.getAccessType() == AccessType.Editor){
+                        d.setAccessType(AccessType.User);
+                    } else if(d.getAccessType() == AccessType.User){
+                        d.setAccessType(AccessType.Editor);
+                    }
+                }
+            }
+
+        });
+
+    }
+
+
+    private void delAccessList(){
+
+        addKeyboardListener(sharesTable,this::deleteKeyPressed);
+    }
+
+    private Boolean deleteKeyPressed(KeyStroke keyStroke) {
+
+        if(keyStroke.getKeyType()==KeyType.Delete){
+            var selectedList = sharesTable.getSelected();
+
+            controller.deleteShare(selectedList);
+        }
+
+        return false;
+    }
+
 
 
 }
