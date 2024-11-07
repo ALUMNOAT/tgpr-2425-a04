@@ -16,6 +16,15 @@ public abstract class UserValidator {
         return Error.NOERROR;
     }
 
+    public static Error isValidAvailableEmail(String email) {
+        var error = isValidEmail(email);
+        if (error != Error.NOERROR)
+            return error;
+        if (User.getByEmail(email) != null)
+            return new Error("not available", User.Fields.Email);
+        return Error.NOERROR;
+    }
+
     public static Error isValidPassword(String password) {
         if (password == null || password.isBlank())
             return new Error("password required", User.Fields.Password);
@@ -38,5 +47,4 @@ public abstract class UserValidator {
 
         return errors;
     }
-
 }
