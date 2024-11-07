@@ -4,6 +4,8 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import tgpr.forms.controller.LoginController;
 import tgpr.framework.Configuration;
+import tgpr.framework.Controller;
+import tgpr.forms.controller.SignupController;
 
 import java.util.List;
 
@@ -105,7 +107,7 @@ public class LoginView extends BasicWindow{
     }
 
     private void signup() {
-        // TODO: Add 'Controller.navigateTo(new SignupController());'
+        Controller.navigateTo(new SignupController());
     }
 
     private void logAsDefaultAdmin() {
