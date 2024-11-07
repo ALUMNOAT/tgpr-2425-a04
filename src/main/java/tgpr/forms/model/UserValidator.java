@@ -36,12 +36,14 @@ public abstract class UserValidator {
     public static List<Error> validate(User user) {
         var errors = new ErrorList();
 
-        // field validations
+        // field validation
         errors.add(isValidEmail(user.getEmail()));
+        errors.add(isValidPassword(user.getPassword()));
 
-        // cross-fields validations
-        if (user.getEmail() != null && !user.getEmail().isBlank() && user.getEmail().equals(user.getName()))
-            errors.add("Name must be different from email", User.Fields.Email);
+        //cross-fields validations
+
+        if (user.getName() != null && !user.getName().isBlank() && user.getName().equals(user.getEmail()))
+            errors.add("name must be different from email", User.Fields.FullName);
 
         return errors;
     }
