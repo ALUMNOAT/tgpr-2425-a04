@@ -10,7 +10,11 @@ import tgpr.forms.model.User;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static tgpr.framework.Tools.asString;
+import static tgpr.framework.Tools.ifNull;
+
 public class SignupView extends DialogWindow {
+
     private final SignupController controller;
     private final TextBox txtEmail;
     private final TextBox txtFullName;
@@ -44,7 +48,7 @@ public class SignupView extends DialogWindow {
         new Label("Mail:").addTo(root);
         txtEmail = new TextBox(new TerminalSize(25, 1)).addTo(root)
                 .setValidationPattern(Pattern.compile("[A-Za-z0-9+_.-]*+[@]{0,1}+[A-Za-z0-9-]*+[.]{0,1}+[A-Za-z]{0,3}"))
-                //.setTextChangeListener((txt, byUser) -> validate())
+                .setTextChangeListener((txt, byUser) -> validate())
                 .setReadOnly(user != null);
         new EmptySpace().addTo(root);
         errEmail = new Label("").addTo(root)
@@ -52,8 +56,8 @@ public class SignupView extends DialogWindow {
 
         //Setup FullName button
         new Label("Full Name:").addTo(root);
-        txtFullName = new TextBox(new TerminalSize(40, 1)).addTo(root);
-                //.setTextChangeListener((txt, byUser) -> validate());
+        txtFullName = new TextBox(new TerminalSize(40, 1)).addTo(root)
+                .setTextChangeListener((txt, byUser) -> validate());
         new EmptySpace().addTo(root);
         errFullName = new Label("").addTo(root)
                 .setForegroundColor(TextColor.ANSI.RED);
@@ -61,8 +65,8 @@ public class SignupView extends DialogWindow {
         //Setup Password button
         new Label("Password:").addTo(root);
         txtPassword = new TextBox(new TerminalSize(25, 1)).addTo(root)
-                .setMask('*');
-                //.setTextChangeListener((txt, byUser) -> validate());
+                .setMask('*')
+                .setTextChangeListener((txt, byUser) -> validate());
         new EmptySpace().addTo(root);
         errPassword = new Label("").addTo(root)
                 .setForegroundColor(TextColor.ANSI.RED);
@@ -70,13 +74,13 @@ public class SignupView extends DialogWindow {
         //Setup ConfirmPassword button
         new Label("Confirm Password:").addTo(root);
         txtPasswordConfirm = new TextBox(new TerminalSize(25, 1)).addTo(root)
-                .setMask('*');
-                //.setTextChangeListener((txt, byUser) -> validate());
+                .setMask('*')
+                .setTextChangeListener((txt, byUser) -> validate());
         new EmptySpace().addTo(root);
         errPasswordConfirm = new Label("").addTo(root)
                 .setForegroundColor(TextColor.ANSI.RED);
 
-        //Add space to dissociate and push the button panel to the bottom of the root panel (estethic)
+        //Add space to dissociate and push the button panel to the bottom of the root panel (esthetic)
         new EmptySpace().addTo(root);
 
         var buttons = new Panel().addTo(root).setLayoutManager(new LinearLayout(Direction.HORIZONTAL))
@@ -91,27 +95,26 @@ public class SignupView extends DialogWindow {
     }
 
     private void add() {
-//        controller.save(
-//                txtEmail.getText(),
-//                txtFullName.getText(),
-//                txtPassword.getText(),
-//                txtPasswordConfirm.getText()
-//        );
+        controller.save(
+                txtEmail.getText(),
+                txtFullName.getText(),
+                txtPassword.getText(),
+                txtPasswordConfirm.getText()
+        );
     }
 
-//    private void validate() {
-//        var errors = controller.validate(
-//                txtEmail.getText(),
-//                txtFullName.getText(),
-//                txtPassword.getText(),
-//                txtPasswordConfirm.getText()
-//        );
-//
-//        errEmail.setText(errors.getFirstErrorMessage(User.Fields.Email));
-//        errFullName.setText(errors.getFirstErrorMessage(User.Fields.FullName));
-//        errPassword.setText(errors.getFirstErrorMessage(User.Fields.Password));
-//        errPasswordConfirm.setText(errors.getFirstErrorMessage(SignupController.Fields.PasswordConfirm));
-//
-//        btnAddUpdate.setEnabled(errors.isEmpty());
-//    }
+    private void validate() {
+        var errors = controller.validate(
+                txtEmail.getText(),
+                txtFullName.getText(),
+                txtPassword.getText(),
+                txtPasswordConfirm.getText()
+        );
+
+        errEmail.setText(errors.getFirstErrorMessage(User.Fields.Email));
+        errFullName.setText(errors.getFirstErrorMessage(User.Fields.FullName));
+        errPassword.setText(errors.getFirstErrorMessage(User.Fields.Password));
+        errPasswordConfirm.setText(errors.getFirstErrorMessage(SignupController.Fields.PasswordConfirm));
+        btnSignup.setEnabled(errors.isEmpty());
+    }
 }

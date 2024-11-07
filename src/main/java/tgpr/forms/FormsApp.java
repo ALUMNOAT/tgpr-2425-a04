@@ -1,7 +1,6 @@
 package tgpr.forms;
 
 import tgpr.forms.controller.SignupController;
-import tgpr.forms.controller.TestController;
 import tgpr.framework.Controller;
 import tgpr.framework.Model;
 
@@ -13,7 +12,6 @@ public class FormsApp {
             Controller.abort("Database is not available!");
         else {
             Controller.navigateTo(new SignupController());
-            Controller.navigateTo(new TestController());
         }
     }
 }
