@@ -1,14 +1,14 @@
 package tgpr.forms.controller;
 
-import tgpr.forms.model.User;
-import tgpr.forms.model.UserValidator;
 import tgpr.framework.Controller;
 import tgpr.framework.Error;
 import tgpr.framework.ErrorList;
 import tgpr.framework.Model;
 import tgpr.forms.FormsApp;
-import tgpr.forms.view.LoginView;
+import tgpr.forms.model.User;
+import tgpr.forms.model.UserValidator;
 import tgpr.forms.model.Security;
+import tgpr.forms.view.LoginView;
 
 import java.util.List;
 
@@ -34,6 +34,7 @@ public class LoginController extends Controller<LoginView> {
 //            System.out.println("User: " + user); //Ajoutez cela pour le débogage
             if (user != null) {
                 Security.login(user);
+                navigateTo(new TestController());
             } else
                 showError(new Error("invalid credentials"));
         } else
