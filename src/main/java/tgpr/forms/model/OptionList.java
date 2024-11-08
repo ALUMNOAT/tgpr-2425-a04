@@ -171,6 +171,10 @@ public class OptionList extends Model {
                         .add("idx", idx));
     }
 
+    public int getSize() {
+        return getOptionValues().size();
+    }
+
     public static OptionList getByNameAndUser(String name, User user) {
         return queryOne(OptionList.class, """
                         select *

@@ -89,6 +89,9 @@ public class ViewFormsView extends BasicWindow {
         menuFile.add(logOut);
         menuFile.add(Exit);
 
+        MenuItem manageOptionLists = new MenuItem("Manage your Option Lists", controller::manageOptionLists);
+        menuParameters.add(manageOptionLists);
+
         menuBar.addTo(menu);
 
         menu.addEmpty();
