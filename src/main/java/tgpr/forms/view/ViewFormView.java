@@ -82,7 +82,7 @@ public class ViewFormView extends DialogWindow {
     }
 
     private Panel createQuestionPanel() {
-        var panel = pnlQuestions = new Panel();
+        var panel = pnlQuestions = Panel.gridPanel(1, Margin.of(1, 0, 1, 1));
         questionTable = new ObjectTable<>(
                 new ColumnSpec<>("Index", Question::getIdx).setWidth(5).alignRight(),
                 new ColumnSpec<>("Title", Question::getTitle).setWidth(30)
