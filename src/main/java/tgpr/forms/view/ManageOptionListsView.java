@@ -16,6 +16,7 @@ public class ManageOptionListsView extends DialogWindow {
     private final Label lblNoOptionLists = new Label("No option list found");
     private Panel pnlOptionLists;
     private ObjectTable<OptionList> optionListsTable;
+    private Button btnAdd;
 
     public ManageOptionListsView(ManageOptionListsController controller) {
         super("Option Lists Management");
@@ -31,18 +32,19 @@ public class ManageOptionListsView extends DialogWindow {
         createOptionListsPanel().addTo(root);
         createButtonsPanel().addTo(root);
 
-
         refresh();
     }
 
     private Panel createOptionListsPanel() {
         var panel = pnlOptionLists = Panel.gridPanel(1, Margin.of(1));
+
         optionListsTable = new ObjectTable<>(
                 new ColumnSpec<>("Name", OptionList::getName).setWidth(30)
                         .setOverflowHandling(ColumnSpec.OverflowHandling.Wrap),
                 new ColumnSpec<>("Values", OptionList::getSize).setWidth(7).alignRight(),
                 new ColumnSpec<OptionList>("Owner", m ->
                         Tools.ifNull(m.getOwner(), "System")).setWidth(20)
+                        .setOverflowHandling(ColumnSpec.OverflowHandling.Wrap)
         ).addTo(panel).setSelectAction(this::editOptionList);
 
         lblNoOptionLists.setForegroundColor(TextColor.ANSI.RED).addTo(panel);
@@ -55,7 +57,7 @@ public class ManageOptionListsView extends DialogWindow {
                 .setLayoutManager(new LinearLayout(Direction.HORIZONTAL))
                 .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
 
-        new Button("New List", this::addOptionList).addTo(panel);
+        btnAdd = new Button("New List", this::addOptionList).addTo(panel);
         new Button("Close", this::close).addTo(panel);
 
         return panel;
@@ -76,6 +78,7 @@ public class ManageOptionListsView extends DialogWindow {
     private void addOptionList() {
         controller.addOptionList();
         refresh();
+        btnAdd.takeFocus();
     }
 
     private void editOptionList() {
