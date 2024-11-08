@@ -411,7 +411,8 @@ values (1, 1, 1, 'Your last name?', 'Your last name', 'short', 1, null),
        (37, 15, 1, 'Gender', 'required for statistical purposes', 'radio', 1, 1),
        (38, 15, 2, 'Age group', 'required for statistical purposes', 'combo', 1, 7),
        (39, 15, 3, 'Favorite animal', 'in lowercase, please', 'short', 0, null),
-       (40, 15, 4, 'Favorite fruits', null, 'check', 0, 6);
+       (40, 15, 4, 'Favorite fruits', null, 'check', 0, 6),
+       (41,5,1,'Question 1','Description question 1','short',0,null);
 
 CREATE TABLE instances
 (
