@@ -58,13 +58,14 @@ public class AddEditOptionListView extends DialogWindow {
         root.addComponent(pnlOptionValues);
 
         //### PANEL ADD ###
-        Panel pnlAdd = new Panel().setLayoutManager(new GridLayout(2).setRightMarginSize(2).setBottomMarginSize(2));
-        errAdd = new Label("test").addTo(pnlAdd).setForegroundColor(TextColor.ANSI.RED);
+        Panel pnlAdd = new Panel().setLayoutManager(new GridLayout(2).setRightMarginSize(2).setBottomMarginSize(1));
+        errAdd = new Label("").addTo(pnlAdd).setForegroundColor(TextColor.ANSI.RED);
         new EmptySpace().addTo(pnlAdd);
         txtAdd = new TextBox(new TerminalSize(48, 1))
                 .addTo(pnlAdd).setTextChangeListener((txt, byUser) -> validate());
         btnAdd = new Button("Add", this::addOptionValue).addTo(pnlAdd);
-        root.addComponent(pnlAdd);
+        if(Security.getLoggedUser().isAdmin() && !optionList.isUsed())
+            root.addComponent(pnlAdd);
 
         //### PANEL BUTTONS ###
         Panel pnlButtons = new Panel(new LinearLayout(Direction.HORIZONTAL)).setLayoutData(Layouts.LINEAR_END).addTo(root); //Merci
