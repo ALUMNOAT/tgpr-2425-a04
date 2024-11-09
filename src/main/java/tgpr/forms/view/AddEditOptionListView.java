@@ -13,6 +13,7 @@ import java.util.List;
 public class AddEditOptionListView extends DialogWindow {
     private final AddEditOptionListController controller;
     private final Label errAdd;
+    private final Label errName;
     private final TextBox txtName;
     private final TextBox txtAdd;
     private final Button btnAdd;
@@ -37,7 +38,10 @@ public class AddEditOptionListView extends DialogWindow {
         //### PANEL NAME ###
         Panel pnlName = new Panel().setLayoutManager(new GridLayout(2).setTopMarginSize(1).setRightMarginSize(2));
         new Label("Name:        ").addTo(pnlName);
-        txtName = new TextBox(new TerminalSize(52, 1)).addTo(pnlName);
+        txtName = new TextBox(new TerminalSize(52, 1)).addTo(pnlName).setTextChangeListener((txt, byUser) -> validate());
+        new EmptySpace().addTo(pnlName);
+        errName = new Label("").addTo(pnlName).setForegroundColor(TextColor.ANSI.RED);
+
         root.addComponent(pnlName);
 
         //### PANEL INDEX LABEL ###
