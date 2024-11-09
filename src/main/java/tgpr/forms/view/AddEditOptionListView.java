@@ -45,7 +45,11 @@ public class AddEditOptionListView extends DialogWindow {
         root.addComponent(pnlName);
 
         //### PANEL INDEX LABEL ###
-        Panel pnlOptionValues = new Panel().setLayoutManager(new GridLayout(1).setTopMarginSize(1).setRightMarginSize(4)).sizeTo(59, 11);
+        Panel pnlOptionValues = new Panel().setLayoutManager(new GridLayout(1)
+                .setRightMarginSize(4).setBottomMarginSize(1))
+                .setLayoutData(LinearLayout
+                        .createLayoutData(LinearLayout.Alignment.End, LinearLayout.GrowPolicy.CanGrow));
+//                .sizeTo(59, 11);
         table = new ObjectTable<>(
                 new ColumnSpec<>("Index ", OptionValue::getIdx),
                 new ColumnSpec<>("Label                                         ", OptionValue::getLabel)
