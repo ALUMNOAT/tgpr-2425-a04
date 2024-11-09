@@ -2,16 +2,22 @@ package tgpr.forms.view;
 
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.gui2.Label;
-import com.googlecode.lanterna.gui2.Margin;
-import com.googlecode.lanterna.gui2.Panel;
-import com.googlecode.lanterna.gui2.Window;
+import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
+import com.googlecode.lanterna.input.KeyStroke;
 import tgpr.forms.controller.ViewInstanceController;
 import tgpr.forms.model.Form;
+import tgpr.forms.model.Instance;
+import tgpr.forms.model.Question;
 import tgpr.framework.Controller;
+import tgpr.framework.Tools;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import static tgpr.framework.Controller.askConfirmation;
 
 public class ViewInstanceView extends DialogWindow {
     private final ViewInstanceController controller;
@@ -22,9 +28,17 @@ public class ViewInstanceView extends DialogWindow {
     public ViewInstanceView( ViewInstanceController controller) {
         super( "List of Submitted Instances" );
         this.controller = controller;
-        this.form = new Form();
+        this.form = Form.getByKey( 1 );
         lblTitle.setText( form.getTitle());lblDescription.setText( form.getDescription() );
         setHints( List.of( Window.Hint.CENTERED , Window.Hint.MODAL ) );
+
+        Panel root = new Panel();
+        setComponent( root );
+        formTextPanel().addTo( root );
+        root.addEmpty();
+        instancePanel().addTo( root );
+        root.addEmpty();
+        buttonsPanel().addTo( root ).bottomCenter();
 
     }
 
@@ -39,4 +53,43 @@ public class ViewInstanceView extends DialogWindow {
 
         return panel;
     }
+
+    private Panel instancePanel() {
+        Panel instancePanel = new Panel();
+        ObjectTable<Instance> table = new ObjectTable<>(
+                new ColumnSpec<>("Id", Instance::getId).setWidth(5).alignRight(),
+                new ColumnSpec<>("User", Instance::getUser).setWidth(30)
+                        .setOverflowHandling(ColumnSpec.OverflowHandling.Wrap),
+                new ColumnSpec<>("Submiited", Instance::getCompleted).setWidth(20)
+                        .setOverflowHandling(ColumnSpec.OverflowHandling.Wrap)
+        ).addTo( instancePanel );
+
+        table.add( form.getCompletedInstances() );
+
+        return instancePanel;
+    }
+    private Panel buttonsPanel() {
+        Panel panel = Panel.horizontalPanel(1 );
+        new Button( "Delete Selected" , this::deleteSelected ).addTo( panel );
+        new Button( "Delete All" , this::deleteAll ).addTo( panel );
+        new Button( "Close" , this::close ).addTo( panel );
+
+        return panel;
+    }
+
+    private void deleteSelected( ) {
+
+    }
+
+    private void deleteAll( ) {
+        if(askConfirmation( "Are you sure you want to delete all the submitted instances?"
+                + System.lineSeparator() +
+                "Note: This will not delete instances that are currently being edited (not submitted).",
+                "Delete All Instances" )){
+            form.deleteAllSubmittedInstances();
+            }
+
+    }
+
+
 }
