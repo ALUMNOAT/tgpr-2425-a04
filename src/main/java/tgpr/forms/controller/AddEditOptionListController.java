@@ -1,6 +1,7 @@
 package tgpr.forms.controller;
 
 import tgpr.forms.model.OptionList;
+import tgpr.forms.model.OptionListValidator;
 import tgpr.forms.model.OptionValue;
 import tgpr.forms.model.OptionValueValidator;
 import tgpr.forms.view.AddEditOptionListView;
@@ -56,9 +57,10 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
                 "Delete");
     }
 
-    public ErrorList validate(String label){
+    public ErrorList validate(String label, String name){
         var errors = new ErrorList();
         errors.add(OptionValueValidator.isValidLabel(label));
+        errors.add(OptionListValidator.isValidName(name));
         return errors;
     }
 }
