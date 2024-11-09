@@ -79,6 +79,7 @@ public class AddEditOptionListView extends DialogWindow {
         if (optionList != null) {
             txtName.setText(optionList.getName());
         }
+        validate();
     }
     public void reloadData() {
         if(optionList != null) {
