@@ -71,18 +71,18 @@ public class AddEditOptionListView extends DialogWindow {
 
         //### PANEL BUTTONS ###
         Panel pnlButtons = new Panel(new LinearLayout(Direction.HORIZONTAL)).setLayoutData(Layouts.LINEAR_END).addTo(root); //Merci
-        btnReorder = new Button("Reorder", this::reorder);
         btnDelete = new Button("Delete", this::delete);
         new Button("Duplicate", this::duplicate).addTo(pnlButtons);
         btnSave = new Button("Save", this::save);
-        new Button("Close", this::close).addTo(pnlButtons);
 
         if(optionList != null && optionList.getOwner() != null)
-            btnSave.addTo(pnlButtons);
-        if(optionList != null && optionList.getOwner() != null)
-            btnReorder.addTo(pnlButtons);
+            new Button("Reorder", this::reorder).addTo(pnlButtons);
         if(optionList != null && !optionList.isUsed())
             btnDelete.addTo(pnlButtons).setEnabled(!optionList.isUsed());
+        if(optionList != null && optionList.getOwner() != null)
+            btnSave.addTo(pnlButtons);
+        new Button("Close", this::close).addTo(pnlButtons);
+
 
         //# SETUP #
         setComponent(root);
