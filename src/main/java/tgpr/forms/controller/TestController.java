@@ -28,7 +28,7 @@ public class TestController extends Controller<TestView> {
 
 
     public Form getForm(){
-        return Form.getAll().get(0);
+        return Form.getAll().get(2);
     }
 
     public void viewForm(Form form) {
@@ -50,6 +50,10 @@ public class TestController extends Controller<TestView> {
     public void displayForm(Form form) {
         navigateTo(new ViewFormController(form));
 
+    }
+
+    public void viewManageShares(Form form) {
+        navigateTo(new ManageSharesController(form));
     }
 
 }

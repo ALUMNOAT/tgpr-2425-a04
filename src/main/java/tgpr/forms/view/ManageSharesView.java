@@ -1,6 +1,7 @@
 package tgpr.forms.view;
 
 
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -27,33 +28,45 @@ public class ManageSharesView extends DialogWindow {
 
 
     public ManageSharesView(ManageSharesController controller, Form form) {
-            super("Manage Shares");
+        super("Manage Shares");
         this.controller = controller;
         this.form = form;
 
-            Panel root = new Panel();
+        Panel root = new Panel();
+        setTitle("Manage Shares");
 
+        setComponent(root);
 
-            createFormAccessLists().addTo(root);
-            addAccessPanel().addTo(root);
+        createFormAccessLists().addTo(root);
+        root.addEmpty(new TerminalSize(1,4));
+        addAccessPanel().addTo(root);
 
+        root.addEmpty();
 
-            btnClose = new Button("Close", this::close).addTo(root);
+        btnClose = new Button("Close", this::close).addTo(root)
+                    .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+
 
     }
 
     private Panel createFormAccessLists(){
         // TODO: put the formats and background blue color on the comboBox
         Panel formsSharesPanel = new Panel();
+
         List<Model> beneficiaries = form.getAccesses();
+
+
+        sharesTable = new ObjectTable<>(
+                    new ColumnSpec<>("Beneficiary", form::getBeneficiaryName).setWidth(30),
+                    new ColumnSpec<>("Type", this::getBeneficiariesType).setWidth(30),
+                    new ColumnSpec<>("Access Right", this::getBeneficiariesAccessType).setWidth(20)
+        ).addTo(formsSharesPanel);
 
         sharesTable.add(beneficiaries);
 
-        sharesTable = new ObjectTable<>(
-                    new ColumnSpec<>("Pseudo", form::getBeneficiaryName),
-                    new ColumnSpec<>("Type", this::getBeneficiariesType),
-                    new ColumnSpec<>("Access Right", this::getBeneficiariesAccessType)
-        ).addTo(formsSharesPanel);
+        changeAccessList();
+        //delAccessList();
+        //changeAccessList();
 
         return formsSharesPanel;
     }
@@ -92,6 +105,8 @@ public class ManageSharesView extends DialogWindow {
 
         Panel addAccessPanel = new Panel();
 
+        addAccessPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+
         // TODO: put the formats on the panel and background blue color on the comboBox
 
         createPotentialBeneficiariesCboBox();
@@ -100,6 +115,7 @@ public class ManageSharesView extends DialogWindow {
         createPotentialBeneficiariesAccessTypeCboBox();
         potentialBeneficiariesAccessType.addTo(addAccessPanel);
 
+        //changeAccessList();
 
         btnAddShare = new Button("Add Share", this::addFormAccess).addTo(addAccessPanel);
 
@@ -121,7 +137,9 @@ public class ManageSharesView extends DialogWindow {
 
         }
 
-        potentialBeneficiaries.addListener((selectedIndex, previousSelection, changedByUserInteraction) -> {potentialBeneficiaries.setSelectedIndex(selectedIndex);});
+        potentialBeneficiaries.setReadOnly(false);
+        potentialBeneficiaries.setSelectedItem(null);
+        //potentialBeneficiaries.addListener((selectedIndex, previousSelection, changedByUserInteraction) -> {potentialBeneficiaries.setSelectedIndex(selectedIndex);});
 
     }
 
@@ -134,7 +152,7 @@ public class ManageSharesView extends DialogWindow {
             potentialBeneficiariesAccessType.setSelectedItem(AccessType.User);
         }
 
-        potentialBeneficiariesAccessType.addListener((selectedIndex, previousSelection, changedByUserInteraction) -> {potentialBeneficiariesAccessType.setSelectedIndex(selectedIndex);});
+        //potentialBeneficiariesAccessType.addListener((selectedIndex, previousSelection, changedByUserInteraction) -> {potentialBeneficiariesAccessType.setSelectedIndex(selectedIndex);});
 
     }
 
@@ -161,8 +179,8 @@ public class ManageSharesView extends DialogWindow {
 
         sharesTable.setSelectAction(() -> {
 
-            var selectedList = sharesTable.getSelected();
-
+            Model selectedList = sharesTable.getSelected();
+            //System.out.println(selectedList);
             if(!form.getIsPublic() && selectedList!=null){
                 if(selectedList instanceof UserFormAccess ua){
                     if(ua.getAccessType() == AccessType.Editor){
@@ -177,6 +195,8 @@ public class ManageSharesView extends DialogWindow {
                         d.setAccessType(AccessType.Editor);
                     }
                 }
+
+                sharesTable.refresh();
             }
 
         });
@@ -185,6 +205,7 @@ public class ManageSharesView extends DialogWindow {
 
 
     private void delAccessList(){
+        sharesTable.takeFocus();
 
         addKeyboardListener(sharesTable,this::deleteKeyPressed);
     }
@@ -195,6 +216,7 @@ public class ManageSharesView extends DialogWindow {
             var selectedList = sharesTable.getSelected();
 
             controller.deleteShare(selectedList);
+            sharesTable.refresh();
         }
 
         return false;

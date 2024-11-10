@@ -14,9 +14,10 @@ public class ManageSharesController extends Controller<ManageSharesView> {
 
     private final Form form;
 
-    public ManageSharesController(ManageSharesView view, Form form) {
-        this.view = view;
+    public ManageSharesController(Form form) {
         this.form = form;
+
+        view = new ManageSharesView(this, form);
     }
 
     @Override
