@@ -246,4 +246,13 @@ public class OptionList extends Model {
     public boolean isUsed() {
         return !getQuestions().isEmpty();
     }
+
+    public int getMaxValueIndex() {
+        if(!getAll().isEmpty()) {
+            OptionValue maxValue = queryOne(OptionValue.class, "select * from option_values where option_list=:id order by idx desc limit 1",
+                    new Params("id", id));
+            return maxValue.getIdx();
+        } else
+            return 1;
+    }
 }
