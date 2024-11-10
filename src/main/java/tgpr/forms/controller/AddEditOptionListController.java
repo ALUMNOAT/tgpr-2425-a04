@@ -41,7 +41,8 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
     }
 
     public void duplicate() {
-        System.out.println("it works ! it works !");
+        optionList.duplicate(Security.getLoggedUser());
+        view.close();
     }
 
     public void save() {
