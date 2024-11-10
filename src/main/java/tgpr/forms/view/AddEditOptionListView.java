@@ -13,13 +13,16 @@ import java.util.List;
 
 public class AddEditOptionListView extends DialogWindow {
     private final AddEditOptionListController controller;
-    private final Label errAdd;
-    private final Label errName;
-    private final TextBox txtName;
-    private final TextBox txtAdd;
-    private final Button btnAdd;
-    private final Button btnDelete;
-    private final Button btnSave;
+    private Label errAdd;
+    private Label errName;
+    private TextBox txtName;
+    private TextBox txtAdd;
+    private Button btnAdd;
+    private Button btnDelete;
+    private Button btnSave;
+    private Button btnDuplicate;
+    private Button btnReorder;
+    private Button btnClose;
     private final ObjectTable<OptionValue> table;
     private final OptionList optionList;
 
@@ -70,18 +73,7 @@ public class AddEditOptionListView extends DialogWindow {
             root.addComponent(pnlAdd);
 
         //### PANEL BUTTONS ###
-        Panel pnlButtons = new Panel(new LinearLayout(Direction.HORIZONTAL)).setLayoutData(Layouts.LINEAR_END).addTo(root); //Merci
-        btnDelete = new Button("Delete", this::delete);
-        new Button("Duplicate", this::duplicate).addTo(pnlButtons);
-        btnSave = new Button("Save", this::save);
-
-        if(optionList != null && optionList.getOwner() != null)
-            new Button("Reorder", this::reorder).addTo(pnlButtons);
-        if(optionList != null && !optionList.isUsed())
-            btnDelete.addTo(pnlButtons).setEnabled(!optionList.isUsed());
-        if(optionList != null && optionList.getOwner() != null)
-            btnSave.addTo(pnlButtons);
-        new Button("Close", this::close).addTo(pnlButtons);
+        root.addComponent(pnlButtons());
 
 
         //# SETUP #
@@ -135,5 +127,20 @@ public class AddEditOptionListView extends DialogWindow {
         controller.add(txtAdd.getText());
         reloadData();
         txtAdd.setText("");
+    }
+
+    private Panel pnlButtons() {
+        Panel pnlButtons = new Panel(new LinearLayout(Direction.HORIZONTAL)).setLayoutData(Layouts.LINEAR_END); //Merci
+
+        if(optionList != null && optionList.getOwner() != null)
+            btnReorder = new Button("Reorder", this::reorder).addTo(pnlButtons);
+        if(optionList != null && !optionList.isUsed())
+            btnDelete = new Button("Delete", this::delete).addTo(pnlButtons).setEnabled(!optionList.isUsed());
+        btnDuplicate = new Button("Duplicate", this::duplicate).addTo(pnlButtons);
+        if(optionList != null && optionList.getOwner() != null)
+            btnSave = new Button("Save", this::save).addTo(pnlButtons);
+        btnClose = new Button("Close", this::close).addTo(pnlButtons);
+
+        return pnlButtons;
     }
 }
