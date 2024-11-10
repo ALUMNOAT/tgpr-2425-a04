@@ -102,12 +102,17 @@ public class AddEditOptionListView extends DialogWindow {
     }
 
     private void validate() {
-        var errors = controller.validate(
-                txtAdd.getText()
-        );
-        errAdd.setText(errors.getFirstErrorMessage(OptionValue.Fields.Label));
+        if(optionList == null) {
+            var errors = controller.validate(
+                    txtAdd.getText(),
+                    txtName.getText()
+            );
+            errAdd.setText(errors.getFirstErrorMessage(OptionValue.Fields.Label));
+            errName.setText(errors.getFirstErrorMessage(OptionList.Fields.Name));
 
-        btnAdd.setEnabled(errors.isEmpty());
+            btnAdd.setEnabled(errors.isEmpty());
+        } else
+            btnAdd.setEnabled(true);
     }
 
     private void reorder() {
