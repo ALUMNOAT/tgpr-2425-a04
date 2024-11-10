@@ -97,6 +97,7 @@ public class AddEditOptionListView extends DialogWindow {
             table.clear();
             var values = controller.getValuesByOptionList(optionList.getId());
             table.add(values);
+            table.add(controller.getValuesToAdd());
         }
     }
 
