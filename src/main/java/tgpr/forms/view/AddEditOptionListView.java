@@ -18,7 +18,6 @@ public class AddEditOptionListView extends DialogWindow {
     private final TextBox txtName;
     private final TextBox txtAdd;
     private final Button btnAdd;
-    private final Button btnReorder;
     private final Button btnDelete;
     private final Button btnSave;
     private final ObjectTable<OptionValue> table;
@@ -50,7 +49,6 @@ public class AddEditOptionListView extends DialogWindow {
                 .setRightMarginSize(4).setBottomMarginSize(1))
                 .setLayoutData(LinearLayout
                         .createLayoutData(LinearLayout.Alignment.End, LinearLayout.GrowPolicy.CanGrow));
-//                .sizeTo(59, 11);
         table = new ObjectTable<>(
                 new ColumnSpec<>("Index ", OptionValue::getIdx),
                 new ColumnSpec<>("Label                                         ", OptionValue::getLabel)
@@ -64,8 +62,11 @@ public class AddEditOptionListView extends DialogWindow {
         new EmptySpace().addTo(pnlAdd);
         txtAdd = new TextBox(new TerminalSize(48, 1))
                 .addTo(pnlAdd).setTextChangeListener((txt, byUser) -> validate());
-        btnAdd = new Button("Add", this::addOptionValue).addTo(pnlAdd);
-        if(Security.getLoggedUser().isAdmin() && !optionList.isUsed())
+        btnAdd = new Button("Add", this::add).addTo(pnlAdd);
+        if(optionList == null)
+            root.addComponent(pnlAdd);
+        else if(optionList.getOwner() != null && (Security.getLoggedUser().isAdmin() || optionList.getOwner().equals(Security.getLoggedUser()))
+        && !optionList.isUsed())
             root.addComponent(pnlAdd);
 
         //### PANEL BUTTONS ###
@@ -124,7 +125,9 @@ public class AddEditOptionListView extends DialogWindow {
         controller.save();
     }
 
-    private void addOptionValue() {
-        controller.addOptionValue();
+    private void add() {
+        controller.add(txtAdd.getText());
+        reloadData();
+        txtAdd.setText("");
     }
 }
