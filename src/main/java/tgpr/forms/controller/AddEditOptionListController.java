@@ -1,22 +1,23 @@
 package tgpr.forms.controller;
 
-import tgpr.forms.model.OptionList;
-import tgpr.forms.model.OptionListValidator;
-import tgpr.forms.model.OptionValue;
-import tgpr.forms.model.OptionValueValidator;
+import tgpr.forms.model.*;
 import tgpr.forms.view.AddEditOptionListView;
 import tgpr.framework.Controller;
 import tgpr.framework.ErrorList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AddEditOptionListController extends Controller<AddEditOptionListView> {
     private final AddEditOptionListView view;
     private final OptionList optionList;
+    private final List<OptionValue> values = new ArrayList<>();
+    private int maxValueIndex;
 
     public AddEditOptionListController(OptionList optionList){
         view = new AddEditOptionListView(this, optionList);
         this.optionList = optionList;
+        maxValueIndex = optionList.getMaxValueIndex();
     }
 
     @Override
@@ -44,11 +45,12 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
     }
 
     public void save() {
-        System.out.println("doews it work ? yes");
+        optionList.addValues(values);
     }
 
-    public void addOptionValue() {
-
+    public void add(String label) {
+        OptionValue newValue = new OptionValue(optionList, maxValueIndex+values.size()+1, label);
+        values.add(newValue);
     }
 
     public boolean askConfirmationDelete() {
@@ -62,5 +64,9 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
         errors.add(OptionValueValidator.isValidLabel(label));
         errors.add(OptionListValidator.isValidName(name));
         return errors;
+    }
+
+    public List<OptionValue> getValuesToAdd() {
+        return values;
     }
 }
