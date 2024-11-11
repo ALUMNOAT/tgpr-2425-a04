@@ -1,20 +1,15 @@
 package tgpr.forms.view;
 
 import com.googlecode.lanterna.SGR;
-import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.input.KeyStroke;
+import tgpr.forms.controller.ViewEditInstanceController;
 import tgpr.forms.controller.ViewInstanceController;
 import tgpr.forms.model.Form;
 import tgpr.forms.model.Instance;
-import tgpr.forms.model.Question;
 import tgpr.framework.Controller;
-import tgpr.framework.Tools;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static tgpr.framework.Controller.askConfirmation;
@@ -41,6 +36,7 @@ public class ViewInstanceView extends DialogWindow {
         root.addEmpty();
         buttonsPanel().addTo( root ).bottomCenter();
 
+        setCloseWindowWithEscape( true );
     }
 
     private Panel formTextPanel() {
@@ -61,18 +57,24 @@ public class ViewInstanceView extends DialogWindow {
                 new ColumnSpec<>("Id", Instance::getId).setWidth(5).alignRight(),
                 new ColumnSpec<>("User", Instance::getUser).setWidth(30)
                         .setOverflowHandling(ColumnSpec.OverflowHandling.Wrap),
-                new ColumnSpec<>("Submiited", Instance::getCompleted).setWidth(20)
+                new ColumnSpec<>("Submitted", Instance::getCompletedFormatted).setWidth(20)
                         .setOverflowHandling(ColumnSpec.OverflowHandling.Wrap)
         ).addTo( instancePanel );
 
         table.add( form.getCompletedInstances() );
+
+        table.setSelectAction( () -> {
+            Instance i = table.getSelected();
+            Controller.navigateTo(new ViewEditInstanceController(i));
+        } );
+
         return instancePanel;
     }
     private Panel buttonsPanel() {
         Panel panel = Panel.horizontalPanel(1 );
         Button btnDelSel = new Button( "Delete Selected" , this::deleteSelected ).addTo( panel );
         addShortcut(btnDelSel, KeyStroke.fromString("<del>" ));
-        Button btnDelAll = new Button( "Delete All" , this::deleteAll ).addTo( panel );
+        new Button( "Delete All" , this::deleteAll ).addTo( panel );
         new Button( "Close" , this::close ).addTo( panel );
 
         return panel;
@@ -84,7 +86,7 @@ public class ViewInstanceView extends DialogWindow {
                 "Delete Instance" )){
             i.delete();
         }
-
+        refresh();
     }
 
     private void deleteAll( ) {
@@ -94,11 +96,13 @@ public class ViewInstanceView extends DialogWindow {
                 "Delete All Instances" )){
             form.deleteAllSubmittedInstances();
             }
+        refresh();
 
     }
 
     public void refresh(){
-        instancePanel();
+        table.clear();
+        table.add( form.getCompletedInstances() );
     }
 
 
