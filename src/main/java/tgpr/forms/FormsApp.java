@@ -1,7 +1,6 @@
 package tgpr.forms;
 
 import tgpr.forms.controller.LoginController;
-import tgpr.forms.controller.TestController;
 import tgpr.framework.Controller;
 import tgpr.framework.Model;
 
@@ -13,10 +12,6 @@ public class FormsApp {
             Controller.abort("Database is not available!");
         else {
             Controller.navigateTo(new LoginController());
-            Controller.navigateTo(new TestController());
         }
     }
 }
-
-// TODO: remove weird bug who returns the database when refreshing in the terminal (not super important but annoying)
-// TODO: Add 'signup' function = 'Add member'

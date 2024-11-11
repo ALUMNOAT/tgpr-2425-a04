@@ -3,9 +3,9 @@ package tgpr.forms.view;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import tgpr.forms.controller.LoginController;
-import tgpr.forms.controller.TestController;
 import tgpr.framework.Configuration;
 import tgpr.framework.Controller;
+import tgpr.forms.controller.SignupController;
 
 import java.util.List;
 
@@ -103,43 +103,30 @@ public class LoginView extends BasicWindow{
         var errors = controller.login(emailTextBox.getText(), passwordTextBox.getText());
         if (!errors.isEmpty()) {
             emailTextBox.takeFocus();
-        } else {
-            Controller.navigateTo(new TestController());
-            // TODO: change 'Controller.navigateTo(new TestController());' to the main page after logging in
         }
     }
 
     private void signup() {
-        // TODO: Add 'Controller.navigateTo(new SignupController());'
+        Controller.navigateTo(new SignupController());
     }
 
     private void logAsDefaultAdmin() {
         controller.login(Configuration.get("default.admin.email"), Configuration.get("default.admin.password"));
-        Controller.navigateTo(new TestController());
-        // TODO: change 'Controller.navigateTo(new TestController());' to the main page after logging in
     }
 
     private void logAsGuest() {
         controller.login(Configuration.get("default.guest.email"), Configuration.get("default.guest.password"));
-        Controller.navigateTo(new TestController());
-        // TODO: change 'Controller.navigateTo(new TestController());' to the main page after logging in
     }
 
     private void logAsPenelle() {
         controller.login(Configuration.get("default.penelle.email"), Configuration.get("default.penelle.password"));
-        Controller.navigateTo(new TestController());
-        // TODO: change 'Controller.navigateTo(new TestController());' to the main page after logging in
     }
 
     private void logAsMichel() {
         controller.login(Configuration.get("default.michel.email"), Configuration.get("default.michel.password"));
-        Controller.navigateTo(new TestController());
-        // TODO: change 'Controller.navigateTo(new TestController());' to the main page after logging in
     }
 
     private void logAsPigeolet() {
         controller.login(Configuration.get("default.pigeolet.email"), Configuration.get("default.pigeolet.password"));
-        Controller.navigateTo(new TestController());
-        // TODO: change 'Controller.navigateTo(new TestController());' to the main page after logging in
     }
 }

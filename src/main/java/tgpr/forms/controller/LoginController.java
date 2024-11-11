@@ -1,14 +1,14 @@
 package tgpr.forms.controller;
 
-import tgpr.forms.model.User;
-import tgpr.forms.model.UserValidator;
 import tgpr.framework.Controller;
 import tgpr.framework.Error;
 import tgpr.framework.ErrorList;
 import tgpr.framework.Model;
 import tgpr.forms.FormsApp;
-import tgpr.forms.view.LoginView;
+import tgpr.forms.model.User;
+import tgpr.forms.model.UserValidator;
 import tgpr.forms.model.Security;
+import tgpr.forms.view.LoginView;
 
 import java.util.List;
 
@@ -22,8 +22,8 @@ public class LoginController extends Controller<LoginView> {
     }
 
     public List<Error> login(String email, String password) {
-//        System.out.println("Email: " + email); // Ajoutez cela pour le débogage
-//        System.out.println("Password: " + password); // Ajoutez cela pour le débogage
+//        System.out.println("Email: " + email); // Add for debugging
+//        System.out.println("Password: " + password); // Add for debugging
 
         var errors = new ErrorList();
         errors.add(UserValidator.isValidEmail(email));
@@ -31,9 +31,10 @@ public class LoginController extends Controller<LoginView> {
 
         if (errors.isEmpty()) {
             var user = User.checkCredentials(email, password);
-//            System.out.println("User: " + user); //Ajoutez cela pour le débogage
+//            System.out.println("User: " + user); //Add for debugging
             if (user != null) {
                 Security.login(user);
+                navigateTo(new ViewFormsController(user)); //return the @user to the FormView so he can use it
             } else
                 showError(new Error("invalid credentials"));
         } else
