@@ -1,6 +1,7 @@
 package tgpr.forms.view;
 
 import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -20,6 +21,8 @@ public class ViewInstanceView extends DialogWindow {
     public Label lblTitle = new Label( "" );
     public Label lblDescription = new Label( "" );
     private ObjectTable<Instance> table;
+    private Button btnDelSel;
+    private Button btnDelAll;
 
     public ViewInstanceView( ViewInstanceController controller) {
         super( "List of Submitted Instances" );
@@ -37,6 +40,7 @@ public class ViewInstanceView extends DialogWindow {
         buttonsPanel().addTo( root ).bottomCenter();
 
         setCloseWindowWithEscape( true );
+        refresh();
     }
 
     private Panel formTextPanel() {
@@ -72,9 +76,9 @@ public class ViewInstanceView extends DialogWindow {
     }
     private Panel buttonsPanel() {
         Panel panel = Panel.horizontalPanel(1 );
-        Button btnDelSel = new Button( "Delete Selected" , this::deleteSelected ).addTo( panel );
+        btnDelSel = new Button( "Delete Selected" , this::deleteSelected ).addTo( panel );
         addShortcut(btnDelSel, KeyStroke.fromString("<del>" ));
-        new Button( "Delete All" , this::deleteAll ).addTo( panel );
+        btnDelAll =new Button( "Delete All" , this::deleteAll ).addTo( panel );
         new Button( "Close" , this::close ).addTo( panel );
 
         return panel;
@@ -103,6 +107,14 @@ public class ViewInstanceView extends DialogWindow {
     public void refresh(){
         table.clear();
         orderTable();
+        if(form.getCompletedInstances().isEmpty()){
+            btnDelAll.setEnabled(false);
+            btnDelSel.setEnabled(false);
+        } else {
+            btnDelAll.setEnabled(true);
+            btnDelSel.setEnabled(true);
+        }
+
     }
 
     public void orderTable(){
