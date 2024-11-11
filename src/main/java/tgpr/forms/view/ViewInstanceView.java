@@ -61,7 +61,7 @@ public class ViewInstanceView extends DialogWindow {
                         .setOverflowHandling(ColumnSpec.OverflowHandling.Wrap)
         ).addTo( instancePanel );
 
-        table.add( form.getCompletedInstances() );
+        orderTable();
 
         table.setSelectAction( () -> {
             Instance i = table.getSelected();
@@ -102,8 +102,23 @@ public class ViewInstanceView extends DialogWindow {
 
     public void refresh(){
         table.clear();
-        table.add( form.getCompletedInstances() );
+        orderTable();
     }
+
+    public void orderTable(){
+        List<Instance> instances = form.getCompletedInstances();
+        for(Instance i : instances){
+            for(Instance y : instances){
+                if(i.getCompleted().isBefore( y.getCompleted() )){
+                    Instance temp = i;
+                    i = y;
+                    y = temp;
+                }
+            }
+        }
+        table.add( instances );
+    }
+
 
 
 }
