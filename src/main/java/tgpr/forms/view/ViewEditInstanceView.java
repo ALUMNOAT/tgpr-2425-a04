@@ -226,7 +226,7 @@ public class ViewEditInstanceView extends DialogWindow {
 
     private Panel formButtonsPanel(boolean review) {
         Panel panel = Panel.horizontalPanel(1 );
-        if(controller.u.isGuest()){
+        if(controller.u.isGuest() && !review){
             Button btnClose = new Button( "Close" , this::cancel ).addTo( panel );
             addShortcut(btnClose, KeyStroke.fromString("<esc>" ));
         }else{
