@@ -24,11 +24,12 @@ public class ViewInstanceView extends DialogWindow {
     private final Form form;
     public Label lblTitle = new Label( "" );
     public Label lblDescription = new Label( "" );
+    private ObjectTable<Instance> table;
 
     public ViewInstanceView( ViewInstanceController controller) {
         super( "List of Submitted Instances" );
         this.controller = controller;
-        this.form = Form.getByKey( 1 );
+        this.form = controller.form;
         lblTitle.setText( form.getTitle());lblDescription.setText( form.getDescription() );
         setHints( List.of( Window.Hint.CENTERED , Window.Hint.MODAL ) );
 
@@ -56,7 +57,7 @@ public class ViewInstanceView extends DialogWindow {
 
     private Panel instancePanel() {
         Panel instancePanel = new Panel();
-        ObjectTable<Instance> table = new ObjectTable<>(
+         table = new ObjectTable<>(
                 new ColumnSpec<>("Id", Instance::getId).setWidth(5).alignRight(),
                 new ColumnSpec<>("User", Instance::getUser).setWidth(30)
                         .setOverflowHandling(ColumnSpec.OverflowHandling.Wrap),
@@ -65,19 +66,24 @@ public class ViewInstanceView extends DialogWindow {
         ).addTo( instancePanel );
 
         table.add( form.getCompletedInstances() );
-
         return instancePanel;
     }
     private Panel buttonsPanel() {
         Panel panel = Panel.horizontalPanel(1 );
-        new Button( "Delete Selected" , this::deleteSelected ).addTo( panel );
-        new Button( "Delete All" , this::deleteAll ).addTo( panel );
+        Button btnDelSel = new Button( "Delete Selected" , this::deleteSelected ).addTo( panel );
+        addShortcut(btnDelSel, KeyStroke.fromString("<del>" ));
+        Button btnDelAll = new Button( "Delete All" , this::deleteAll ).addTo( panel );
         new Button( "Close" , this::close ).addTo( panel );
 
         return panel;
     }
 
-    private void deleteSelected( ) {
+    private void deleteSelected() {
+        Instance i = table.getSelected();
+        if(askConfirmation( "Are you sure you want to delete this instances?",
+                "Delete Instance" )){
+            i.delete();
+        }
 
     }
 
@@ -89,6 +95,10 @@ public class ViewInstanceView extends DialogWindow {
             form.deleteAllSubmittedInstances();
             }
 
+    }
+
+    public void refresh(){
+        instancePanel();
     }
 
 
