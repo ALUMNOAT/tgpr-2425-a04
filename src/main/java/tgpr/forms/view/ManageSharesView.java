@@ -13,7 +13,7 @@ import static tgpr.framework.Controller.askConfirmation;
 
 
 
-public class ManageSharesView extends BasicWindow {
+public class ManageSharesView extends DialogWindow {
 
     private final ManageSharesController controller;
 

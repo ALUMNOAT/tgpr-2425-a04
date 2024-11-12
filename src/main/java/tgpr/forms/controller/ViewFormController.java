@@ -58,7 +58,7 @@ public class ViewFormController extends Controller<ViewFormView> {
     }
 
     public void share() {
-        //TODO: manage_shares
+        navigateTo(new ManageSharesController(form));
     }
 
     public void analyze() {
