@@ -28,13 +28,13 @@ public class TestView extends DialogWindow {
 
         setHints(List.of(Hint.EXPANDED));
 
-        //form =controller.getForm();
+        form =controller.getForm();
         //controller.viewForm(form);
+        controller.viewManageShares(form);
+        //user = controller.getUser();
+        //controller.viewForms(user);
 
-        user = controller.getUser();
-        controller.viewForms(user);
-
-
+        /*
         Panel panel = new Panel();
         tblUsers = new ObjectTable<>(
                 new ColumnSpec<>("FullName", User::getFullName),
@@ -56,7 +56,10 @@ public class TestView extends DialogWindow {
         tblForms.setSelectAction(this::displayForm);
         tblForms.addSelectionChangeListener(this::selectionChanged);
 
+
         //return panel;
+        */
+
     }
 
 
