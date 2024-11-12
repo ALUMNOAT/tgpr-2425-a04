@@ -208,6 +208,7 @@ public class ViewFormsView extends BasicWindow {
 
     public void createNewForm(){
         Controller.navigateTo( new AddEditFormController(null) );
+        reloadData();
     }
 
     public void manage(Form form) {
