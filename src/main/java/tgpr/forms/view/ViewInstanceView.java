@@ -17,7 +17,6 @@ import static tgpr.framework.Controller.askConfirmation;
 
 public class ViewInstanceView extends DialogWindow {
     private final ViewInstanceController controller;
-    private final Form form;
     public Label lblTitle = new Label( "" );
     public Label lblDescription = new Label( "" );
     private ObjectTable<Instance> table;
@@ -27,8 +26,7 @@ public class ViewInstanceView extends DialogWindow {
     public ViewInstanceView( ViewInstanceController controller) {
         super( "List of Submitted Instances" );
         this.controller = controller;
-        this.form = controller.form;
-        lblTitle.setText( form.getTitle());lblDescription.setText( form.getDescription() );
+        lblTitle.setText( controller.getTitle());lblDescription.setText( controller.getDescription() );
         setHints( List.of( Window.Hint.CENTERED , Window.Hint.MODAL ) );
 
         Panel root = new Panel();
@@ -94,12 +92,7 @@ public class ViewInstanceView extends DialogWindow {
     }
 
     private void deleteAll( ) {
-        if(askConfirmation( "Are you sure you want to delete all the submitted instances?"
-                + System.lineSeparator() +
-                "Note: This will not delete instances that are currently being edited (not submitted).",
-                "Delete All Instances" )){
-            form.deleteAllSubmittedInstances();
-            }
+        controller.deleteAllInstances();
         refresh();
 
     }
@@ -107,7 +100,7 @@ public class ViewInstanceView extends DialogWindow {
     public void refresh(){
         table.clear();
         orderTable();
-        if(form.getCompletedInstances().isEmpty()){
+        if(controller.getCompletedInstances().isEmpty()){
             btnDelAll.setEnabled(false);
             btnDelSel.setEnabled(false);
         } else {
@@ -118,7 +111,7 @@ public class ViewInstanceView extends DialogWindow {
     }
 
     public void orderTable(){
-        List<Instance> instances = form.getCompletedInstances();
+        List<Instance> instances = controller.getCompletedInstances();
         for(Instance i : instances){
             for(Instance y : instances){
                 if(i.getCompleted().isBefore( y.getCompleted() )){
