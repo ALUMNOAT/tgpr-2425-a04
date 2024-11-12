@@ -60,17 +60,15 @@ public class AddEditOptionListView extends DialogWindow {
     }
 
     private void validate() {
-        if(optionList == null) {
-            var errors = controller.validate(
-                    txtAdd.getText(),
-                    txtName.getText()
-            );
-            errAdd.setText(errors.getFirstErrorMessage(OptionValue.Fields.Label));
-            errName.setText(errors.getFirstErrorMessage(OptionList.Fields.Name));
-
+        var errors = controller.validate(
+                txtName.getText()
+        );
+        errAdd.setText(errors.getFirstErrorMessage(OptionValue.Fields.Label));
+        errName.setText(errors.getFirstErrorMessage(OptionList.Fields.Name));
+        if(addPnlAdd())
             btnAdd.setEnabled(errors.isEmpty());
-        } else
-            btnAdd.setEnabled(true);
+        if(btnSave != null)
+            btnSave.setEnabled(errors.isEmpty());
     }
 
     private void reorder() {
