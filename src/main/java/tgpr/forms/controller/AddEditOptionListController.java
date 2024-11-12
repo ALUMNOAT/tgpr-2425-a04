@@ -74,7 +74,14 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
         return errors;
     }
 
-    public List<OptionValue> getValuesToAdd() {
+    public ErrorList validateAdd(String label) {
+        var errors = new ErrorList();
+        errors.add(OptionValueValidator.notEmptyLabel(label));
+        return errors;
+    }
+
+    public List<OptionValue> getValues() {
+        OptionValue.indexGravity(values);
         return values;
     }
 }
