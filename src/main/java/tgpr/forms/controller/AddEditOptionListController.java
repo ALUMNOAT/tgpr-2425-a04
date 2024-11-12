@@ -48,6 +48,7 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
 
     public void save() {
         optionList.addValues(values);
+        view.close();
     }
 
     public void add(String label) {
