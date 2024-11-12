@@ -4,6 +4,7 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.menu.*;
+import tgpr.forms.controller.AddEditFormController;
 import tgpr.forms.controller.FormController;
 import tgpr.forms.controller.ViewFormsController;
 import tgpr.forms.model.AccessType;
@@ -188,7 +189,7 @@ public class ViewFormsView extends BasicWindow {
     private Panel createButtonsPanel(){
         Panel buttonsPanel = new Panel().setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
 
-        Button createForm = new Button("Create a new form");
+        Button createForm = new Button("Create a new form", this::createNewForm);
 
         createForm.addTo(buttonsPanel).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Beginning));
 
@@ -199,6 +200,10 @@ public class ViewFormsView extends BasicWindow {
         paginator.addTo(buttonsPanel).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.End));
 
         return buttonsPanel;
+    }
+
+    public void createNewForm(){
+        Controller.navigateTo( new AddEditFormController(null) );
     }
 
     public void manage(Form form) {
