@@ -322,10 +322,9 @@ public class Form extends Model {
             throw new IllegalArgumentException("Wrong model type");
     }
 
-    // gestion des permissions accessible uniquement si owner ou admin et que le form n'est pas public
-
+    // gestion des permissions accessible uniquement si owner ou admin
     public boolean mayChangePermissions(User user) {
-        return !isPublic && (user.isAdmin() || user.getId() == ownerId);
+        return user.isAdmin() || user.getId() == ownerId;
     }
 
     public List<Model> getPotentialBeneficiaries() {

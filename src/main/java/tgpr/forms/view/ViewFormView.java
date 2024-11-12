@@ -7,6 +7,7 @@ import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.forms.controller.ViewFormController;
 import tgpr.forms.model.Form;
 import tgpr.forms.model.Question;
+import tgpr.forms.model.Security;
 import tgpr.framework.Tools;
 
 import java.util.List;
@@ -178,22 +179,19 @@ public class ViewFormView extends DialogWindow {
             if(form.isUsed()) {
                 btnAdd.setVisible(false);
                 btnEdit.setVisible(false);
-                btnDelete.setVisible(true);
                 btnTogglePublic.setVisible(true);
-                btnShare.setVisible(true);
                 btnReorder.setVisible(false);
                 btnClear.setVisible(true);
             }
             else {
                 btnAdd.setVisible(true);
                 btnEdit.setVisible(true);
-                btnDelete.setVisible(true);
                 btnTogglePublic.setVisible(false);
-                btnShare.setVisible(true);
                 btnReorder.setVisible(!form.getQuestions().isEmpty());
                 btnClear.setVisible(false);
             }
-            btnAnalyze.setVisible(true);
+            btnDelete.setVisible(true);
+            btnShare.setVisible(form.mayChangePermissions(Security.getLoggedUser()));
             btnClose.setVisible(true);
             btnSave.setVisible(false);
             btnCancel.setVisible(false);
