@@ -31,4 +31,13 @@ public class ViewFormsController extends Controller<ViewFormsView> {
     public void manage(Form form) {
         Controller.navigateTo(new ViewFormController(form));
     }
+
+    public void logOut() {
+        Security.logout();
+        navigateTo(new LoginController());
+    }
+
+    public void exit() {
+        System.exit(0);
+    }
 }

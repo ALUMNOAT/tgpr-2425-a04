@@ -27,8 +27,8 @@ public class ViewFormsView extends BasicWindow {
     private final Menu menuParameters = new Menu("Parameters");
 
     private final MenuItem ViewProfile = new MenuItem("View Profile");
-    private final MenuItem logOut = new MenuItem("Log out");
-    private final MenuItem Exit = new MenuItem("Exit");
+    private MenuItem logOut;
+    private MenuItem Exit;
 
     private final Label lblFilter = new Label(" Filter: ");
     private final TextBox txtFilter = new TextBox(new TerminalSize(30,1));
@@ -87,7 +87,11 @@ public class ViewFormsView extends BasicWindow {
         menuBar.add(menuParameters);
 
         menuFile.add(ViewProfile);
+
+        logOut = new MenuItem("Log out", controller::logOut);
         menuFile.add(logOut);
+
+        Exit = new MenuItem("Exit", controller::exit);
         menuFile.add(Exit);
 
         MenuItem manageOptionLists = new MenuItem("Manage your Option Lists", controller::manageOptionLists);
