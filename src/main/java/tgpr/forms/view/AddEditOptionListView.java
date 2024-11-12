@@ -19,6 +19,7 @@ public class AddEditOptionListView extends DialogWindow {
     private Label errName = new Label("");
     private TextBox txtAdd = new TextBox();
     private TextBox txtName = new TextBox();
+    private CheckBox checkBoxSystem;
     private Button btnAdd;
     private Button btnDelete;
     private Button btnSave;
@@ -132,6 +133,16 @@ public class AddEditOptionListView extends DialogWindow {
         txtName = new TextBox(new TerminalSize(52, 1)).addTo(pnlName);
         new EmptySpace().addTo(pnlName);
         errName = new Label("").setForegroundColor(TextColor.ANSI.RED).addTo(pnlName);
+
+        if(Security.getLoggedUser().isAdmin() &&
+                (optionList.getOwner().equals(Security.getLoggedUser()) || optionList.getOwner() == null)
+        ) {
+            new Label("System:        ").addTo(pnlName);
+            checkBoxSystem = new CheckBox().addTo(pnlName);
+            new EmptySpace().addTo(pnlName);
+            new EmptySpace().addTo(pnlName);
+        }
+
 
         return pnlName;
     }
