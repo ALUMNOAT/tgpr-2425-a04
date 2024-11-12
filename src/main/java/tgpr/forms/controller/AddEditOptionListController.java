@@ -67,7 +67,7 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
                 "Delete");
     }
 
-    public ErrorList validate(String label, String name){
+    public ErrorList validate(String name){
         var errors = new ErrorList();
         errors.add(OptionListValidator.hasOneValue(values));
         errors.add(OptionListValidator.isValidName(name));
