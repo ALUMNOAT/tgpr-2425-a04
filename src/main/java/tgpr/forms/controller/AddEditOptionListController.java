@@ -52,7 +52,7 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
     }
 
     public void add(String label) {
-        OptionValue newValue = new OptionValue(optionList, maxValueIndex+values.size()+1, label);
+        OptionValue newValue = new OptionValue(optionList, OptionList.getMaxValueIndex(values)+1, label);
         values.add(newValue);
     }
 
