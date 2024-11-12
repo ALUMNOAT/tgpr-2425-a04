@@ -1,5 +1,6 @@
 package tgpr.forms.controller;
 
+import tgpr.forms.model.Security;
 import tgpr.framework.Controller;
 import tgpr.framework.ErrorList;
 import tgpr.forms.model.User;
@@ -48,6 +49,10 @@ public class SignupController extends Controller<SignupView> {
             user = User.createUser(fullName, email, hashedPassword, User.Role.valueOf("User"));
             user.save();
             view.close();
+            var member = User.checkCredentials(email, password);
+            Security.login(member);
+            navigateTo(new ViewFormsController(member));
+
         } else
             showErrors(errors);
     }
