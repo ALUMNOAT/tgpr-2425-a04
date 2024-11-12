@@ -42,7 +42,7 @@ public class AddEditOptionListView extends DialogWindow {
         Panel root = new Panel();
         root.addComponent(pnlName());
         root.addComponent(pnlTable());
-        if(addPnlAdd())
+        if(changeable())
             root.addComponent(pnlAdd());
         root.addComponent(pnlButtons());
 
@@ -68,7 +68,7 @@ public class AddEditOptionListView extends DialogWindow {
         );
         errAdd.setText(errors.getFirstErrorMessage(OptionValue.Fields.Label));
         errName.setText(errors.getFirstErrorMessage(OptionList.Fields.Name));
-        if(addPnlAdd())
+        if(changeable())
             btnAdd.setEnabled(errors.isEmpty());
         if(btnSave != null)
             btnSave.setEnabled(errors.isEmpty());
@@ -102,6 +102,16 @@ public class AddEditOptionListView extends DialogWindow {
 
     private void save() {
         controller.save();
+
+        this.close();
+    }
+
+    public void closeIt() {
+        if(changeable()) {
+            if (askConfirmationClose())
+                this.close();
+        } else
+            this.close();
     }
 
     private void add() {
@@ -205,7 +215,7 @@ public class AddEditOptionListView extends DialogWindow {
         return pnlTable;
     }
 
-    private boolean addPnlAdd() {
+    private boolean changeable() {
         return optionList == null ||
                 !optionList.isUsed() && (
                         optionList.getOwner().equals(Security.getLoggedUser()) ||
