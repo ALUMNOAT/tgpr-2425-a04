@@ -9,6 +9,7 @@ import tgpr.forms.model.AccessType;
 import tgpr.forms.model.Form;
 import tgpr.forms.model.Security;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class FormView extends BasicWindow {
@@ -79,10 +80,10 @@ public class FormView extends BasicWindow {
         if(instance == null) {
             lblInstanceStart.setText("Not Started");
         } else {
-            lblInstanceStart.setText("Started on " + instance.getStarted().toString());
+            lblInstanceStart.setText("Started on " + instance.getStarted().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")).toString());
 
             if(instance.getCompleted() != null){
-                lblInstanceEnd.setText("Submitted on " +instance.getCompleted().toString());
+                lblInstanceEnd.setText("Submitted on " +instance.getCompleted().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")).toString());
             } else {
                 lblInstanceEnd.setText("In progress");
             }
