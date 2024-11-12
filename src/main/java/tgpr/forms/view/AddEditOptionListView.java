@@ -51,12 +51,11 @@ public class AddEditOptionListView extends DialogWindow {
         txtAdd.setTextChangeListener((txt, byUser) -> validate());
         validate();
     }
+
     public void reloadData() {
         if(optionList != null) {
             table.clear();
-            var values = controller.getValuesByOptionList(optionList.getId());
-            table.add(values);
-            table.add(controller.getValuesToAdd());
+            table.add(controller.getValues());
         }
     }
 
