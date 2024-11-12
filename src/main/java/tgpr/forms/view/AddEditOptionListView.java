@@ -35,46 +35,13 @@ public class AddEditOptionListView extends DialogWindow {
         setCloseWindowWithEscape(true);
         setFixedSize(new TerminalSize(60, 18));
 
-        //## PANEL ROOT ##
+        //## PANELS ##
         Panel root = new Panel();
-
-        //### PANEL NAME ###
-        Panel pnlName = new Panel().setLayoutManager(new GridLayout(2).setTopMarginSize(1).setRightMarginSize(2));
-        new Label("Name:        ").addTo(pnlName);
-        txtName = new TextBox(new TerminalSize(52, 1)).addTo(pnlName).setTextChangeListener((txt, byUser) -> validate());
-        new EmptySpace().addTo(pnlName);
-        errName = new Label("").addTo(pnlName).setForegroundColor(TextColor.ANSI.RED);
-
-        root.addComponent(pnlName);
-
-        //### PANEL INDEX LABEL ###
-        Panel pnlOptionValues = new Panel().setLayoutManager(new GridLayout(1)
-                .setRightMarginSize(4).setBottomMarginSize(1))
-                .setLayoutData(LinearLayout
-                        .createLayoutData(LinearLayout.Alignment.End, LinearLayout.GrowPolicy.CanGrow));
-        table = new ObjectTable<>(
-                new ColumnSpec<>("Index ", OptionValue::getIdx),
-                new ColumnSpec<>("Label                                         ", OptionValue::getLabel)
-        );
-        pnlOptionValues.addComponent(table);
-        root.addComponent(pnlOptionValues);
-
-        //### PANEL ADD ###
-        Panel pnlAdd = new Panel().setLayoutManager(new GridLayout(2).setRightMarginSize(2).setBottomMarginSize(1));
-        errAdd = new Label("").addTo(pnlAdd).setForegroundColor(TextColor.ANSI.RED);
-        new EmptySpace().addTo(pnlAdd);
-        txtAdd = new TextBox(new TerminalSize(48, 1))
-                .addTo(pnlAdd).setTextChangeListener((txt, byUser) -> validate());
-        btnAdd = new Button("Add", this::add).addTo(pnlAdd);
-        if(optionList == null)
-            root.addComponent(pnlAdd);
-        else if(optionList.getOwner() != null && (Security.getLoggedUser().isAdmin() || optionList.getOwner().equals(Security.getLoggedUser()))
-        && !optionList.isUsed())
-            root.addComponent(pnlAdd);
-
-        //### PANEL BUTTONS ###
+        root.addComponent(pnlName());
+        root.addComponent(pnlTable());
+        if(addPnlAdd())
+            root.addComponent(pnlAdd());
         root.addComponent(pnlButtons());
-
 
         //# SETUP #
         setComponent(root);
@@ -129,6 +96,17 @@ public class AddEditOptionListView extends DialogWindow {
         txtAdd.setText("");
     }
 
+    private Panel pnlName() {
+        Panel pnlName = new Panel(new GridLayout(2).setTopMarginSize(1).setRightMarginSize(2));
+
+        new Label("Name:        ").addTo(pnlName);
+        txtName = new TextBox(new TerminalSize(52, 1)).addTo(pnlName);
+        new EmptySpace().addTo(pnlName);
+        errName = new Label("").setForegroundColor(TextColor.ANSI.RED).addTo(pnlName);
+
+        return pnlName;
+    }
+
     private Panel pnlButtons() {
         Panel pnlButtons = new Panel(new LinearLayout(Direction.HORIZONTAL)).setLayoutData(Layouts.LINEAR_END); //Merci
 
@@ -143,4 +121,59 @@ public class AddEditOptionListView extends DialogWindow {
 
         return pnlButtons;
     }
+
+    private Panel pnlAdd() {
+        Panel pnlAdd = new Panel(new GridLayout(2).setRightMarginSize(2).setBottomMarginSize(1));
+
+        errAdd = new Label("").addTo(pnlAdd).setForegroundColor(TextColor.ANSI.RED);
+        new EmptySpace().addTo(pnlAdd);
+        txtAdd = new TextBox(new TerminalSize(48, 1))
+                .addTo(pnlAdd);
+        btnAdd = new Button("Add", this::add).addTo(pnlAdd);
+
+        return pnlAdd;
+    }
+
+    private Panel pnlTable() {
+        Panel pnlTable = new Panel(
+                new GridLayout(1).setRightMarginSize(4).setBottomMarginSize(1))
+                .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.End, LinearLayout.GrowPolicy.CanGrow));
+
+        table = new ObjectTable<>(
+                new ColumnSpec<>("Index ", OptionValue::getIdx),
+                new ColumnSpec<>("Label                                         ", OptionValue::getLabel)
+        )
+        {
+            @Override
+            public Interactable.Result handleKeyStroke(KeyStroke keyStroke) {
+                if (keyStroke.equals(KeyStroke.fromString("<bs>"))) {
+                    controller.remove(getSelected());
+                    AddEditOptionListView.this.reloadData();
+                    return Interactable.Result.HANDLED;
+                }
+                return super.handleKeyStroke(keyStroke);
+            }
+        }.addTo(pnlTable);
+        //addKeyboardListener(table, this::deleteK);
+
+        return pnlTable;
+    }
+
+    private boolean addPnlAdd() {
+        return optionList == null ||
+                !optionList.isUsed() && (
+                        optionList.getOwner().equals(Security.getLoggedUser()) ||
+                        (Security.getLoggedUser().isAdmin())
+                );
+    }
+
+    private boolean deleteK(KeyStroke keyStroke) {
+        table.takeFocus();
+        if(keyStroke.getKeyType().equals(KeyType.Backspace)) {
+            System.out.println("CA MARCHE BABY !!!");
+            return true;
+        }
+        return false;
+    }
+
 }
