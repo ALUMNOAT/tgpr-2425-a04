@@ -5,11 +5,11 @@ import tgpr.framework.Error;
 import java.util.regex.Pattern;
 
 public abstract class OptionValueValidator {
-    public static Error isValidLabel(String label){
+    public static Error notEmptyLabel(String label) {
         if(label == null)
             return Error.NOERROR;
-        if(!Pattern.matches(".{1,100}", label))
-            return new Error("at least one value required", OptionValue.Fields.Label);
+        if(label.isBlank())
+            return new Error("cannot be blank", OptionValue.Fields.Label);
         return Error.NOERROR;
     }
 }
