@@ -126,4 +126,11 @@ public class OptionValue extends Model {
 			new Params("idx", idx).add("option_list", optionListId));
         Assert.isTrue(c == 1, "Something went wrong");
     }
+
+    public static void indexGravity(List<OptionValue> ls) {
+        int index = 1;
+        for(OptionValue value : ls) {
+            value.setIdx(index++);
+        }
+    }
 }
