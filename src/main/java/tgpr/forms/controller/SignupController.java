@@ -58,13 +58,14 @@ public class SignupController extends Controller<SignupView> {
             if (isNew) {
                 errors.add(UserValidator.isValidAvailableEmail(email));
                 errors.add(UserValidator.isValidPassword(password));
+                errors.add(UserValidator.isValidName(fullName));
             }
 
             if (!password.equals(confirmPassword))
                 errors.add("must match password", Fields.PasswordConfirm);
 
-            var hashedPassword = password.isBlank() ? password : hash(password);
-            var user = User.createUser(fullName, email, hashedPassword, User.Role.valueOf("User"));
+            var user = User.createUser(fullName, email, password, User.Role.valueOf("User"));
+
             errors.addAll(UserValidator.validate(user));
 
             return errors;
