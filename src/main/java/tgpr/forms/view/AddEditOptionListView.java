@@ -13,17 +13,17 @@ import java.util.List;
 
 public class AddEditOptionListView extends DialogWindow {
     private final AddEditOptionListController controller;
-    private Label errAdd;
-    private Label errName;
-    private TextBox txtName;
-    private TextBox txtAdd;
+    private Label errAdd = new Label("");
+    private Label errName = new Label("");
+    private TextBox txtAdd = new TextBox();
+    private TextBox txtName = new TextBox();
     private Button btnAdd;
     private Button btnDelete;
     private Button btnSave;
     private Button btnDuplicate;
     private Button btnReorder;
     private Button btnClose;
-    private final ObjectTable<OptionValue> table;
+    private ObjectTable<OptionValue> table;
     private final OptionList optionList;
 
     public AddEditOptionListView(AddEditOptionListController controller, OptionList optionList) {
