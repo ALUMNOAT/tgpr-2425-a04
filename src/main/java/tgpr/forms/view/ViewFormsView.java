@@ -84,7 +84,6 @@ public class ViewFormsView extends BasicWindow {
         Panel menu = new Panel();
 
         menuBar.add(menuFile);
-        menuBar.add(menuParameters);
 
         menuFile.add(ViewProfile);
 
@@ -94,8 +93,11 @@ public class ViewFormsView extends BasicWindow {
         Exit = new MenuItem("Exit", controller::exit);
         menuFile.add(Exit);
 
-        MenuItem manageOptionLists = new MenuItem("Manage your Option Lists", controller::manageOptionLists);
-        menuParameters.add(manageOptionLists);
+        if(!Security.isGuest()){
+            menuBar.add(menuParameters);
+            MenuItem manageOptionLists = new MenuItem("Manage your Option Lists", controller::manageOptionLists);
+            menuParameters.add(manageOptionLists);
+        }
 
         menuBar.addTo(menu);
 
@@ -195,9 +197,17 @@ public class ViewFormsView extends BasicWindow {
 
         Button createForm = new Button("Create a new form", this::createNewForm);
 
+        if(Security.isGuest()){
+            createForm.setVisible(false);
+        }
+
         createForm.addTo(buttonsPanel).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Beginning));
 
         Panel emptySpace = new Panel().setPreferredSize(new TerminalSize(43,1));
+
+        if(Security.isGuest()){
+            emptySpace.setPreferredSize(new TerminalSize(62,1));
+        }
 
         buttonsPanel.addComponent(emptySpace);
 
