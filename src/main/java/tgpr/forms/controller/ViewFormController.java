@@ -66,7 +66,12 @@ public class ViewFormController extends Controller<ViewFormView> {
     }
 
     public void clear() {
-        //TODO: view_instances
+        if(askConfirmation( "Are you sure you want to delete all the instances?"
+                        + System.lineSeparator() +
+                        "Note: This will also delete instances that are currently being edited (not submitted).",
+                "Delete All Instances" )){
+            form.deleteAllInstances();
+        }
     }
 
     @Override
