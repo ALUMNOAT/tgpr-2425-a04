@@ -56,6 +56,11 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
         values.add(newValue);
     }
 
+    public void remove(OptionValue value) {
+        values.remove(value);
+        view.reloadData();
+    }
+
     public boolean askConfirmationDelete() {
         return askConfirmation(
                 "Are you sure you want to delete this option list?",
