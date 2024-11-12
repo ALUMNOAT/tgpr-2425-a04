@@ -79,8 +79,15 @@ public class AddEditOptionListView extends DialogWindow {
         return !errors.hasErrors();
     }
 
+    private void reorder(boolean reorder) {
+        root.removeComponent(pnlButtons);
+        pnlButtons = pnlButtons(reorder);
+        root.addComponent(pnlButtons);
+        txtName.takeFocus();
+    }
+
     private void reorder() {
-        controller.reorder();
+        reorder(true);
     }
 
     private void delete() {
@@ -104,6 +111,20 @@ public class AddEditOptionListView extends DialogWindow {
         }
     }
 
+    private void alphabetReorder() {
+        controller.alphabetReorder();
+        reloadData();
+    }
+
+    private void confirmOrder() {
+        controller.save();
+        reorder(false);
+    }
+
+    private void cancelReorder() {
+
+    }
+
     private Panel pnlName() {
         Panel pnlName = new Panel(new GridLayout(2).setTopMarginSize(1).setRightMarginSize(2));
 
@@ -115,17 +136,23 @@ public class AddEditOptionListView extends DialogWindow {
         return pnlName;
     }
 
-    private Panel pnlButtons() {
+    private Panel pnlButtons(boolean reorder) {
         Panel pnlButtons = new Panel(new LinearLayout(Direction.HORIZONTAL)).setLayoutData(Layouts.LINEAR_END); //Merci
 
-        if(optionList != null && optionList.getOwner() != null)
-            btnReorder = new Button("Reorder", this::reorder).addTo(pnlButtons);
-        if(optionList != null && !optionList.isUsed())
-            btnDelete = new Button("Delete", this::delete).addTo(pnlButtons).setEnabled(!optionList.isUsed());
-        btnDuplicate = new Button("Duplicate", this::duplicate).addTo(pnlButtons);
-        if(optionList != null && optionList.getOwner() != null)
-            btnSave = new Button("Save", this::save).addTo(pnlButtons);
-        btnClose = new Button("Close", this::close).addTo(pnlButtons);
+        if(!reorder) {
+            if (optionList != null && optionList.getOwner() != null)
+                btnReorder = new Button("Reorder", this::reorder).addTo(pnlButtons);
+            if (optionList != null && !optionList.isUsed())
+                btnDelete = new Button("Delete", this::delete).addTo(pnlButtons).setEnabled(changeable());
+            btnDuplicate = new Button("Duplicate", this::duplicate).addTo(pnlButtons);
+            if (optionList != null && optionList.getOwner() != null)
+                btnSave = new Button("Save", this::save).addTo(pnlButtons);
+            btnClose = new Button("Close", this::closeIt).addTo(pnlButtons);
+        } else {
+            Button btnAlphabetically = new Button("Alphabetically", this::alphabetReorder).addTo(pnlButtons);
+            Button btnConfirmOrder = new Button("Confirm order", this::confirmOrder).addTo(pnlButtons);
+            Button btnCancel = new Button("Cancel", this::cancelReorder).addTo(pnlButtons);
+        }
 
         return pnlButtons;
     }

@@ -30,10 +30,6 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
         return OptionValue.getAllByOptionList(optionListID);
     }
 
-    public void reorder() {
-        System.out.println("it works !");
-    }
-
     public void delete() {
         if(!optionList.isUsed() && askConfirmationDelete()) {
             optionList.delete();
@@ -59,6 +55,24 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
     public void remove(OptionValue value) {
         values.remove(value);
         view.reloadData();
+    }
+
+    public void alphabetReorder() {
+        //very inefficient but works
+        for (int i = 0; i < values.size(); i++) {
+            OptionValue min = values.get(i);
+            int indexSwap = i;
+            for (int j = 0; j < values.size(); j++) {
+                if(min.getLabel().compareToIgnoreCase(values.get(j).getLabel()) < 0) {
+                    min = values.get(j);
+                    indexSwap = j;
+                }
+            }
+            OptionValue temp = values.get(i);
+            values.set(i, min);
+            values.set(indexSwap, temp);
+        }
+
     }
 
     public boolean askConfirmationDelete() {
