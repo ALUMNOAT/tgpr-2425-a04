@@ -83,6 +83,7 @@ public class AddEditOptionListView extends DialogWindow {
 
     private void delete() {
         controller.delete();
+        validate();
     }
 
     private void duplicate() {
