@@ -217,6 +217,7 @@ public class ViewFormsView extends BasicWindow {
 
     public void openInstance(Form form){
         Controller.navigateTo(new ViewEditInstanceController(user, form));
+        reloadData();
     }
 
 }
