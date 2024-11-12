@@ -95,9 +95,11 @@ public class AddEditOptionListView extends DialogWindow {
     }
 
     private void add() {
-        controller.add(txtAdd.getText());
-        reloadData();
-        txtAdd.setText("");
+        if(validateAdd()) {
+            controller.add(txtAdd.getText());
+            reloadData();
+            txtAdd.setText("");
+        }
     }
 
     private Panel pnlName() {
