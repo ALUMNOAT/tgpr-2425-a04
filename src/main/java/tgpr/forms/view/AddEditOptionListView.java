@@ -71,6 +71,12 @@ public class AddEditOptionListView extends DialogWindow {
             btnSave.setEnabled(errors.isEmpty());
     }
 
+    private boolean validateAdd() {
+        var errors = controller.validateAdd(txtAdd.getText());
+        errAdd.setText(errors.getFirstErrorMessage(OptionValue.Fields.Label));
+        return !errors.hasErrors();
+    }
+
     private void reorder() {
         controller.reorder();
     }
