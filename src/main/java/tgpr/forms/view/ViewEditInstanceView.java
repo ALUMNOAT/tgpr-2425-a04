@@ -143,7 +143,7 @@ public class ViewEditInstanceView extends DialogWindow {
         /*
           gestion panel de la question
          */
-        Panel panel = createPanel();
+        Panel panel = Panel.verticalPanel( );
         panel.addEmpty();
         titlePanel().addTo(panel);
         panel.addEmpty();
@@ -162,7 +162,7 @@ public class ViewEditInstanceView extends DialogWindow {
         Panel panel = Panel.horizontalPanel();
         Question q = controller.getQuestion();
         answer = controller.i.getOrCreateAnswer(q);
-        Label quest = new Label(q.getTitle());
+        Label quest = new Label( q.getTitle());
         if (q.getRequired()){
             Label req = new Label("(*)");
             req.setForegroundColor(TextColor.ANSI.RED).addTo(panel);
