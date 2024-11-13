@@ -92,9 +92,23 @@ public class AddEditOptionListView extends DialogWindow {
     }
 
     private void reorder(boolean reorder) {
+        if(reorder) {
+            controller.save();
+        }
+        root.removeComponent(pnlTable);
+        pnlTable = pnlTable(reorder);
+        root.addComponent(pnlTable);
+
+        root.removeComponent(pnlAdd);
+        pnlAdd = pnlAdd();
+        root.addComponent(pnlAdd);
+
         root.removeComponent(pnlButtons);
         pnlButtons = pnlButtons(reorder);
         root.addComponent(pnlButtons);
+
+        reloadData();
+
         txtName.takeFocus();
     }
 
@@ -144,7 +158,9 @@ public class AddEditOptionListView extends DialogWindow {
     }
 
     private void cancelReorder() {
-
+        reorder(false);
+        controller.refreshValues();
+        reloadData();
     }
 
     private Panel pnlName() {
@@ -163,8 +179,6 @@ public class AddEditOptionListView extends DialogWindow {
             new EmptySpace().addTo(pnlName);
             new EmptySpace().addTo(pnlName);
         }
-
-
         return pnlName;
     }
 
@@ -201,7 +215,7 @@ public class AddEditOptionListView extends DialogWindow {
         return pnlAdd;
     }
 
-    private Panel pnlTable() {
+    private Panel pnlTable(boolean reorder) {
         Panel pnlTable = new Panel(
                 new GridLayout(1).setRightMarginSize(4).setBottomMarginSize(1))
                 .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.End, LinearLayout.GrowPolicy.CanGrow));
@@ -220,9 +234,13 @@ public class AddEditOptionListView extends DialogWindow {
                 }
                 return super.handleKeyStroke(keyStroke);
             }
-        }.addTo(pnlTable);
-        //addKeyboardListener(table, this::deleteK);
+        };
+        if(reorder) {
+            //on entre dans la méthode move quand on appuie sur 'enter'
+            table.setSelectAction(this::move);
+        }
 
+        pnlTable.addComponent(table);
         return pnlTable;
     }
 
