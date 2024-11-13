@@ -100,4 +100,19 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
     public List<OptionValue> getValues() {
         return values;
     }
+
+    public void swap(int oldIndex, int newIndex) {
+        OptionValue temp = values.get(oldIndex);
+        values.set(oldIndex, values.get(newIndex));
+        values.set(newIndex, temp);
+    }
+
+    public void gravity() {
+        OptionValue.indexGravity(values);
+    }
+
+    public void refreshValues() {
+        values.clear();
+        values.addAll(optionList.getOptionValues());
+    }
 }
