@@ -16,6 +16,8 @@ import static tgpr.framework.Controller.askConfirmation;
 
 public class AddEditOptionListView extends DialogWindow {
     private final AddEditOptionListController controller;
+    private Panel root = new Panel();
+    private Panel pnlButtons;
     private Label errAdd = new Label("");
     private Label errName = new Label("");
     private TextBox txtAdd = new TextBox();
@@ -40,12 +42,12 @@ public class AddEditOptionListView extends DialogWindow {
         setFixedSize(new TerminalSize(60, 18));
 
         //## PANELS ##
-        Panel root = new Panel();
         root.addComponent(pnlName());
         root.addComponent(pnlTable());
         if(changeable())
             root.addComponent(pnlAdd());
-        root.addComponent(pnlButtons());
+        pnlButtons = pnlButtons(false);
+        root.addComponent(pnlButtons);
 
         //# SETUP #
         setComponent(root);
@@ -94,7 +96,6 @@ public class AddEditOptionListView extends DialogWindow {
 
     private void delete() {
         controller.delete();
-        validate();
     }
 
     private void duplicate() {
@@ -224,13 +225,14 @@ public class AddEditOptionListView extends DialogWindow {
                 );
     }
 
-    private boolean deleteK(KeyStroke keyStroke) {
-        table.takeFocus();
-        if(keyStroke.getKeyType().equals(KeyType.Backspace)) {
-            System.out.println("CA MARCHE BABY !!!");
-            return true;
-        }
-        return false;
+    public boolean askConfirmationClose() {
+        return askConfirmation(
+                "Are you sure you want to cancel ?",
+                "Cancel");
+    }
+
+    public boolean isOptionListSystem() {
+        return checkBoxSystem.isChecked();
     }
 
 }
