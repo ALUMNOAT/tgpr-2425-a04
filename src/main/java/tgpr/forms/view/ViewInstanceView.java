@@ -29,13 +29,14 @@ public class ViewInstanceView extends DialogWindow {
         lblTitle.setText( controller.getTitle());lblDescription.setText( controller.getDescription() );
         setHints( List.of( Window.Hint.CENTERED , Window.Hint.MODAL ) );
 
-        Panel root = new Panel();
+        Panel root = Panel.verticalPanel(  );
         setComponent( root );
+
         formTextPanel().addTo( root );
         root.addEmpty();
         instancePanel().addTo( root );
         root.addEmpty();
-        buttonsPanel().addTo( root ).bottomCenter();
+        buttonsPanel().addTo( root );
 
         setCloseWindowWithEscape( true );
         refresh();
@@ -54,7 +55,7 @@ public class ViewInstanceView extends DialogWindow {
     }
 
     private Panel instancePanel() {
-        Panel instancePanel = new Panel();
+        Panel instancePanel = new Panel().sizeTo( 70,15 );
          table = new ObjectTable<>(
                 new ColumnSpec<>("Id", Instance::getId).setWidth(5).alignRight(),
                 new ColumnSpec<>("User", Instance::getUser).setWidth(30)
@@ -73,7 +74,10 @@ public class ViewInstanceView extends DialogWindow {
         return instancePanel;
     }
     private Panel buttonsPanel() {
-        Panel panel = Panel.horizontalPanel(1 );
+        Panel panel = new Panel()
+                .setLayoutManager(new LinearLayout(Direction.HORIZONTAL))
+                .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+
         btnDelSel = new Button( "Delete Selected" , this::deleteSelected ).addTo( panel );
         addShortcut(btnDelSel, KeyStroke.fromString("<del>" ));
         btnDelAll =new Button( "Delete All" , this::deleteAll ).addTo( panel );
