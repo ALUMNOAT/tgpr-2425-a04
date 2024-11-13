@@ -98,7 +98,6 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
     }
 
     public List<OptionValue> getValues() {
-        OptionValue.indexGravity(values);
         return values;
     }
 }
