@@ -270,6 +270,9 @@ public class ViewEditInstanceView extends DialogWindow {
         if(controller.u.isGuest() && !controller.review){
             Button btnClose = new Button( "Close" , this::cancel ).addTo( panel );
             addShortcut(btnClose, KeyStroke.fromString("<esc>" ));
+        } else if(controller.review){
+            Button btnClose = new Button( "Close" , this::close ).addTo( panel );
+            addShortcut(btnClose, KeyStroke.fromString("<esc>" ));
         }else{
             Button btnClose = new Button( "Close" , this::closeSave ).addTo( panel );
             addShortcut(btnClose, KeyStroke.fromString("<esc>" ));
