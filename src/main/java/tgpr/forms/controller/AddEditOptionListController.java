@@ -34,6 +34,10 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
         return view;
     }
 
+    public OptionList getOptionList() {
+        return optionList;
+    }
+
     public List<OptionValue> getValuesByOptionList(int optionListID) {
         return OptionValue.getAllByOptionList(optionListID);
     }

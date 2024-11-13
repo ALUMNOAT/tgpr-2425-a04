@@ -19,13 +19,11 @@ public class ManageOptionListsController extends Controller<ManageOptionListsVie
     }
 
     public void addOptionList() {
-        //TODO: edit_add_option_list
-        //navigateTo(new AddEditOptionListController())
+        navigateTo(new AddEditOptionListController(null));
     }
 
     public void editOptionList(OptionList optionList) {
-        //TODO: edit_add_option_list
-        //navigateTo(new AddEditOptionListController(optionList))
+        navigateTo(new AddEditOptionListController(optionList));
     }
 
     @Override

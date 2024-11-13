@@ -29,7 +29,7 @@ public class AnalyzeView extends DialogWindow {
 
         lblTitle.setText(controller.getTitle());
         lblDescription.setText(controller.getDescription());
-        lblNbSubInstances.setText(form.getInstances().size()+"");
+        lblNbSubInstances.setText(form.getCompletedInstances().size()+"");
         setHints(List.of(Window.Hint.CENTERED, Window.Hint.MODAL));
 
         Panel root = new Panel();
