@@ -50,18 +50,14 @@ public abstract class UserValidator {
     public static Error isValidName(String fullName) {
         if (fullName == null || fullName.isBlank())
             return new Error("name required", User.Fields.FullName);
-        if(!Pattern.matches("[a-zA-Z]{3,}( [a-zA-Z]{3,})*", fullName))
-            return new Error("invalid name", User.Fields.FullName);
+        if (fullName.length() < 3)
+            return new Error("minimum 3 characters", User.Fields.FullName);
         return Error.NOERROR;
     }
 
     public static Error isValidAvailableName(String fullName) {
         var error = isValidName(fullName);
-        /** Blame Benoit Penelle
-         * (IDK who the fuck putted unique names as a key in the database
-         * when more people can have the same name, lost 1 hour losing my mind thinking that I'm dumb
-         * but actually the code was ok)
-         */
+        //Debugger
         //System.out.println(User.getByFullName(fullName);
         if (error != Error.NOERROR)
             return error;

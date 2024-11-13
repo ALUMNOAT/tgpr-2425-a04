@@ -19,34 +19,37 @@ import static tgpr.framework.Controller.askConfirmation;
 
 public class ViewEditInstanceView extends DialogWindow {
 
-    private final Label txtBody = new Label("You have already answered this form."+System.lineSeparator()+"You can view your submission or submit again."+System.lineSeparator()+"What would you like to do?");
-    private final Label errBody = new Label("");
     private final ViewEditInstanceController controller;
+
+    //Labels
+    private final Label errBody = new Label("");
     private final Label lblTitle = new Label("");
     private final Label lblDescription = new Label("");
     private final Label lblStart = new Label("");
     private final Label lblSubmitted = new Label("");
     private final Label lblUser = new Label("");
-    private boolean review=false;
-    public boolean view_instance;
+
     private Answer answer;
+    public List<Integer> questionError = new ArrayList<>();
+
+    //différentes boxs
     private TextBox textBox;
     private final CheckBoxList checkBox = new CheckBoxList();
     private final RadioBoxList radioBox = new RadioBoxList();
     private final ComboBox comboBox = new ComboBox();
-    public List<Integer> questionError = new ArrayList<>();
 
-    public ViewEditInstanceView( ViewEditInstanceController controller, boolean view_instance) {
+    public ViewEditInstanceView( ViewEditInstanceController controller) {
         super("Open a form");
         this.controller = controller;
-        errBody.setForegroundColor(TextColor.ANSI.RED);
 
+        //initialisation des variables
+        errBody.setForegroundColor(TextColor.ANSI.RED);
         setHints(List.of(Hint.CENTERED, Hint.MODAL));
         this.lblTitle.setText( controller.getTitle());
         this.lblDescription.setText(controller.getDescription());
         this.lblStart.setText(controller.getDate());
-        this.view_instance = view_instance;
-        if (!view_instance){
+
+        if (!controller.view_instance){
             if(controller.isCompleted()){
                 confirmationPanel();
             } else{
@@ -59,6 +62,9 @@ public class ViewEditInstanceView extends DialogWindow {
     }
 
     private void confirmationPanel(){
+        /*
+          gestion fenetre si la dernière instances est déjà soumise
+         */
         var root = createPanel();
         setComponent(root);
         root.addEmpty();
@@ -68,12 +74,21 @@ public class ViewEditInstanceView extends DialogWindow {
     }
 
     private Panel confirmationTextPanel() {
+        /*
+          gestion texte si la dernière instances est déjà soumise
+         */
         Panel panel = Panel.horizontalPanel();
-        txtBody.addTo(panel);
+        new Label("You have already answered this form."
+                +System.lineSeparator()+"You can view your submission or submit again."
+                +System.lineSeparator()+"What would you like to do?")
+                .addTo(panel);
         return panel;
     }
 
     private Panel confirmationButtonsPanel() {
+        /*
+          gestion boutons si la dernière instances est déjà soumise
+         */
         Panel panel = Panel.horizontalPanel(1).center();
 
         new Button( "View Submission" , this::review ).addTo( panel );
@@ -84,17 +99,23 @@ public class ViewEditInstanceView extends DialogWindow {
     }
 
     private void instancePanel(){
-        var root = createPanel().sizeTo(85,25).setLayoutManager(new BorderLayout());
+        /*
+          gestion de la fenetre
+         */
+        var root = Panel.verticalPanel(1);
         setComponent(root);
-        formTextPanel().setLayoutData(BorderLayout.Location.TOP).addTo(root);
-        root.addEmpty();
-        QuestionPanel(review).setLayoutData(BorderLayout.Location.CENTER).withBorder(Borders.singleLine("Question " + controller.getQuestion().getIdx() + " of " + controller.numQuestions())).addTo(root);
-        root.addEmpty();
-        formButtonsPanel(review).setLayoutData(BorderLayout.Location.BOTTOM).addTo(root);
+
+        formTextPanel().addTo(root);
+        QuestionPanel().withBorder(Borders.singleLine("Question " + (controller.numQuestion+1) + " of " + controller.numQuestions())).addTo(root);
+        formButtonsPanel().addTo(root);
+
         super.setTitle("Answer the Form");
     }
 
     private Panel formTextPanel() {
+        /*
+          gestion titres et informations de l'instance
+         */
         Panel panel = Panel.gridPanel(2, Margin.of(1, 1, 1, 0));
 
         new Label("Title:").addTo(panel);
@@ -106,11 +127,11 @@ public class ViewEditInstanceView extends DialogWindow {
         new Label("Started on:").addTo(panel);
         lblStart.addTo(panel).addStyle(SGR.BOLD);
 
-        if(review){
+        if(controller.review){
             new Label("Submitted on:").addTo(panel);
             lblSubmitted.addTo(panel).addStyle(SGR.BOLD);
         }
-        if(view_instance){
+        if(controller.view_instance){
             this.lblUser.setText(controller.u.getName());
             new Label("Submitted by:").addTo(panel);
             lblUser.addTo(panel).addStyle(SGR.BOLD);
@@ -118,12 +139,15 @@ public class ViewEditInstanceView extends DialogWindow {
         return panel;
     }
 
-    private Panel QuestionPanel(boolean review){
-        Panel panel = createPanel();
+    private Panel QuestionPanel(){
+        /*
+          gestion panel de la question
+         */
+        Panel panel = Panel.verticalPanel().sizeTo( 80,19 );
         panel.addEmpty();
         titlePanel().addTo(panel);
         panel.addEmpty();
-        if(review){
+        if(controller.review){
             reviewQuizPanel().addTo(panel);
         } else {
             QuizPanel().addTo(panel);
@@ -132,10 +156,13 @@ public class ViewEditInstanceView extends DialogWindow {
     }
 
     private Panel titlePanel(){
+        /*
+          Panel du titre de la question et affiche si requis ou non
+         */
         Panel panel = Panel.horizontalPanel();
         Question q = controller.getQuestion();
         answer = controller.i.getOrCreateAnswer(q);
-        Label quest = new Label(q.getTitle());
+        Label quest = new Label( q.getTitle());
         if (q.getRequired()){
             Label req = new Label("(*)");
             req.setForegroundColor(TextColor.ANSI.RED).addTo(panel);
@@ -145,7 +172,10 @@ public class ViewEditInstanceView extends DialogWindow {
     }
 
     private Panel QuizPanel(){
-        Panel panel = createPanel();
+        /*
+          affiche la question avec une box pour la reponse en fonction de son type
+         */
+        Panel panel = Panel.verticalPanel(  );
         Question q = controller.getQuestion();
         if (q.getType() == Question.Type.Short || q.getType() == Question.Type.Email || q.getType() == Question.Type.Date){
             textBox = new TextBox().sizeTo(100);
@@ -164,6 +194,7 @@ public class ViewEditInstanceView extends DialogWindow {
             if (answer.isValid()){
                 textBox.setText(answer.getValue());
             }
+            textBox.setTextChangeListener( ( txt, byUser) -> validate() );
             textBox.addTo(panel);
         } else if (q.getType() == Question.Type.Check){
             checkBox.clearItems();
@@ -175,6 +206,7 @@ public class ViewEditInstanceView extends DialogWindow {
                     }
                 }
             }
+            checkBox.addListener( ( txt, byUser) -> validate() );
             checkBox.setAfterLeaveFocusListener( ( txt, byUser) -> validate() );
             checkBox.addTo(panel);
         } else if (q.getType() == Question.Type.Radio){
@@ -187,6 +219,7 @@ public class ViewEditInstanceView extends DialogWindow {
                     }
                 }
             }
+            radioBox.addListener( ( txt, byUser) -> validate() );
             radioBox.setAfterLeaveFocusListener( ( txt, byUser) -> validate() );
             radioBox.addTo(panel);
         } else if (q.getType() == Question.Type.Combo){
@@ -203,11 +236,14 @@ public class ViewEditInstanceView extends DialogWindow {
             comboBox.addTo(panel);
         }
         panel.addEmpty();
-        errBody.addTo(panel);
+        errBody.bottom().addTo(panel);
         return panel;
     }
 
     private Panel reviewQuizPanel(){
+        /*
+          En lecture de l'instance, affiche les réponses
+         */
         Panel panel = createPanel();
         Question q = controller.getQuestion();
         if(q.getType() == Question.Type.Check){
@@ -224,34 +260,42 @@ public class ViewEditInstanceView extends DialogWindow {
         return panel;
     }
 
-    private Panel formButtonsPanel(boolean review) {
-        Panel panel = Panel.horizontalPanel(1 );
-        if(controller.u.isGuest() && !review){
+    private Panel formButtonsPanel() {
+        /*
+          Gestion des boutons du formulaire
+         */
+        Panel panel = new Panel()
+                .setLayoutManager(new LinearLayout(Direction.HORIZONTAL))
+                .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        if(controller.u.isGuest() && !controller.review){
             Button btnClose = new Button( "Close" , this::cancel ).addTo( panel );
             addShortcut(btnClose, KeyStroke.fromString("<esc>" ));
         }else{
             Button btnClose = new Button( "Close" , this::closeSave ).addTo( panel );
             addShortcut(btnClose, KeyStroke.fromString("<esc>" ));
         }
-        if(controller.getQuestion().getIdx() > 1){
+        if(controller.numQuestion > 0){
             Button btnPrev =new Button( "Previous" , this::previous ).addTo( panel );
             addShortcut(btnPrev, KeyStroke.fromString("<pagedown>" ));
 
-        } if(controller.getQuestion().getIdx() < controller.numQuestions()){
+        } if(controller.numQuestion+1 < controller.numQuestions()){
             Button btnNext =new Button( "Next" , this::next ).addTo( panel );
             addShortcut(btnNext, KeyStroke.fromString("<pageup>" ));
         } else  {
-            if(!review){
+            if(!controller.review){
                 new Button( "Submit" , this::submit ).addTo( panel );
             }
         }
-        if(!review){
+        if(!controller.review){
             new Button( "Cancel" , this::cancel ).addTo( panel );
         }
         return panel;
     }
 
     private void cancel(){
+        /*
+          Demande confirmation avant de supprimer l'instance, automique pour Guest quand il quitte l'instance
+         */
         if (askConfirmation("You are about to delete this instance and its answers?", "Delete Instance")) {
             controller.i.delete();
             close();
@@ -260,16 +304,26 @@ public class ViewEditInstanceView extends DialogWindow {
 
 
     private void submit(){
+        /*
+          Sauvegarde l'instance et la soumet
+         */
         saveAnswer();
         validate();
         Object o = controller.numQuestion;
         if(!errBody.getText().isBlank()){
-            if(!questionError.contains( o ))
-                questionError.add( controller.numQuestion );
-        } else {
+            if(errBody.getText().compareTo( "This question is required" ) == 0){
+                if(!questionError.contains( o ))
+                    questionError.add( controller.numQuestion );
+            } else {
+                textBox.setText( "" );
+            }
+            }else {
             questionError.remove( o );
         }
         if(questionError.isEmpty()){
+            /*
+          Si il n'y a pas de question avec des réponses non valide
+         */
             if(askConfirmation( "Are you sure you want to submit this form?", "Submit Form" )){
                 controller.i.submit();
                 MessageDialog.showMessageDialog( getTextGUI(),
@@ -278,6 +332,9 @@ public class ViewEditInstanceView extends DialogWindow {
                         MessageDialogButton.OK);
                 this.close();}
         }else {
+            /*
+          Si au moins une question a une réponse non valide
+         */
                 MessageDialog.showMessageDialog( getTextGUI(),
                         "Error",
                         "You must correct all errors before submitting the form.",
@@ -288,30 +345,53 @@ public class ViewEditInstanceView extends DialogWindow {
         }
 
     private void previous(){
+        /*
+          retourne à la question précedante, efface message error
+         */
         controller.previousQuestion();
         instancePanel();
         errBody.setText( "" );
     }
 
     private void next(){
-        if (review){
+        /*
+          passe à la prochaine question:
+          if (!review):
+              -Vérifie si la réponse est valide
+              -Ajoute la question à la liste des question non validé si réponse non valide
+              -Sauvegarde la réponse
+         */
+        if (controller.review){
             controller.nextQuestion();
             instancePanel();
         }else {
             validate();
             Object o = controller.numQuestion;
             if(!errBody.getText().isBlank()){
-                if(!questionError.contains( o ))
-                    questionError.add( controller.numQuestion );
+                if(errBody.getText().compareTo( "This question is required" ) == 0){
+                    if(!questionError.contains( o )){
+                        questionError.add( controller.numQuestion );
+                        saveAnswer();
+                    }
+                } else {
+                    textBox.setText( "" );
+                    controller.nextQuestion();
+                    instancePanel();
+                }
             } else {
                 questionError.remove( o );
+                saveAnswer();
             }
             errBody.setText( "" );
-            saveAnswer();
+
         }
     }
 
     private void saveAnswer(){
+        /*
+          sauvegarde la réponse dépendant du type de la question. Dans le cas de check,
+          sauvegarde chaque réponse dans un Answer() different.
+         */
         Question q = controller.getQuestion();
         if (q.getType() == Question.Type.Short || q.getType() == Question.Type.Email
                 || q.getType() == Question.Type.Date || q.getType() == Question.Type.Long){
@@ -340,17 +420,29 @@ public class ViewEditInstanceView extends DialogWindow {
     }
 
     private void submitAgain(){
+        /*
+          Crée une nouvelle instance et lance le questionnaire pour cette instance
+         */
         controller.i = controller.f.createInstance(controller.u);
         instancePanel();
     }
 
     private void review(){
+        /*
+          fonction lanncé dans le cas de la relecture d'une instance
+         */
         this.lblSubmitted.setText( controller.i.getCompleted().format( DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
-        this.review = true;
+        controller.review = true;
         instancePanel();
     }
 
     private void validate() {
+        /*
+          recupere la réponse et appelle la fonction validate(String txt) du controller avec en paramètre
+          la réponse sous forme de String.
+          Dans le cas de check, vérifie qu'il y a au moins une réponse si il y a une réponse envoie "c'est bon"
+           sinon envoie un String blank
+         */
         String txt = "";
         if(controller.getQuestion().getType() == Question.Type.Check){
             if(!checkBox.getCheckedItems().isEmpty()){
@@ -376,6 +468,9 @@ public class ViewEditInstanceView extends DialogWindow {
     }
 
     public void closeSave(){
+        /*
+          ferme la fonction en sauvegardant la réponse
+         */
         saveAnswer();
         close();
     }

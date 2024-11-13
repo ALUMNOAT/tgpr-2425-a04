@@ -14,13 +14,14 @@ import static tgpr.framework.LocaleFormats.INPUT_DATE_FORMATTER;
 
 public class ViewEditInstanceController extends Controller<ViewEditInstanceView> {
 
+    public boolean view_instance = false;
     public User u;
     public Form f;
     public Instance i;
     public int numQuestion = 0;
-    public boolean view_instance = false;
     public String description;
     public String title;
+    public boolean review =false;
 
     public ViewEditInstanceController( User u, Form f) {
         this.u = u;
@@ -31,6 +32,7 @@ public class ViewEditInstanceController extends Controller<ViewEditInstanceView>
         this.u = i.getUser();
         this.f = i.getForm();
         this.i = i;
+        this.review = true;
         this.view_instance = true;
     }
 
@@ -72,6 +74,15 @@ public class ViewEditInstanceController extends Controller<ViewEditInstanceView>
     }
 
     public ErrorList validate( String body) {
+        /*
+          recoit en paramatre la réponse sous forme de String
+
+          verifie que la réponse est valide:
+           -si requis --> réponse ne doit pas etre vide
+           -si Question.Type == Date || Email --> verifie que le format soit respecter
+
+           Return une liste d'erreurs
+         */
         var errors = new ErrorList();
         if(!(!getQuestion().getRequired() || body != null && !body.isBlank())){
             errors.add(  new Error("This question is required"));
@@ -95,6 +106,10 @@ public class ViewEditInstanceController extends Controller<ViewEditInstanceView>
     }
 
     private void getInstance() {
+        /*
+          -Si guest crée une nouvelle instance
+          -Si User récupere dernière instance si aucune instance en crée une nouvelle.
+         */
         if (u.isGuest()){
             i = f.createInstance(u);
         } else {
@@ -107,11 +122,14 @@ public class ViewEditInstanceController extends Controller<ViewEditInstanceView>
 
     @Override
     public ViewEditInstanceView getView() {
-        if(!view_instance)
+        /*
+          gestion de la vue
+         */
+        if(!review)
             getInstance();
         description = f.getDescription();
         title = f.getTitle();
         date = i.getStarted().format( DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss") );
-        return new ViewEditInstanceView(this, this.view_instance);
+        return new ViewEditInstanceView(this);
     }
 }
