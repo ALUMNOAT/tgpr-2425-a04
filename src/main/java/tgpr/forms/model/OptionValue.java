@@ -97,6 +97,11 @@ public class OptionValue extends Model {
         return queryList(OptionValue.class, "select * from option_values");
     }
 
+    public static List<OptionValue> getAllByOptionList(int optionListId) {
+        return queryList(OptionValue.class, "select * from option_values where option_list=:option_list",
+                new Params("option_list", optionListId));
+    }
+
     public OptionValue save() {
         int c;
         OptionValue obj = getByKey(idx, optionListId);
@@ -120,5 +125,12 @@ public class OptionValue extends Model {
         int c = execute("delete from option_values where idx=:idx and option_list=:option_list",
 			new Params("idx", idx).add("option_list", optionListId));
         Assert.isTrue(c == 1, "Something went wrong");
+    }
+
+    public static void indexGravity(List<OptionValue> ls) {
+        int index = 1;
+        for(OptionValue value : ls) {
+            value.setIdx(index++);
+        }
     }
 }
