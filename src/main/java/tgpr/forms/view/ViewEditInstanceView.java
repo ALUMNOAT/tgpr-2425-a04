@@ -194,6 +194,7 @@ public class ViewEditInstanceView extends DialogWindow {
             if (answer.isValid()){
                 textBox.setText(answer.getValue());
             }
+            textBox.setTextChangeListener( ( txt, byUser) -> validate() );
             textBox.addTo(panel);
         } else if (q.getType() == Question.Type.Check){
             checkBox.clearItems();
@@ -205,6 +206,7 @@ public class ViewEditInstanceView extends DialogWindow {
                     }
                 }
             }
+            checkBox.addListener( ( txt, byUser) -> validate() );
             checkBox.setAfterLeaveFocusListener( ( txt, byUser) -> validate() );
             checkBox.addTo(panel);
         } else if (q.getType() == Question.Type.Radio){
@@ -217,6 +219,7 @@ public class ViewEditInstanceView extends DialogWindow {
                     }
                 }
             }
+            radioBox.addListener( ( txt, byUser) -> validate() );
             radioBox.setAfterLeaveFocusListener( ( txt, byUser) -> validate() );
             radioBox.addTo(panel);
         } else if (q.getType() == Question.Type.Combo){
