@@ -99,9 +99,11 @@ public class AddEditOptionListView extends DialogWindow {
         pnlTable = pnlTable(reorder);
         root.addComponent(pnlTable);
 
-        root.removeComponent(pnlAdd);
-        pnlAdd = pnlAdd();
-        root.addComponent(pnlAdd);
+        if(changeable()) {
+            root.removeComponent(pnlAdd);
+            pnlAdd = pnlAdd();
+            root.addComponent(pnlAdd);
+        }
 
         root.removeComponent(pnlButtons);
         pnlButtons = pnlButtons(reorder);
