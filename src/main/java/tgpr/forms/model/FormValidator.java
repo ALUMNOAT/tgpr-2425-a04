@@ -18,7 +18,7 @@ public abstract class FormValidator {
         Form dbForm = Form.getByTitleAndUser(title, Security.getLoggedUser());
         if(dbForm != null && dbForm.getOwner().equals(Security.getLoggedUser())) {
             if(form == null || dbForm.getId() != form.getId())
-            return new Error("This title is already taken", Form.Fields.Title);
+                return new Error("This title is already taken", Form.Fields.Title);
         }
         return Error.NOERROR;
     }
