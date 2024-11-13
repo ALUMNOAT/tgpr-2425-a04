@@ -66,6 +66,7 @@ public class AddEditOptionListView extends DialogWindow {
     public void reloadData() {
         if(optionList != null) {
             table.clear();
+            controller.gravity();
             table.add(controller.getValues());
         }
     }
