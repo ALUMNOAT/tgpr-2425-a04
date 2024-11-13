@@ -9,14 +9,14 @@ public abstract class FormValidator {
     public static Error isValidTitle(String title){
         if(title == null)
             return Error.NOERROR;
-        if(!Pattern.matches("[a-zA-Z\\d][a-z\\d]{0,21}", title))
+        if(!Pattern.matches("[a-zA-Z\\d][a-zA-Z\\d\\s]{0,21}", title))
             return new Error("Invalid title format", Form.Fields.Title);
         return Error.NOERROR;
     }
 
     public static Error isNotTakenTitle(String title, Form form){
         Form dbForm = Form.getByTitleAndUser(title, Security.getLoggedUser());
-        if(dbForm != null && dbForm.getId() != form.getId())
+        if(dbForm != null && dbForm.getOwner().equals(Security.getLoggedUser()))
             return new Error("This title is already taken", Form.Fields.Title);
         return Error.NOERROR;
     }
