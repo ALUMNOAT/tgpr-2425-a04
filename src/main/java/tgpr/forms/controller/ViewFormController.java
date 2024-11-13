@@ -62,7 +62,7 @@ public class ViewFormController extends Controller<ViewFormView> {
     }
 
     public void analyze() {
-        //TODO: analyze
+        navigateTo(new AnalyzeController(form));
     }
 
     public void clear() {
