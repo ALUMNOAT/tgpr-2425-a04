@@ -80,6 +80,8 @@ public class AddEditOptionListView extends DialogWindow {
             btnAdd.setEnabled(true);
         if(btnSave != null)
             btnSave.setEnabled(errors.isEmpty());
+        if(btnDuplicate != null)
+            btnDuplicate.setEnabled(errors.isEmpty());
         errAdd.setText(errors.getFirstErrorMessage(OptionValue.Fields.Label));
 
         return !errors.hasErrors();
