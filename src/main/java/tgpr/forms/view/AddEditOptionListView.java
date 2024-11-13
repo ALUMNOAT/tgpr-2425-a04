@@ -244,6 +244,25 @@ public class AddEditOptionListView extends DialogWindow {
         return pnlTable;
     }
 
+    private void move() {
+        //si on re-appuie sur 'enter', on arrête de bouger
+        table.setSelectAction(this::stopMove);
+        //move écoute pour voir si on bouge l'élément, si oui on swap() !
+        table.addSelectionChangeListener(this::swap);
+    }
+
+    private void swap(int oldRow, int newRow, boolean byUser) {
+        table.addSelectionChangeListener(null);
+        controller.swap(oldRow, newRow);
+        reloadData();
+        table.setSelectedRow(newRow);
+        move();
+    }
+
+    private void stopMove() {
+        table.addSelectionChangeListener(null);
+        table.setSelectAction(this::move);
+    }
     private boolean changeable() {
         return optionList == null ||
                 !optionList.isUsed() && (
