@@ -21,9 +21,8 @@ public abstract class FormValidator {
     public static Error isValidDescription(String description){
         if(description == null)
             return Error.NOERROR;
-
-        if(description.isBlank())
-            return new Error("Description required", Form.Fields.Description);
+        if(description.isEmpty())
+            return Error.NOERROR;
         else if(!Pattern.matches(".{3,21}", description))
             return new Error("Description requires at least 3 char", Form.Fields.Description);
 
