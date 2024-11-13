@@ -15,10 +15,16 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
     private int maxValueIndex;
 
     public AddEditOptionListController(OptionList optionList){
+        if(optionList == null) {
+            optionList = new OptionList();
+            optionList.setOwnerId(Security.getLoggedUserId());
+            optionList.setName("");
+        }
+        this.optionList = optionList;
+        optionList.save();
         values.addAll(optionList.getOptionValues());
         view = new AddEditOptionListView(this, optionList);
-        this.optionList = optionList;
-        maxValueIndex = optionList.getMaxValueIndex(values);
+        maxValueIndex = OptionList.getMaxValueIndex(values);
     }
 
     @Override
