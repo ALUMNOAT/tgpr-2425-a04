@@ -71,6 +71,7 @@ public class AddEditFormView extends DialogWindow {
             txtDescription.setText(form.getDescription());
             blnPublic.setChecked(form.getIsPublic());
         }
+        validate();
     }
 
     private void validate() {

@@ -9,8 +9,12 @@ public abstract class FormValidator {
     public static Error isValidTitle(String title){
         if(title == null)
             return Error.NOERROR;
-        if(!Pattern.matches("[a-zA-Z\\d][a-zA-Z\\d\\s]{0,21}", title))
+
+        if(title.isBlank())
+            return new Error("title required", Form.Fields.Title);
+        else if(!Pattern.matches("[a-zA-Z\\d][a-zA-Z\\d\\s]{0,21}", title))
             return new Error("Invalid title format", Form.Fields.Title);
+
         return Error.NOERROR;
     }
 
