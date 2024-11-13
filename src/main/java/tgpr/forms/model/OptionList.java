@@ -109,6 +109,16 @@ public class OptionList extends Model {
         return queryList(OptionList.class, "select * from option_lists order by name");
     }
 
+    public static int getMaxId() {
+        List<OptionList> ls = getAll();
+        int max = 0;
+        for(OptionList ol : ls) {
+            if(ol.id > max)
+                max = ol.id;
+        }
+        return max;
+    }
+
     public static List<OptionList> getForUser(User user) {
         return queryList(OptionList.class, """
                         select * from option_lists

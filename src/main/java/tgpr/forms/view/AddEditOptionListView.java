@@ -126,6 +126,7 @@ public class AddEditOptionListView extends DialogWindow {
 
     private void save() {
         if(validate()) {
+            optionList.setName(txtName.getText());
             controller.save();
             this.close();
         }
