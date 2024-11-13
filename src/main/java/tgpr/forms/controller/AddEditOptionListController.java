@@ -43,7 +43,7 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
     }
 
     public void save() {
-        optionList.addValues(values);
+        optionList.setValues(values);
         if(Security.getLoggedUser().isAdmin())
             if(view.isOptionListSystem())
                 optionList.setOwnerId(null);
