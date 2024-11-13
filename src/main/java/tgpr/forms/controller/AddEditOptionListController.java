@@ -66,8 +66,8 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
         for (int i = 0; i < values.size(); i++) {
             OptionValue min = values.get(i);
             int indexSwap = i;
-            for (int j = 0; j < values.size(); j++) {
-                if(min.getLabel().compareToIgnoreCase(values.get(j).getLabel()) < 0) {
+            for (int j = i; j < values.size(); j++) {
+                if(min.getLabel().compareToIgnoreCase(values.get(j).getLabel()) > 0) {
                     min = values.get(j);
                     indexSwap = j;
                 }
@@ -76,7 +76,6 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
             values.set(i, min);
             values.set(indexSwap, temp);
         }
-
     }
 
     public boolean askConfirmationDelete() {
