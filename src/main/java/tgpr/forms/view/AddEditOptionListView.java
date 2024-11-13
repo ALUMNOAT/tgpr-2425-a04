@@ -71,16 +71,18 @@ public class AddEditOptionListView extends DialogWindow {
         }
     }
 
-    private void validate() {
+    private boolean validate() {
         var errors = controller.validate(
                 txtName.getText()
         );
-        errAdd.setText(errors.getFirstErrorMessage(OptionValue.Fields.Label));
         errName.setText(errors.getFirstErrorMessage(OptionList.Fields.Name));
         if(changeable())
-            btnAdd.setEnabled(errors.isEmpty());
+            btnAdd.setEnabled(true);
         if(btnSave != null)
             btnSave.setEnabled(errors.isEmpty());
+        errAdd.setText(errors.getFirstErrorMessage(OptionValue.Fields.Label));
+
+        return !errors.hasErrors();
     }
 
     private boolean validateAdd() {
@@ -109,9 +111,10 @@ public class AddEditOptionListView extends DialogWindow {
     }
 
     private void save() {
-        controller.save();
-
-        this.close();
+        if(validate()) {
+            controller.save();
+            this.close();
+        }
     }
 
     public void closeIt() {
