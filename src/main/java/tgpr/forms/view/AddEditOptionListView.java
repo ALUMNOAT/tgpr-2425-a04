@@ -5,13 +5,14 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 import tgpr.forms.controller.AddEditOptionListController;
 import tgpr.forms.model.OptionList;
 import tgpr.forms.model.OptionValue;
 import tgpr.forms.model.Security;
 
 import java.util.List;
+
+import static tgpr.framework.Controller.askConfirmation;
 
 public class AddEditOptionListView extends DialogWindow {
     private final AddEditOptionListController controller;
