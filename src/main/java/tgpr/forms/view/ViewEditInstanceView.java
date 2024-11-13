@@ -230,7 +230,7 @@ public class ViewEditInstanceView extends DialogWindow {
             Button btnClose = new Button( "Close" , this::cancel ).addTo( panel );
             addShortcut(btnClose, KeyStroke.fromString("<esc>" ));
         }else{
-            Button btnClose = new Button( "Close" , this::close ).addTo( panel );
+            Button btnClose = new Button( "Close" , this::closeSave ).addTo( panel );
             addShortcut(btnClose, KeyStroke.fromString("<esc>" ));
         }
         if(controller.getQuestion().getIdx() > 1){
@@ -373,6 +373,11 @@ public class ViewEditInstanceView extends DialogWindow {
             errBody.setText(errors.getFirst().getMessage());
         }else
             errBody.setText( "" );
+    }
+
+    public void closeSave(){
+        saveAnswer();
+        close();
     }
 
     private Panel createPanel() {
