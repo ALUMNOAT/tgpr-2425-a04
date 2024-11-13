@@ -102,13 +102,13 @@ public class ViewEditInstanceView extends DialogWindow {
         /*
           gestion de la fenetre
          */
-        var root = createPanel().sizeTo(85,25).setLayoutManager(new BorderLayout());
+        var root = Panel.verticalPanel(1);
         setComponent(root);
-        formTextPanel().setLayoutData(BorderLayout.Location.TOP).addTo(root);
-        root.addEmpty();
-        QuestionPanel().setLayoutData(BorderLayout.Location.CENTER).withBorder(Borders.singleLine("Question " + controller.getQuestion().getIdx() + " of " + controller.numQuestions())).addTo(root);
-        root.addEmpty();
-        formButtonsPanel().setLayoutData(BorderLayout.Location.BOTTOM).addTo(root);
+
+        formTextPanel().addTo(root);
+        QuestionPanel().withBorder(Borders.singleLine("Question " + (controller.numQuestion+1) + " of " + controller.numQuestions())).addTo(root);
+        formButtonsPanel().addTo(root);
+
         super.setTitle("Answer the Form");
     }
 
@@ -143,7 +143,7 @@ public class ViewEditInstanceView extends DialogWindow {
         /*
           gestion panel de la question
          */
-        Panel panel = Panel.verticalPanel( );
+        Panel panel = Panel.verticalPanel().sizeTo( 80,19 );
         panel.addEmpty();
         titlePanel().addTo(panel);
         panel.addEmpty();
@@ -175,7 +175,7 @@ public class ViewEditInstanceView extends DialogWindow {
         /*
           affiche la question avec une box pour la reponse en fonction de son type
          */
-        Panel panel = createPanel();
+        Panel panel = Panel.verticalPanel(  );
         Question q = controller.getQuestion();
         if (q.getType() == Question.Type.Short || q.getType() == Question.Type.Email || q.getType() == Question.Type.Date){
             textBox = new TextBox().sizeTo(100);
@@ -236,7 +236,7 @@ public class ViewEditInstanceView extends DialogWindow {
             comboBox.addTo(panel);
         }
         panel.addEmpty();
-        errBody.addTo(panel);
+        errBody.bottom().addTo(panel);
         return panel;
     }
 
@@ -264,7 +264,9 @@ public class ViewEditInstanceView extends DialogWindow {
         /*
           Gestion des boutons du formulaire
          */
-        Panel panel = Panel.horizontalPanel(1 );
+        Panel panel = new Panel()
+                .setLayoutManager(new LinearLayout(Direction.HORIZONTAL))
+                .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
         if(controller.u.isGuest() && !controller.review){
             Button btnClose = new Button( "Close" , this::cancel ).addTo( panel );
             addShortcut(btnClose, KeyStroke.fromString("<esc>" ));
@@ -272,11 +274,11 @@ public class ViewEditInstanceView extends DialogWindow {
             Button btnClose = new Button( "Close" , this::closeSave ).addTo( panel );
             addShortcut(btnClose, KeyStroke.fromString("<esc>" ));
         }
-        if(controller.getQuestion().getIdx() > 1){
+        if(controller.numQuestion > 0){
             Button btnPrev =new Button( "Previous" , this::previous ).addTo( panel );
             addShortcut(btnPrev, KeyStroke.fromString("<pagedown>" ));
 
-        } if(controller.getQuestion().getIdx() < controller.numQuestions()){
+        } if(controller.numQuestion+1 < controller.numQuestions()){
             Button btnNext =new Button( "Next" , this::next ).addTo( panel );
             addShortcut(btnNext, KeyStroke.fromString("<pageup>" ));
         } else  {
@@ -309,9 +311,13 @@ public class ViewEditInstanceView extends DialogWindow {
         validate();
         Object o = controller.numQuestion;
         if(!errBody.getText().isBlank()){
-            if(!questionError.contains( o ))
-                questionError.add( controller.numQuestion );
-        } else {
+            if(errBody.getText().compareTo( "This question is required" ) == 0){
+                if(!questionError.contains( o ))
+                    questionError.add( controller.numQuestion );
+            } else {
+                textBox.setText( "" );
+            }
+            }else {
             questionError.remove( o );
         }
         if(questionError.isEmpty()){
@@ -362,13 +368,22 @@ public class ViewEditInstanceView extends DialogWindow {
             validate();
             Object o = controller.numQuestion;
             if(!errBody.getText().isBlank()){
-                if(!questionError.contains( o ))
-                    questionError.add( controller.numQuestion );
+                if(errBody.getText().compareTo( "This question is required" ) == 0){
+                    if(!questionError.contains( o )){
+                        questionError.add( controller.numQuestion );
+                        saveAnswer();
+                    }
+                } else {
+                    textBox.setText( "" );
+                    controller.nextQuestion();
+                    instancePanel();
+                }
             } else {
                 questionError.remove( o );
+                saveAnswer();
             }
             errBody.setText( "" );
-            saveAnswer();
+
         }
     }
 
