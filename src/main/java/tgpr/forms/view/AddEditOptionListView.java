@@ -18,6 +18,8 @@ public class AddEditOptionListView extends DialogWindow {
     private final AddEditOptionListController controller;
     private Panel root = new Panel();
     private Panel pnlButtons;
+    private Panel pnlAdd;
+    private Panel pnlTable;
     private Label errAdd = new Label("");
     private Label errName = new Label("");
     private TextBox txtAdd = new TextBox();
@@ -43,9 +45,12 @@ public class AddEditOptionListView extends DialogWindow {
 
         //## PANELS ##
         root.addComponent(pnlName());
-        root.addComponent(pnlTable());
-        if(changeable())
-            root.addComponent(pnlAdd());
+        pnlTable = pnlTable(false);
+        root.addComponent(pnlTable);
+        if(changeable()) {
+            pnlAdd = pnlAdd();
+            root.addComponent(pnlAdd);
+        }
         pnlButtons = pnlButtons(false);
         root.addComponent(pnlButtons);
 
