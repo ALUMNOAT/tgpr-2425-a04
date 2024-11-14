@@ -92,23 +92,54 @@ public class AddEditOptionListView extends DialogWindow {
         return !errors.hasErrors();
     }
 
-    private void reorder(boolean reorder) {
-        if(reorder) {
-            controller.save();
-        }
-        root.removeComponent(pnlTable);
-        pnlTable = pnlTable(reorder);
-        root.addComponent(pnlTable);
+    private void pnlName() {
+        pnlName = new Panel(new GridLayout(2).setTopMarginSize(1).setRightMarginSize(2));
 
-        if(changeable()) {
-            root.removeComponent(pnlAdd);
-            pnlAdd = pnlAdd();
-            root.addComponent(pnlAdd);
-        }
+        new Label("Name:        ").addTo(pnlName);
+        txtName = new TextBox(new TerminalSize(52, 1)).setReadOnly(!controller.changeable).addTo(pnlName);
+        new EmptySpace().addTo(pnlName);
+        errName = new Label("").setForegroundColor(TextColor.ANSI.RED).addTo(pnlName);
 
-        root.removeComponent(pnlButtons);
-        pnlButtons = pnlButtons(reorder);
-        root.addComponent(pnlButtons);
+        if(Security.getLoggedUser().isAdmin() &&
+                (optionList.getOwner().equals(Security.getLoggedUser()) || optionList.getOwner() == null)
+        ) {
+            new Label("System:        ").addTo(pnlName);
+            checkBoxSystem = new CheckBox().addTo(pnlName);
+            new EmptySpace().addTo(pnlName);
+            new EmptySpace().addTo(pnlName);
+        }
+    }
+
+    private void pnlButtons() {
+        pnlButtons = new Panel(new LinearLayout(Direction.HORIZONTAL)).setLayoutData(Layouts.LINEAR_END); //Merci
+        btnReorder = new Button("Reorder", this::reorder);
+        btnDelete = new Button("Delete", this::delete);
+        btnDuplicate = new Button("Duplicate", this::duplicate);
+        btnSave = new Button("Save", this::save);
+        btnClose = new Button("Close", this::closeIt);
+        btnAlphabetically = new Button("Alphabetically", this::alphabetReorder);
+        btnConfirmOrder = new Button("Confirm order", this::confirmOrder);
+        btnCancel = new Button("Cancel", this::cancelReorder);
+        setPnlButtons();
+    }
+
+    private void setPnlButtons() {
+        pnlButtons.removeAllComponents();
+        if(controller.getReorderMode()) {
+            pnlButtons.addComponent(btnAlphabetically);
+            pnlButtons.addComponent(btnConfirmOrder);
+            pnlButtons.addComponent(btnCancel);
+        } else {
+            if (controller.changeable) {
+                pnlButtons.addComponent(btnReorder);
+                pnlButtons.addComponent(btnDelete);
+            }
+            pnlButtons.addComponent(btnDuplicate);
+            if (controller.changeable)
+                pnlButtons.addComponent(btnSave);
+            pnlButtons.addComponent(btnClose);
+        }
+    }
 
     private void pnlAdd() {
         pnlAdd = new Panel(new GridLayout(2).setRightMarginSize(2).setBottomMarginSize(1));
@@ -150,10 +181,6 @@ public class AddEditOptionListView extends DialogWindow {
             table.setSelectAction(null);
     }
 
-    private void reorder() {
-        reorder(true);
-    }
-
     private void delete() {
         controller.delete();
     }
@@ -184,6 +211,19 @@ public class AddEditOptionListView extends DialogWindow {
             reloadData();
             txtAdd.setText("");
         }
+    }
+
+    private void reloadAndSet() {
+        reloadData();
+        setPnlTable();
+        setPnlButtons();
+        txtName.takeFocus();
+    }
+
+    private void reorder() {
+        controller.setReorderMode(true);
+        controller.setNewValues(controller.getOldValues());
+        reloadAndSet();
     }
 
     private void alphabetReorder() {
