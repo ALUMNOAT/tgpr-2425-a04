@@ -260,17 +260,4 @@ public class OptionList extends Model {
     public boolean isUsed() {
         return !getQuestions().isEmpty();
     }
-
-    public static int getMaxValueIndex(List<OptionValue> values) {
-        if(values.isEmpty())
-            return 1;
-        else {
-            int max = 1;
-            for(OptionValue value : values) {
-                if (value.getIdx() > max)
-                    max = value.getIdx();
-            }
-            return max;
-        }
-    }
 }
