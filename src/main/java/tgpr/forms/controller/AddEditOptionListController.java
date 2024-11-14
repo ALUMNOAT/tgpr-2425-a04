@@ -59,6 +59,24 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
         return OptionValue.getAllByOptionList(optionListID);
     }
 
+    public List<OptionValue> getNewValues() {
+        return newValues;
+    }
+
+    public void setNewValues(List<OptionValue> values) {
+        newValues.clear();
+        newValues.addAll(values);
+    }
+
+    public List<OptionValue> getOldValues() {
+        return oldValues;
+    }
+
+    public void setOldValues(List<OptionValue> values) {
+        oldValues.clear();
+        oldValues.addAll(values);
+    }
+
     public void delete() {
         if(!optionList.isUsed() && askConfirmationDelete()) {
             optionList.delete();
