@@ -47,7 +47,6 @@ public class ViewEditInstanceView extends DialogWindow {
         setHints(List.of(Hint.CENTERED, Hint.MODAL));
         this.lblTitle.setText( controller.getTitle());
         this.lblDescription.setText(controller.getDescription());
-        this.lblStart.setText(controller.getDate());
 
         if (!controller.view_instance){
             if(controller.isCompleted()){
@@ -109,7 +108,7 @@ public class ViewEditInstanceView extends DialogWindow {
         QuestionPanel().withBorder(Borders.singleLine("Question " + (controller.numQuestion+1) + " of " + controller.numQuestions())).addTo(root);
         formButtonsPanel().addTo(root);
 
-        super.setTitle("Answer the Form");
+        super.setTitle(controller.review?"View Answers":"Answer the Form");
     }
 
     private Panel formTextPanel() {
@@ -125,6 +124,7 @@ public class ViewEditInstanceView extends DialogWindow {
         lblDescription.addTo(panel).addStyle(SGR.BOLD);
 
         new Label("Started on:").addTo(panel);
+        lblStart.setText(controller.i.getStarted().format( DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss") ));
         lblStart.addTo(panel).addStyle(SGR.BOLD);
 
         if(controller.review){

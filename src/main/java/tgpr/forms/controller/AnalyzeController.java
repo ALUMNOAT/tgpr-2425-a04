@@ -1,8 +1,12 @@
 package tgpr.forms.controller;
 
+import tgpr.forms.model.Question;
+import tgpr.forms.model.ValueStat;
 import tgpr.forms.view.AnalyzeView;
 import tgpr.framework.Controller;
 import tgpr.forms.model.Form;
+
+import java.util.List;
 
 public class AnalyzeController extends Controller<AnalyzeView> {
     private final AnalyzeView view;
@@ -34,4 +38,11 @@ public class AnalyzeController extends Controller<AnalyzeView> {
         navigateTo(new ViewInstanceController(form));
     }
 
+    public List<Question> getQuestions(){
+        return form.getQuestions();
+    }
+
+    public List<ValueStat> getAnswerStatsForQuestion(Question question){
+        return question.getStats();
+    }
 }

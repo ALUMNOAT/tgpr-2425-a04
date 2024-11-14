@@ -40,12 +40,6 @@ public class ViewEditInstanceController extends Controller<ViewEditInstanceView>
     public String getDescription() {
         return description;
     }
-    public String date;
-
-
-    public String getDate() {
-        return date;
-    }
 
 
     public String getTitle() {
@@ -129,7 +123,6 @@ public class ViewEditInstanceController extends Controller<ViewEditInstanceView>
             getInstance();
         description = f.getDescription();
         title = f.getTitle();
-        date = i.getStarted().format( DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss") );
         return new ViewEditInstanceView(this);
     }
 }
