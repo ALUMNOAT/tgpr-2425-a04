@@ -182,11 +182,13 @@ public class AddEditOptionListView extends DialogWindow {
     }
 
     private void delete() {
-        controller.delete();
+        if(controller.changeable)
+            controller.delete();
     }
 
     private void duplicate() {
-        controller.duplicate();
+        if(validate())
+            controller.duplicate();
     }
 
     private void save() {
@@ -198,8 +200,10 @@ public class AddEditOptionListView extends DialogWindow {
     }
 
     public void closeIt() {
-        if(changeable()) {
-            if (askConfirmationClose())
+        if(controller.changeable) {
+            if (askConfirmation(
+                    "Are you sure you want to cancel ?",
+                    "Cancel"))
                 this.close();
         } else
             this.close();
