@@ -257,6 +257,11 @@ public class AddEditOptionListView extends DialogWindow {
         table.addSelectionChangeListener(this::swap);
     }
 
+    private void stopMove() {
+        table.addSelectionChangeListener(null);
+        table.setSelectAction(this::move);
+    }
+
     private void swap(int oldRow, int newRow, boolean byUser) {
         table.addSelectionChangeListener(null);
         controller.swap(oldRow, newRow);
@@ -265,26 +270,7 @@ public class AddEditOptionListView extends DialogWindow {
         move();
     }
 
-    private void stopMove() {
-        table.addSelectionChangeListener(null);
-        table.setSelectAction(this::move);
-    }
-    private boolean changeable() {
-        return optionList == null ||
-                !optionList.isUsed() && (
-                        optionList.getOwner().equals(Security.getLoggedUser()) ||
-                        (Security.getLoggedUser().isAdmin())
-                );
-    }
-
-    public boolean askConfirmationClose() {
-        return askConfirmation(
-                "Are you sure you want to cancel ?",
-                "Cancel");
-    }
-
     public boolean isOptionListSystem() {
         return checkBoxSystem.isChecked();
     }
-
 }
