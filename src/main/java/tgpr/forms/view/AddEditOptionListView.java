@@ -236,9 +236,11 @@ public class AddEditOptionListView extends DialogWindow {
     }
 
     private void confirmOrder() {
+        controller.setReorderMode(false);
         optionList.setName(txtName.getText());
-        controller.save();
-        reorder(false);
+        controller.gravity();
+        controller.setOldValues(controller.getNewValues());
+        reloadAndSet();
     }
 
     private void cancelReorder() {
