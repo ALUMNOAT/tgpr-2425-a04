@@ -22,7 +22,7 @@ public class ManageSharesView extends DialogWindow {
     private  ObjectTable<Model> sharesTable;
     private Panel formsSharesPanel;
 
-    private final ComboBox<Model> potentialBeneficiaries = new ComboBox<>();
+    private final AutoCompleteComboBox potentialBeneficiaries = new AutoCompleteComboBox();
     private final ComboBox<AccessType> potentialBeneficiariesAccessType = new ComboBox<>();;
 
     private Button btnAddShare;
@@ -179,7 +179,7 @@ public class ManageSharesView extends DialogWindow {
         To add a new list to the table using the selected beneficiary and the selected AccessType to add a new share of a form to the table
          */
 
-        Model beneficiaryToAdd = potentialBeneficiaries.getSelectedItem();
+        var beneficiaryToAdd = potentialBeneficiaries.getSelectedItem();
 
         AccessType beneficiaryAccessTypeToAdd = potentialBeneficiariesAccessType.getSelectedItem();
 
