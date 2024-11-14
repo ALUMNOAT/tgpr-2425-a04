@@ -230,8 +230,10 @@ public class ViewFormView extends DialogWindow {
     }
 
     private void clear() {
-        controller.clear();
-        refresh();
+        if(controller.clear()) {
+            refresh();
+            btnAdd.takeFocus();
+        }
     }
 
     private void togglePublic() {
