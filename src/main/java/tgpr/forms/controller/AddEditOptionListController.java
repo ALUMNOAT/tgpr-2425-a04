@@ -11,6 +11,7 @@ import java.util.List;
 public class AddEditOptionListController extends Controller<AddEditOptionListView> {
     private final AddEditOptionListView view;
     private final OptionList optionList;
+    private OptionList savedOptionList;
     private final List<OptionValue> oldValues = new ArrayList<>();
     private final List<OptionValue> newValues = new ArrayList<>();
     private boolean isNew = false;
@@ -19,6 +20,7 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
 
 
     public AddEditOptionListController(OptionList optionList){
+        savedOptionList = optionList;
         if(optionList == null) {
             isNew = true;
             optionList = new OptionList();
@@ -36,6 +38,10 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
         newValues.addAll(optionList.getOptionValues());
         oldValues.addAll(optionList.getOptionValues());
         view = new AddEditOptionListView(this, optionList);
+    }
+
+    public OptionList getSavedOptionList() {
+        return savedOptionList;
     }
 
     public void setReorderMode(boolean reorderMode) {
@@ -103,6 +109,7 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
                 optionList.setOwnerId(Security.getLoggedUserId());
         }
         optionList.save();
+        savedOptionList = optionList;
     }
 
     public void add(String label) {
