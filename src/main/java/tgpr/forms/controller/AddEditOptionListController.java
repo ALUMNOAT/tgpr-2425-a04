@@ -154,6 +154,7 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
     public ErrorList validateAdd(String label) {
         var errors = new ErrorList();
         errors.add(OptionValueValidator.notEmptyLabel(label));
+        errors.add(OptionValueValidator.uniqueLabelIgnoreCase(oldValues, label));
         return errors;
     }
 
