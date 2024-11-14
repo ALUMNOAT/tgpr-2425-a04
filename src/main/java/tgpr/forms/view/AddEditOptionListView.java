@@ -70,8 +70,7 @@ public class AddEditOptionListView extends DialogWindow {
     public void reloadData() {
         if(optionList != null) {
             table.clear();
-            controller.gravity();
-            table.add(controller.getValues());
+            table.add(controller.getReorderMode() ? controller.getNewValues() : controller.getOldValues());
         }
     }
 
@@ -80,14 +79,10 @@ public class AddEditOptionListView extends DialogWindow {
                 txtName.getText()
         );
         errName.setText(errors.getFirstErrorMessage(OptionList.Fields.Name));
-        if(changeable())
-            btnAdd.setEnabled(true);
-        if(btnSave != null)
-            btnSave.setEnabled(errors.isEmpty());
-        if(btnDuplicate != null)
-            btnDuplicate.setEnabled(errors.isEmpty());
         errAdd.setText(errors.getFirstErrorMessage(OptionValue.Fields.Label));
 
+        btnSave.setEnabled(errors.isEmpty());
+        btnDuplicate.setEnabled(errors.isEmpty());
         return !errors.hasErrors();
     }
 
