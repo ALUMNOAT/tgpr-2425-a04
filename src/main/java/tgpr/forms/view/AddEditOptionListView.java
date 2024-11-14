@@ -217,7 +217,8 @@ public class AddEditOptionListView extends DialogWindow {
         }
     }
 
-    private void reloadAndSet() {
+    private void reloadAndSet(boolean reorderMode) {
+        controller.setReorderMode(reorderMode);
         reloadData();
         setPnlTable();
         setPnlButtons();
@@ -225,9 +226,8 @@ public class AddEditOptionListView extends DialogWindow {
     }
 
     private void reorder() {
-        controller.setReorderMode(true);
         controller.setNewValues(controller.getOldValues());
-        reloadAndSet();
+        reloadAndSet(true);
     }
 
     private void alphabetReorder() {
@@ -236,22 +236,22 @@ public class AddEditOptionListView extends DialogWindow {
     }
 
     private void confirmOrder() {
-        controller.setReorderMode(false);
         optionList.setName(txtName.getText());
         controller.gravity();
         controller.setOldValues(controller.getNewValues());
-        reloadAndSet();
+        reloadAndSet(false);
     }
 
     private void cancelReorder() {
-        controller.setReorderMode(false);
         controller.setNewValues(controller.getOldValues());
-        reloadAndSet();
+        reloadAndSet(false);
     }
 
     private void removeRow(OptionValue value, int row) {
         if(controller.changeable) {
             controller.remove(value);
+            if(!controller.getReorderMode())
+                controller.gravity();
             reloadData();
             if(!controller.getCurrentValues().isEmpty()) {
                 if(row < controller.getCurrentValues().size())
