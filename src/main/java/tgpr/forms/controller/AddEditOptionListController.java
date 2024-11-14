@@ -165,7 +165,7 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
     }
 
     public void gravity() {
-        OptionValue.indexGravity(newValues);
+        indexGravity(getCurrentValues());
     }
 
     public List<OptionValue> getCurrentValues() {
@@ -182,6 +182,13 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
                     max = value.getIdx();
             }
             return max;
+        }
+    }
+
+    public static void indexGravity(List<OptionValue> ls) {
+        int index = 1;
+        for(OptionValue value : ls) {
+            value.setIdx(index++);
         }
     }
 }
