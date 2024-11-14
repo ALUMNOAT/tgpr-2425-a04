@@ -11,9 +11,12 @@ import java.util.List;
 public class AddEditOptionListController extends Controller<AddEditOptionListView> {
     private final AddEditOptionListView view;
     private final OptionList optionList;
-    private final List<OptionValue> values = new ArrayList<>();
-    private int maxValueIndex;
+    private final List<OptionValue> oldValues = new ArrayList<>();
+    private final List<OptionValue> newValues = new ArrayList<>();
     private boolean isNew = false;
+    boolean reorderMode = false;
+    public boolean changeable;
+
 
     public AddEditOptionListController(OptionList optionList){
         if(optionList == null) {
@@ -23,10 +26,24 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
             optionList.setName("");
             optionList.setId(OptionList.getMaxId()+1);
         }
+        changeable =
+                isNew ||
+                !optionList.isUsed() && (
+                        optionList.getOwner().equals(Security.getLoggedUser()) ||
+                                (Security.getLoggedUser().isAdmin())
+                );
         this.optionList = optionList;
-        values.addAll(optionList.getOptionValues());
+        newValues.addAll(optionList.getOptionValues());
+        oldValues.addAll(optionList.getOptionValues());
         view = new AddEditOptionListView(this, optionList);
-        maxValueIndex = OptionList.getMaxValueIndex(values);
+    }
+
+    public void setReorderMode(boolean reorderMode) {
+        this.reorderMode = reorderMode;
+    }
+
+    public boolean getReorderMode() {
+        return reorderMode;
     }
 
     @Override
