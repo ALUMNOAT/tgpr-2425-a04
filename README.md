@@ -2,6 +2,36 @@
 
 ## Notes de version
 
+### Liste des membres du groupe
+
+
+  * BRAGANCA MARTINS Orlando
+    * view_forms
+    * manage_shares
+
+
+  * DRIF Kamil
+    * view_form
+    * add_edit_question
+    * manage_option_lists
+
+
+  * EL MAMY Mouhamed
+    * view_edit_instance
+    * view_instances
+
+
+  * GORSKI Emilian Michal
+    * login
+    * signup
+    * analyze
+
+
+  * HULOT Luca R
+    * add_edit_form
+    * add_edit_option_list
+
+
 ### Liste des utilisateurs et mots de passe
 
 | ID | full-name       | email               | mot de passe | role  |
