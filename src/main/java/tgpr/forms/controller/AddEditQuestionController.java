@@ -51,7 +51,7 @@ public class AddEditQuestionController extends Controller<AddEditQuestionView> {
     public OptionList addOptionList() {
         var controller = new AddEditOptionListController(null);
         navigateTo(controller);
-        return controller.getOptionList();
+        return controller.getSavedOptionList();
     }
 
     public ErrorList validate(String title, String description, String type, OptionList optionList) {

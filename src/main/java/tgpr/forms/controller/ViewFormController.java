@@ -65,13 +65,16 @@ public class ViewFormController extends Controller<ViewFormView> {
         navigateTo(new AnalyzeController(form));
     }
 
-    public void clear() {
+    public boolean clear() {
         if(askConfirmation( "Are you sure you want to delete all the instances?"
                         + System.lineSeparator() +
                         "Note: This will also delete instances that are currently being edited (not submitted).",
                 "Delete All Instances" )){
             form.deleteAllInstances();
+            return true;
         }
+        else
+            return false;
     }
 
     @Override

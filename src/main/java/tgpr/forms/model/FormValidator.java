@@ -9,8 +9,23 @@ public abstract class FormValidator {
     public static Error isValidTitle(String title){
         if(title == null)
             return Error.NOERROR;
-        if(!Pattern.matches("[a-zA-Z\\d][a-zA-Z\\d\\s]{0,21}", title))
+
+        if(title.isBlank())
+            return new Error("title required", Form.Fields.Title);
+        else if(!Pattern.matches("[a-zA-Z\\d][a-zA-Z\\d\\s]{2,21}", title))
             return new Error("Invalid title format", Form.Fields.Title);
+
+        return Error.NOERROR;
+    }
+
+    public static Error isValidDescription(String description){
+        if(description == null)
+            return Error.NOERROR;
+        if(description.isEmpty())
+            return Error.NOERROR;
+        else if(!Pattern.matches(".{3,21}", description))
+            return new Error("Description requires at least 3 char", Form.Fields.Description);
+
         return Error.NOERROR;
     }
 

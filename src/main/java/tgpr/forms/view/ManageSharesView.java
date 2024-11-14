@@ -22,7 +22,7 @@ public class ManageSharesView extends DialogWindow {
     private  ObjectTable<Model> sharesTable;
     private Panel formsSharesPanel;
 
-    private final ComboBox<Model> potentialBeneficiaries = new ComboBox<>();
+    private final AutoCompleteComboBox potentialBeneficiaries = new AutoCompleteComboBox();
     private final ComboBox<AccessType> potentialBeneficiariesAccessType = new ComboBox<>();;
 
     private Button btnAddShare;
@@ -38,6 +38,7 @@ public class ManageSharesView extends DialogWindow {
         
         setTitle("Manage Shares");
         setHints(List.of(Hint.CENTERED));
+        setCloseWindowWithEscape(true);
         setComponent(root);
 
         root.addEmpty();
@@ -166,9 +167,10 @@ public class ManageSharesView extends DialogWindow {
 
         potentialBeneficiariesAccessType.addItem(AccessType.Editor);
 
-        potentialBeneficiariesAccessType.addItem(AccessType.User);
-        potentialBeneficiariesAccessType.setSelectedItem(AccessType.User);
-
+        if(!form.getIsPublic()) {
+            potentialBeneficiariesAccessType.addItem(AccessType.User);
+            potentialBeneficiariesAccessType.setSelectedItem(AccessType.User);
+        }
 
     }
 
@@ -177,7 +179,7 @@ public class ManageSharesView extends DialogWindow {
         To add a new list to the table using the selected beneficiary and the selected AccessType to add a new share of a form to the table
          */
 
-        Model beneficiaryToAdd = potentialBeneficiaries.getSelectedItem();
+        var beneficiaryToAdd = potentialBeneficiaries.getSelectedItem();
 
         AccessType beneficiaryAccessTypeToAdd = potentialBeneficiariesAccessType.getSelectedItem();
 
@@ -191,6 +193,7 @@ public class ManageSharesView extends DialogWindow {
             }
 
             refresh();
+            refreshPotentialBeneficiaries();
         }
 
 

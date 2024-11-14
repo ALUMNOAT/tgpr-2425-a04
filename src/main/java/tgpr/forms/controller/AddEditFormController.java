@@ -66,10 +66,11 @@ public class AddEditFormController extends Controller<AddEditFormView> {
         }
     }
 
-    public ErrorList validate(String title){
+    public ErrorList validate(String title, String description){
         var errors = new ErrorList();
         errors.add(FormValidator.isValidTitle(title));
         errors.add(FormValidator.isNotTakenTitle(title, form));
+        errors.add(FormValidator.isValidDescription(description));
         return errors;
     }
 }
