@@ -244,9 +244,9 @@ public class AddEditOptionListView extends DialogWindow {
     }
 
     private void cancelReorder() {
-        reorder(false);
-        controller.refreshValues();
-        reloadData();
+        controller.setReorderMode(false);
+        controller.setNewValues(controller.getOldValues());
+        reloadAndSet();
     }
 
     private void removeRow(OptionValue value, int row) {
@@ -261,9 +261,6 @@ public class AddEditOptionListView extends DialogWindow {
             } else
                 txtName.takeFocus();
         }
-
-        pnlTable.addComponent(table);
-        return pnlTable;
     }
 
     private void move() {
