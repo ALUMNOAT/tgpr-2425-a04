@@ -16,10 +16,11 @@ import static tgpr.framework.Controller.askConfirmation;
 
 public class AddEditOptionListView extends DialogWindow {
     private final AddEditOptionListController controller;
-    private Panel root = new Panel();
-    private Panel pnlButtons;
-    private Panel pnlAdd;
+    private final Panel root = new Panel();
+    private Panel pnlName;
     private Panel pnlTable;
+    private Panel pnlAdd;
+    private Panel pnlButtons;
     private Label errAdd = new Label("");
     private Label errName = new Label("");
     private TextBox txtAdd = new TextBox();
@@ -31,6 +32,9 @@ public class AddEditOptionListView extends DialogWindow {
     private Button btnDuplicate;
     private Button btnReorder;
     private Button btnClose;
+    private Button btnAlphabetically;
+    private Button btnConfirmOrder;
+    private Button btnCancel;
     private ObjectTable<OptionValue> table;
     private final OptionList optionList;
 
@@ -43,18 +47,18 @@ public class AddEditOptionListView extends DialogWindow {
         setCloseWindowWithEscape(true);
         setFixedSize(new TerminalSize(60, 18));
 
-        //## PANELS ##
-        root.addComponent(pnlName());
-        pnlTable = pnlTable(false);
+        pnlName();
+        pnlTable();
+        pnlButtons();
+        if(controller.changeable)
+            pnlAdd();
+
+        root.addComponent(pnlName);
         root.addComponent(pnlTable);
-        if(changeable()) {
-            pnlAdd = pnlAdd();
+        if(controller.changeable)
             root.addComponent(pnlAdd);
-        }
-        pnlButtons = pnlButtons(false);
         root.addComponent(pnlButtons);
 
-        //# SETUP #
         setComponent(root);
         reloadData();
         txtName.setText(optionList != null ? optionList.getName() : null)
@@ -111,9 +115,44 @@ public class AddEditOptionListView extends DialogWindow {
         pnlButtons = pnlButtons(reorder);
         root.addComponent(pnlButtons);
 
-        reloadData();
+    private void pnlAdd() {
+        pnlAdd = new Panel(new GridLayout(2).setRightMarginSize(2).setBottomMarginSize(1));
 
-        txtName.takeFocus();
+        errAdd = new Label("").addTo(pnlAdd).setForegroundColor(TextColor.ANSI.RED);
+        new EmptySpace().addTo(pnlAdd);
+        txtAdd = new TextBox(new TerminalSize(48, 1)).addTo(pnlAdd);
+        btnAdd = new Button("Add", this::add);
+        pnlAdd.addComponent(btnAdd);
+    }
+
+    private void pnlTable() {
+        pnlTable = new Panel(
+                new GridLayout(1).setRightMarginSize(4).setBottomMarginSize(1))
+                .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.End, LinearLayout.GrowPolicy.CanGrow));
+
+        table = new ObjectTable<>(
+                new ColumnSpec<>("Index ", OptionValue::getIdx),
+                new ColumnSpec<>("Label                                         ", OptionValue::getLabel)
+        ) {
+            @Override
+            public Interactable.Result handleKeyStroke(KeyStroke keyStroke) {
+                if (keyStroke.equals(KeyStroke.fromString("<bs>"))) {
+                    removeRow(getSelected(), getSelectedRow());
+                    return Interactable.Result.HANDLED;
+                }
+                return super.handleKeyStroke(keyStroke);
+            }
+        };
+
+        pnlTable.addComponent(table);
+    }
+
+    private void setPnlTable() {
+        if(controller.getReorderMode()) {
+            table.setSelectAction(this::move);
+        }
+        else
+            table.setSelectAction(null);
     }
 
     private void reorder() {
@@ -169,81 +208,17 @@ public class AddEditOptionListView extends DialogWindow {
         reloadData();
     }
 
-    private Panel pnlName() {
-        Panel pnlName = new Panel(new GridLayout(2).setTopMarginSize(1).setRightMarginSize(2));
-
-        new Label("Name:        ").addTo(pnlName);
-        txtName = new TextBox(new TerminalSize(52, 1)).addTo(pnlName);
-        new EmptySpace().addTo(pnlName);
-        errName = new Label("").setForegroundColor(TextColor.ANSI.RED).addTo(pnlName);
-
-        if(Security.getLoggedUser().isAdmin() &&
-                (optionList.getOwner().equals(Security.getLoggedUser()) || optionList.getOwner() == null)
-        ) {
-            new Label("System:        ").addTo(pnlName);
-            checkBoxSystem = new CheckBox().addTo(pnlName);
-            new EmptySpace().addTo(pnlName);
-            new EmptySpace().addTo(pnlName);
-        }
-        return pnlName;
-    }
-
-    private Panel pnlButtons(boolean reorder) {
-        Panel pnlButtons = new Panel(new LinearLayout(Direction.HORIZONTAL)).setLayoutData(Layouts.LINEAR_END); //Merci
-
-        if(!reorder) {
-            if (optionList != null && optionList.getOwner() != null)
-                btnReorder = new Button("Reorder", this::reorder).addTo(pnlButtons);
-            if (optionList != null && !optionList.isUsed())
-                btnDelete = new Button("Delete", this::delete).addTo(pnlButtons).setEnabled(changeable());
-            btnDuplicate = new Button("Duplicate", this::duplicate).addTo(pnlButtons);
-            if (optionList != null && optionList.getOwner() != null)
-                btnSave = new Button("Save", this::save).addTo(pnlButtons);
-            btnClose = new Button("Close", this::closeIt).addTo(pnlButtons);
-        } else {
-            Button btnAlphabetically = new Button("Alphabetically", this::alphabetReorder).addTo(pnlButtons);
-            Button btnConfirmOrder = new Button("Confirm order", this::confirmOrder).addTo(pnlButtons);
-            Button btnCancel = new Button("Cancel", this::cancelReorder).addTo(pnlButtons);
-        }
-
-        return pnlButtons;
-    }
-
-    private Panel pnlAdd() {
-        Panel pnlAdd = new Panel(new GridLayout(2).setRightMarginSize(2).setBottomMarginSize(1));
-
-        errAdd = new Label("").addTo(pnlAdd).setForegroundColor(TextColor.ANSI.RED);
-        new EmptySpace().addTo(pnlAdd);
-        txtAdd = new TextBox(new TerminalSize(48, 1))
-                .addTo(pnlAdd);
-        btnAdd = new Button("Add", this::add).addTo(pnlAdd);
-
-        return pnlAdd;
-    }
-
-    private Panel pnlTable(boolean reorder) {
-        Panel pnlTable = new Panel(
-                new GridLayout(1).setRightMarginSize(4).setBottomMarginSize(1))
-                .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.End, LinearLayout.GrowPolicy.CanGrow));
-
-        table = new ObjectTable<>(
-                new ColumnSpec<>("Index ", OptionValue::getIdx),
-                new ColumnSpec<>("Label                                         ", OptionValue::getLabel)
-        )
-        {
-            @Override
-            public Interactable.Result handleKeyStroke(KeyStroke keyStroke) {
-                if (keyStroke.equals(KeyStroke.fromString("<bs>"))) {
-                    controller.remove(getSelected());
-                    AddEditOptionListView.this.reloadData();
-                    return Interactable.Result.HANDLED;
-                }
-                return super.handleKeyStroke(keyStroke);
-            }
-        };
-        if(reorder) {
-            //on entre dans la méthode move quand on appuie sur 'enter'
-            table.setSelectAction(this::move);
+    private void removeRow(OptionValue value, int row) {
+        if(controller.changeable) {
+            controller.remove(value);
+            reloadData();
+            if(!controller.getCurrentValues().isEmpty()) {
+                if(row < controller.getCurrentValues().size())
+                    table.setSelectedRow(row);
+                else
+                    table.setSelectedRow(row-1);
+            } else
+                txtName.takeFocus();
         }
 
         pnlTable.addComponent(table);
