@@ -109,7 +109,7 @@ public class ViewEditInstanceView extends DialogWindow {
         QuestionPanel().withBorder(Borders.singleLine("Question " + (controller.numQuestion+1) + " of " + controller.numQuestions())).addTo(root);
         formButtonsPanel().addTo(root);
 
-        super.setTitle("Answer the Form");
+        super.setTitle(controller.review?"View Answers":"Answer the Form");
     }
 
     private Panel formTextPanel() {
