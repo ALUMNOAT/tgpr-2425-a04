@@ -38,6 +38,7 @@ public class ManageSharesView extends DialogWindow {
         
         setTitle("Manage Shares");
         setHints(List.of(Hint.CENTERED));
+        setCloseWindowWithEscape(true);
         setComponent(root);
 
         root.addEmpty();
@@ -166,9 +167,10 @@ public class ManageSharesView extends DialogWindow {
 
         potentialBeneficiariesAccessType.addItem(AccessType.Editor);
 
-        potentialBeneficiariesAccessType.addItem(AccessType.User);
-        potentialBeneficiariesAccessType.setSelectedItem(AccessType.User);
-
+        if(!form.getIsPublic()) {
+            potentialBeneficiariesAccessType.addItem(AccessType.User);
+            potentialBeneficiariesAccessType.setSelectedItem(AccessType.User);
+        }
 
     }
 
@@ -191,6 +193,7 @@ public class ManageSharesView extends DialogWindow {
             }
 
             refresh();
+            refreshPotentialBeneficiaries();
         }
 
 
