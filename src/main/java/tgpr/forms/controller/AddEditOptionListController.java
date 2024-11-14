@@ -11,11 +11,13 @@ import java.util.List;
 public class AddEditOptionListController extends Controller<AddEditOptionListView> {
     private final AddEditOptionListView view;
     private final OptionList optionList;
+    private OptionList savedOptionList;
     private final List<OptionValue> values = new ArrayList<>();
     private int maxValueIndex;
     private boolean isNew = false;
 
     public AddEditOptionListController(OptionList optionList){
+        savedOptionList = optionList;
         if(optionList == null) {
             isNew = true;
             optionList = new OptionList();
@@ -34,8 +36,8 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
         return view;
     }
 
-    public OptionList getOptionList() {
-        return optionList;
+    public OptionList getSavedOptionList() {
+        return savedOptionList;
     }
 
     public List<OptionValue> getValuesByOptionList(int optionListID) {
@@ -70,6 +72,7 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
                 optionList.setOwnerId(Security.getLoggedUserId());
         }
         optionList.save();
+        savedOptionList = optionList;
     }
 
     public void add(String label) {
