@@ -1,6 +1,5 @@
 package tgpr.forms.controller;
 
-import tgpr.forms.model.Answer;
 import tgpr.forms.model.Question;
 import tgpr.forms.model.ValueStat;
 import tgpr.forms.view.AnalyzeView;
@@ -46,5 +45,4 @@ public class AnalyzeController extends Controller<AnalyzeView> {
     public List<ValueStat> getAnswerStatsForQuestion(Question question){
         return question.getStats();
     }
-
 }
