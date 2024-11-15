@@ -11,8 +11,12 @@ public abstract class OptionValueValidator {
     public static Error notEmptyLabel(String label) {
         if(label == null)
             return Error.NOERROR;
-        if(label.isBlank())
-            return new Error("cannot be blank", OptionValue.Fields.Label);
+        else if(label.isBlank())
+            return new Error("label required", OptionValue.Fields.Label);
+        else if(!Pattern.matches("[\\Wa-zA-Z\\d][\\Wa-zA-Z\\d\\s]{2,}", label))
+            return new Error("label requires 3 char minimum", OptionValue.Fields.Label);
+        else if(!Pattern.matches("[\\Wa-zA-Z\\d\\s]{0,255}", label))
+            return new Error("label cannot be longer than 255 char", OptionValue.Fields.Label);
         return Error.NOERROR;
     }
 

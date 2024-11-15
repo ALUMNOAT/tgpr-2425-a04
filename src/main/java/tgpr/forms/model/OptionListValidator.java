@@ -14,8 +14,8 @@ public abstract class OptionListValidator {
             return new Error("name required", OptionList.Fields.Name);
         else if(!Pattern.matches("[\\Wa-zA-Z\\d][\\Wa-zA-Z\\d\\s]{2,}", name))
             return new Error("name requires 3 char minimum", OptionList.Fields.Name);
-        else if(!Pattern.matches("[\\Wa-zA-Z\\d\\s]{0,21}", name))
-            return new Error("name cannot be longer than 21 char", OptionList.Fields.Name);
+        else if(!Pattern.matches("[\\Wa-zA-Z\\d\\s]{0,255}", name))
+            return new Error("name cannot be longer than 255 char", OptionList.Fields.Name);
         else if(dbOptionList != null && olID != dbOptionList.getId())
             return new Error("name already taken", OptionList.Fields.Name);
         return Error.NOERROR;
