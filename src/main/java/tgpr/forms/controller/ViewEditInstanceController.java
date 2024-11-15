@@ -1,0 +1,128 @@
+package tgpr.forms.controller;
+
+import tgpr.forms.model.*;
+import tgpr.forms.view.ViewEditInstanceView;
+import tgpr.framework.Controller;
+import tgpr.framework.Error;
+import tgpr.framework.ErrorList;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.regex.Pattern;
+
+import static tgpr.framework.LocaleFormats.INPUT_DATE_FORMATTER;
+
+public class ViewEditInstanceController extends Controller<ViewEditInstanceView> {
+
+    public boolean view_instance = false;
+    public User u;
+    public Form f;
+    public Instance i;
+    public int numQuestion = 0;
+    public String description;
+    public String title;
+    public boolean review =false;
+
+    public ViewEditInstanceController( User u, Form f) {
+        this.u = u;
+        this.f = f;
+    }
+
+    public ViewEditInstanceController( Instance i) {
+        this.u = i.getUser();
+        this.f = i.getForm();
+        this.i = i;
+        this.review = true;
+        this.view_instance = true;
+    }
+
+
+    public String getDescription() {
+        return description;
+    }
+
+
+    public String getTitle() {
+        return title;
+    }
+
+
+    public boolean isCompleted() {
+        return i.isCompleted();
+    }
+
+    public Question getQuestion() {
+        return f.getQuestions().get(numQuestion);
+    }
+
+    public int numQuestions() {
+        return f.getQuestions().size();
+    }
+
+    public void nextQuestion() {
+        numQuestion++;
+    }
+
+    public void previousQuestion() {
+        numQuestion--;
+    }
+
+    public ErrorList validate( String body) {
+        /*
+          recoit en paramatre la réponse sous forme de String
+
+          verifie que la réponse est valide:
+           -si requis --> réponse ne doit pas etre vide
+           -si Question.Type == Date || Email --> verifie que le format soit respecter
+
+           Return une liste d'erreurs
+         */
+        var errors = new ErrorList();
+        if(!(!getQuestion().getRequired() || body != null && !body.isBlank())){
+            errors.add(  new Error("This question is required"));
+        } if (getQuestion().getType() == Question.Type.Date){
+            try {
+                assert body != null;
+                LocalDate.parse(body, INPUT_DATE_FORMATTER);
+            } catch (Exception e) {
+                errors.add(  new Error("Invalide date format"));
+            }
+        } if(getQuestion().getType() == Question.Type.Email){
+            String regex = "^[\\w.-]+@[a-zA-Z\\d.-]+\\.[a-zA-Z]{2,}$";
+
+            Pattern pattern = Pattern.compile(regex);
+            assert body != null;
+            if(!pattern.matcher(body).matches()){
+                errors.add(  new Error("Invalide email format"));
+            }
+        }
+        return errors;
+    }
+
+    private void getInstance() {
+        /*
+          -Si guest crée une nouvelle instance
+          -Si User récupere dernière instance si aucune instance en crée une nouvelle.
+         */
+        if (u.isGuest()){
+            i = f.createInstance(u);
+        } else {
+            i = f.getMostRecentInstance(u);
+            if(i == null){
+                i = f.getCurrentOrCreateInstance(u);
+            }
+        }
+    }
+
+    @Override
+    public ViewEditInstanceView getView() {
+        /*
+          gestion de la vue
+         */
+        if(!review)
+            getInstance();
+        description = f.getDescription();
+        title = f.getTitle();
+        return new ViewEditInstanceView(this);
+    }
+}

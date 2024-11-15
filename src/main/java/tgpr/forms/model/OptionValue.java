@@ -97,6 +97,11 @@ public class OptionValue extends Model {
         return queryList(OptionValue.class, "select * from option_values");
     }
 
+    public static List<OptionValue> getAllByOptionList(int optionListId) {
+        return queryList(OptionValue.class, "select * from option_values where option_list=:option_list",
+                new Params("option_list", optionListId));
+    }
+
     public OptionValue save() {
         int c;
         OptionValue obj = getByKey(idx, optionListId);

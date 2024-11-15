@@ -1,0 +1,133 @@
+package tgpr.forms.view;
+
+import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
+import com.googlecode.lanterna.input.KeyStroke;
+import tgpr.forms.controller.ViewEditInstanceController;
+import tgpr.forms.controller.ViewInstanceController;
+import tgpr.forms.model.Form;
+import tgpr.forms.model.Instance;
+import tgpr.framework.Controller;
+
+import java.util.List;
+
+import static tgpr.framework.Controller.askConfirmation;
+
+public class ViewInstanceView extends DialogWindow {
+    private final ViewInstanceController controller;
+    public Label lblTitle = new Label( "" );
+    public Label lblDescription = new Label( "" );
+    private ObjectTable<Instance> table;
+    private Button btnDelSel;
+    private Button btnDelAll;
+
+    public ViewInstanceView( ViewInstanceController controller) {
+        super( "List of Submitted Instances" );
+        this.controller = controller;
+        lblTitle.setText( controller.getTitle());lblDescription.setText( controller.getDescription() );
+        setHints( List.of( Window.Hint.CENTERED , Window.Hint.MODAL ) );
+
+        Panel root = Panel.verticalPanel(  );
+        setComponent( root );
+
+        formTextPanel().addTo( root );
+        root.addEmpty();
+        instancePanel().addTo( root );
+        root.addEmpty();
+        buttonsPanel().addTo( root );
+
+        setCloseWindowWithEscape( true );
+        refresh();
+    }
+
+    private Panel formTextPanel() {
+        Panel panel = Panel.gridPanel(2, Margin.of(1, 1, 1, 0));
+
+        new Label("Title:").addTo(panel);
+        lblTitle.addTo(panel).addStyle( SGR.BOLD);
+
+        new Label("Description:").addTo(panel);
+        lblDescription.addTo(panel).addStyle(SGR.BOLD);
+
+        return panel;
+    }
+
+    private Panel instancePanel() {
+        Panel instancePanel = new Panel().sizeTo( 70,15 );
+         table = new ObjectTable<>(
+                new ColumnSpec<>("Id", Instance::getId).setWidth(5).alignRight(),
+                new ColumnSpec<>("User", Instance::getUser).setWidth(30)
+                        .setOverflowHandling(ColumnSpec.OverflowHandling.Wrap),
+                new ColumnSpec<>("Submitted", Instance::getCompletedFormatted).setWidth(20)
+                        .setOverflowHandling(ColumnSpec.OverflowHandling.Wrap)
+        ).addTo( instancePanel );
+
+        orderTable();
+
+        table.setSelectAction( () -> {
+            Instance i = table.getSelected();
+            Controller.navigateTo(new ViewEditInstanceController(i));
+        } );
+
+        return instancePanel;
+    }
+    private Panel buttonsPanel() {
+        Panel panel = new Panel()
+                .setLayoutManager(new LinearLayout(Direction.HORIZONTAL))
+                .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+
+        btnDelSel = new Button( "Delete Selected" , this::deleteSelected ).addTo( panel );
+        addShortcut(btnDelSel, KeyStroke.fromString("<del>" ));
+        btnDelAll =new Button( "Delete All" , this::deleteAll ).addTo( panel );
+        new Button( "Close" , this::close ).addTo( panel );
+
+        return panel;
+    }
+
+    private void deleteSelected() {
+        Instance i = table.getSelected();
+        if(askConfirmation( "Are you sure you want to delete this instances?",
+                "Delete Instance" )){
+            i.delete();
+        }
+        refresh();
+    }
+
+    private void deleteAll( ) {
+        controller.deleteAllInstances();
+        refresh();
+
+    }
+
+    public void refresh(){
+        table.clear();
+        orderTable();
+        if(controller.getCompletedInstances().isEmpty()){
+            btnDelAll.setEnabled(false);
+            btnDelSel.setEnabled(false);
+        } else {
+            btnDelAll.setEnabled(true);
+            btnDelSel.setEnabled(true);
+        }
+
+    }
+
+    public void orderTable(){
+        List<Instance> instances = controller.getCompletedInstances();
+        for(Instance i : instances){
+            for(Instance y : instances){
+                if(i.getCompleted().isBefore( y.getCompleted() )){
+                    Instance temp = i;
+                    i = y;
+                    y = temp;
+                }
+            }
+        }
+        table.add( instances );
+    }
+
+
+
+}

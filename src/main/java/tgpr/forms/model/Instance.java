@@ -7,6 +7,7 @@ import tgpr.framework.Params;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
@@ -80,6 +81,9 @@ public class Instance extends Model {
 
     public LocalDateTime getCompleted() {
         return completed;
+    }
+    public String getCompletedFormatted() {
+        return completed.format( DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss") );
     }
 
     public boolean isCompleted() {
