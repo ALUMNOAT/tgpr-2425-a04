@@ -58,6 +58,7 @@ public class AddEditOptionListView extends DialogWindow {
         if(controller.changeable)
             root.addComponent(pnlAdd);
         root.addComponent(pnlButtons);
+        addShortcut(btnClose, KeyStroke.fromString("<esc>" ));
 
         setComponent(root);
         reloadData();
