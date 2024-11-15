@@ -131,7 +131,8 @@ public class AddEditOptionListView extends DialogWindow {
             pnlButtons.addComponent(btnCancel);
         } else {
             if (controller.changeable) {
-                pnlButtons.addComponent(btnReorder);
+                if(controller.getOldValues().size() > 1)
+                    pnlButtons.addComponent(btnReorder);
                 if(!controller.getIsNew())
                     pnlButtons.addComponent(btnDelete);
             }
@@ -215,6 +216,7 @@ public class AddEditOptionListView extends DialogWindow {
         if(validateAdd()) {
             controller.add(txtAdd.getText());
             reloadData();
+            setPnlButtons();
             txtAdd.setText("");
         }
     }
@@ -252,8 +254,10 @@ public class AddEditOptionListView extends DialogWindow {
     private void removeRow(OptionValue value, int row) {
         if(controller.changeable) {
             controller.remove(value);
-            if(!controller.getReorderMode())
+            if(!controller.getReorderMode()) {
                 controller.gravity();
+                setPnlButtons();
+            }
             reloadData();
             if(!controller.getCurrentValues().isEmpty()) {
                 if(row < controller.getCurrentValues().size())
