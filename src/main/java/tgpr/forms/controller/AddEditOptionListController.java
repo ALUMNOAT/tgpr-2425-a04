@@ -154,7 +154,7 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
     public ErrorList validate(String name){
         var errors = new ErrorList();
         errors.add(OptionListValidator.hasOneValue(getCurrentValues()));
-        errors.add(OptionListValidator.isValidName(name));
+        errors.add(OptionListValidator.isValidName(name, optionList.getId()));
         return errors;
     }
 
