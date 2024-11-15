@@ -40,7 +40,7 @@ public class AddEditOptionListView extends DialogWindow {
 
     public AddEditOptionListView(AddEditOptionListController controller, OptionList optionList) {
         //# SETUP #
-        super((optionList == null ? "Create" : "Update") + " Option List");
+        super((controller.getSavedOptionList() == null ? "Create" : "Update") + " Option List");
         this.controller = controller;
         this.optionList = optionList;
         setHints(List.of(Hint.CENTERED));
