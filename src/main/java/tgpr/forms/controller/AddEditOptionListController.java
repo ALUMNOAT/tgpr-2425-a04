@@ -44,6 +44,10 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
         return savedOptionList;
     }
 
+    public boolean getIsNew() {
+        return isNew;
+    }
+
     public void setReorderMode(boolean reorderMode) {
         this.reorderMode = reorderMode;
     }

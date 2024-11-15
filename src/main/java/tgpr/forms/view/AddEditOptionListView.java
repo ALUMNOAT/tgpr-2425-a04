@@ -132,9 +132,11 @@ public class AddEditOptionListView extends DialogWindow {
         } else {
             if (controller.changeable) {
                 pnlButtons.addComponent(btnReorder);
-                pnlButtons.addComponent(btnDelete);
+                if(!controller.getIsNew())
+                    pnlButtons.addComponent(btnDelete);
             }
-            pnlButtons.addComponent(btnDuplicate);
+            if(!controller.getIsNew())
+                pnlButtons.addComponent(btnDuplicate);
             if (controller.changeable)
                 pnlButtons.addComponent(btnSave);
             pnlButtons.addComponent(btnClose);
