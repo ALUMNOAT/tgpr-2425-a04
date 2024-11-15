@@ -108,6 +108,7 @@ public class AnalyzeView extends DialogWindow {
 
     private void viewInstances() {
         controller.viewInstances();
+        refresh();
     }
 
     private void refresh() {
