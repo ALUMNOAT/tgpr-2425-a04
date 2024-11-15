@@ -12,20 +12,24 @@ public abstract class FormValidator {
 
         if(title.isBlank())
             return new Error("title required", Form.Fields.Title);
-        else if(!Pattern.matches("[a-zA-Z\\d][a-zA-Z\\d\\s]{2,21}", title))
-            return new Error("Invalid title format", Form.Fields.Title);
+        else if(!Pattern.matches("[a-zA-Z\\d][a-zA-Z\\d\\s]{2,}", title))
+            return new Error("title requires 3 char minimum", Form.Fields.Title);
+        else if(!Pattern.matches("[a-zA-Z\\d][a-zA-Z\\d\\s]{0,21}", title))
+            return new Error("title cannot be longer than 21 char", Form.Fields.Title);
 
         return Error.NOERROR;
     }
 
     public static Error isValidDescription(String description){
+        System.out.println(description);
         if(description == null)
             return Error.NOERROR;
-        if(description.isEmpty())
+        else if(description.isEmpty())
             return Error.NOERROR;
-        else if(!Pattern.matches(".{3,21}", description))
+        else if(!Pattern.matches(".{3,}[\\s\\S.]*", description)) //[\s\S.] removes newline thing, thank you stack overflow
             return new Error("Description requires at least 3 char", Form.Fields.Description);
-
+        else if(!Pattern.matches("[\\s\\S.]{0,200}", description))
+            return new Error("Description cannot be longer than 200 char", Form.Fields.Description);
         return Error.NOERROR;
     }
 
