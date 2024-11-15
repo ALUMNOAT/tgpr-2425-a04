@@ -6,10 +6,13 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public abstract class OptionListValidator {
-    public static Error isValidName(String name){
+    public static Error isValidName(String name, int olID){
+        OptionList dbOptionList = OptionList.getByNameAndUser(name, Security.getLoggedUser());
         if(name == null)
             return Error.NOERROR;
-        if(!Pattern.matches(".{1,100}", name))
+        else if(dbOptionList != null && olID != dbOptionList.getId())
+            return new Error("name already taken", OptionList.Fields.Name);
+        else if(!Pattern.matches(".{1,100}", name))
             return new Error("name required", OptionList.Fields.Name);
         return Error.NOERROR;
     }
