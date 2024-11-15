@@ -19,11 +19,7 @@ public class AnalyzeView extends DialogWindow {
     public Label lblNbSubInstances = new Label("");
     private ObjectTable<Question> questionTable;
     private ObjectTable<ValueStat> answerTable;
-    private Button btnViewInstances;
     private int currentQuestionIndex = 0;
-
-
-
 
 
     public AnalyzeView(AnalyzeController controller, Form form) {
@@ -31,7 +27,6 @@ public class AnalyzeView extends DialogWindow {
 
         this.controller = controller;
         this.form = form;
-        setFixedSize(new TerminalSize(100, 18));
 
         setHints(List.of(Hint.EXPANDED));
 
@@ -42,6 +37,7 @@ public class AnalyzeView extends DialogWindow {
 
         Panel root = new Panel();
         setComponent(root);
+        root.setSize(new TerminalSize(100, 100));
         formTextPanel().addTo(root);
         root.addEmpty();
         analyzePanel().addTo(root);
@@ -69,17 +65,18 @@ public class AnalyzeView extends DialogWindow {
     }
 
     private Panel analyzePanel() {
-        Panel analyzePanel = Panel.gridPanel(2, Margin.of(1, 0, 1, 1));
+        Panel analyzePanel = Panel.gridPanel(3, Margin.of(1, 0, 1, 1));
         questionTable = new ObjectTable<>(
                 new ColumnSpec<>("Index", Question::getIdx).setWidth(5).alignRight(),
                 new ColumnSpec<>("Title", Question::getTitle).setWidth(30)
                         .setOverflowHandling(ColumnSpec.OverflowHandling.Wrap)
         ).addTo(analyzePanel).addSelectionChangeListener(this::test);
+        new EmptySpace().addTo(analyzePanel);
         answerTable = new ObjectTable<>(
-                new ColumnSpec<>("Value", ValueStat::getValue).setWidth(30)
+                new ColumnSpec<>("Value", ValueStat::getValue).setWidth(25)
                         .setOverflowHandling(ColumnSpec.OverflowHandling.Wrap),
-                new ColumnSpec<>("Nb Occ.", ValueStat::getCount).setWidth(7),
-                new ColumnSpec<>("Ratio", this::getRatiosAsString).setWidth(10)
+                new ColumnSpec<>("Nb Occ.", ValueStat::getCount).setWidth(7).alignRight(),
+                new ColumnSpec<>("Ratio", this::getRatiosAsString).setWidth(8).alignRight()
         ).addTo(analyzePanel);
 
         return analyzePanel;
@@ -100,9 +97,13 @@ public class AnalyzeView extends DialogWindow {
     }
 
     private Panel btnsPanel() {
-        Panel panel = Panel.horizontalPanel(1);
-        new Button("Close", this::close).addTo(panel);
-        btnViewInstances = new Button("View Instances", this::viewInstances).addTo(panel);
+        Panel panel = new Panel()
+                .setLayoutManager(new LinearLayout(Direction.HORIZONTAL))
+                .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        new EmptySpace(new TerminalSize(28,2)).addTo(panel);
+
+        panel.addComponent(new Button("Close", this::close));
+        panel.addComponent(new Button("View Instances", this::viewInstances));
 
         return panel;
     }
