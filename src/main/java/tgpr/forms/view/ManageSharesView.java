@@ -209,8 +209,9 @@ public class ManageSharesView extends DialogWindow {
 
             Model selectedList = sharesTable.getSelected();
 
-            if((askConfirmation("Are you sure you want to modify this share?", "Modify Share"))) {
-                if (!form.getIsPublic() && selectedList != null) {
+
+            if (!form.getIsPublic() && selectedList != null) {
+                if((askConfirmation("Are you sure you want to modify this share?", "Modify Share"))) {
                     if (selectedList instanceof UserFormAccess ua) {
                         if (ua.getAccessType() == AccessType.Editor) {
                             ua.setAccessType(AccessType.User);
@@ -224,10 +225,11 @@ public class ManageSharesView extends DialogWindow {
                             d.setAccessType(AccessType.Editor);
                         }
                     }
-
-                    sharesTable.refresh();
                 }
+
+                sharesTable.refresh();
             }
+
 
         });
 
