@@ -13,6 +13,8 @@ public abstract class QuestionValidator {
             return new Error("title required", Question.Fields.Title);
         if (title.length() < 3)
             return new Error("minimum 3 chars", Question.Fields.Title);
+        if (title.length() > 255)
+            return new Error("maximum 255 chars", Question.Fields.Title);
         return Error.NOERROR;
     }
 

@@ -102,7 +102,7 @@ public class AddEditOptionListView extends DialogWindow {
         errName = new Label("").setForegroundColor(TextColor.ANSI.RED).addTo(pnlName);
 
         if(Security.getLoggedUser().isAdmin() &&
-                (optionList.getOwner().equals(Security.getLoggedUser()) || optionList.getOwner() == null)
+                (optionList.getOwner() == null || optionList.getOwner().equals(Security.getLoggedUser())  )
         ) {
             new Label("System:        ").addTo(pnlName);
             checkBoxSystem = new CheckBox().addTo(pnlName);
