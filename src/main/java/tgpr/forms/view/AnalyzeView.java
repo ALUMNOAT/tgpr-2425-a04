@@ -113,17 +113,18 @@ public class AnalyzeView extends DialogWindow {
     private void refresh() {
         // Get the list of questions
         var questions = controller.getQuestions();
+        if(!questions.isEmpty()){
+            // Set the items for the question table
+            questionTable.setItems(questions);
 
-        // Set the items for the question table
-        questionTable.setItems(questions);
+            // For each question, update the stats for the answer table
+            // This should ideally be dynamically set when selecting the question.
+            var selectedQuestion = questions.get(currentQuestionIndex);
+            var stats = controller.getAnswerStatsForQuestion(selectedQuestion);
 
-        // For each question, update the stats for the answer table
-        // This should ideally be dynamically set when selecting the question.
-        var selectedQuestion = questions.get(currentQuestionIndex);
-        var stats = controller.getAnswerStatsForQuestion(selectedQuestion);
-
-        // Update the answer table with the selected question's stats
-        answerTable.setItems(stats);
+            // Update the answer table with the selected question's stats
+            answerTable.setItems(stats);
+        }
     }
 
     private String getRatiosAsString(ValueStat valueStat) {
