@@ -35,14 +35,11 @@ public class AnalyzeView extends DialogWindow {
         lblNbSubInstances.setText(form.getCompletedInstances().size() + "");
         setHints(List.of(Window.Hint.CENTERED, Window.Hint.MODAL));
 
-        Panel root = new Panel();
+        Panel root = Panel.verticalPanel(1);
         setComponent(root);
-        root.setSize(new TerminalSize(100, 100));
         formTextPanel().addTo(root);
-        root.addEmpty();
         analyzePanel().addTo(root);
-        root.addEmpty();
-        btnsPanel().addTo(root).bottomCenter();
+        btnsPanel().addTo(root);
 
         setCloseWindowWithEscape(true);
 
@@ -51,6 +48,7 @@ public class AnalyzeView extends DialogWindow {
 
     private Panel formTextPanel() {
         Panel panel = Panel.gridPanel(2, Margin.of(1,1,1,0));
+
 
         new Label("Title:").addTo(panel);
         lblTitle.addTo(panel).addStyle(SGR.BOLD);
@@ -66,6 +64,7 @@ public class AnalyzeView extends DialogWindow {
 
     private Panel analyzePanel() {
         Panel analyzePanel = Panel.gridPanel(3, Margin.of(1, 0, 1, 1));
+        analyzePanel.sizeTo(100,10);
         questionTable = new ObjectTable<>(
                 new ColumnSpec<>("Index", Question::getIdx).setWidth(5).alignRight(),
                 new ColumnSpec<>("Title", Question::getTitle).setWidth(30)
@@ -100,7 +99,6 @@ public class AnalyzeView extends DialogWindow {
         Panel panel = new Panel()
                 .setLayoutManager(new LinearLayout(Direction.HORIZONTAL))
                 .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-        new EmptySpace(new TerminalSize(28,2)).addTo(panel);
 
         panel.addComponent(new Button("Close", this::close));
         panel.addComponent(new Button("View Instances", this::viewInstances));
