@@ -12,9 +12,9 @@ public abstract class FormValidator {
 
         if(title.isBlank())
             return new Error("title required", Form.Fields.Title);
-        else if(!Pattern.matches("[a-zA-Z\\d][a-zA-Z\\d\\s]{2,}", title))
+        else if(!Pattern.matches("[\\Wa-zA-Z\\d][\\Wa-zA-Z\\d\\s]{2,}", title))
             return new Error("title requires 3 char minimum", Form.Fields.Title);
-        else if(!Pattern.matches("[a-zA-Z\\d][a-zA-Z\\d\\s]{0,21}", title))
+        else if(!Pattern.matches("[\\Wa-zA-Z\\d\\s]{0,21}", title))
             return new Error("title cannot be longer than 21 char", Form.Fields.Title);
 
         return Error.NOERROR;
