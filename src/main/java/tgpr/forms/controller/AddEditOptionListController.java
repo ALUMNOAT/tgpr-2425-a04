@@ -198,4 +198,9 @@ public class AddEditOptionListController extends Controller<AddEditOptionListVie
             value.setIdx(index++);
         }
     }
+
+    public boolean hasChanged() {
+        return !optionList.getOptionValues().equals(oldValues) ||
+                !optionList.getName().equals(view.getCurrentName());
+    }
 }

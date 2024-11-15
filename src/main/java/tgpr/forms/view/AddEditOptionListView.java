@@ -200,7 +200,7 @@ public class AddEditOptionListView extends DialogWindow {
     }
 
     public void closeIt() {
-        if(controller.changeable) {
+        if(controller.changeable && controller.hasChanged()) {
             if (askConfirmation(
                     "Are you sure you want to cancel ?",
                     "Cancel"))
@@ -285,5 +285,9 @@ public class AddEditOptionListView extends DialogWindow {
 
     public boolean isOptionListSystem() {
         return checkBoxSystem.isChecked();
+    }
+
+    public String getCurrentName() {
+        return txtName.getText();
     }
 }
