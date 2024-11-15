@@ -15,11 +15,7 @@ public class FormsApp {
         if (!Model.checkDb(DATABASE_SCRIPT_FILE))
             Controller.abort("Database is not available!");
         else {
-//            Security.login(User.getByEmail("bepenelle@epfc.eu"));
-//            Controller.navigateTo(new AddEditFormController(null));
             Controller.navigateTo(new LoginController());
-            //Controller.navigateTo(new TestController());
-
         }
     }
 }

@@ -21,7 +21,6 @@ public abstract class FormValidator {
     }
 
     public static Error isValidDescription(String description){
-        System.out.println(description);
         if(description == null)
             return Error.NOERROR;
         else if(description.isEmpty())
