@@ -54,6 +54,9 @@
 
 ### Liste des fonctionnalités supplémentaires
 
+  * view_form
+    * On peut supprimer les questions en appuyant sur le bouton Delete du clavier
+
 ### Divers
 
 ...
