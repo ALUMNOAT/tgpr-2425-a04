@@ -168,42 +168,23 @@ public class ViewFormView extends DialogWindow {
     }
 
     private void refreshButtons() {
-        btnTogglePublic.setLabel(form.getIsPublic() ? "Make Private" : "Make Public");
-        if(reorderMode) {
-            btnAdd.setVisible(false);
-            btnEdit.setVisible(false);
-            btnDelete.setVisible(false);
-            btnTogglePublic.setVisible(false);
-            btnShare.setVisible(false);
-            btnReorder.setVisible(false);
-            btnClear.setVisible(false);
-            btnAnalyze.setVisible(false);
-            btnClose.setVisible(false);
-            btnSave.setVisible(true);
-            btnCancel.setVisible(true);
-        }
-        else {
-            if(form.isUsed()) {
-                btnAdd.setVisible(false);
-                btnEdit.setVisible(false);
-                btnTogglePublic.setVisible(true);
-                btnReorder.setVisible(false);
-                btnClear.setVisible(true);
-            }
-            else {
-                btnAdd.setVisible(true);
-                btnEdit.setVisible(true);
-                btnTogglePublic.setVisible(false);
-                btnReorder.setVisible(form.getQuestions().size() > 1);
-                btnClear.setVisible(false);
-            }
-            btnAnalyze.setVisible(true);
-            btnDelete.setVisible(true);
-            btnShare.setVisible(form.mayChangePermissions(Security.getLoggedUser()));
-            btnClose.setVisible(true);
-            btnSave.setVisible(false);
-            btnCancel.setVisible(false);
-        }
+        //Normal mode
+        btnDelete.setVisible(!reorderMode);
+        btnShare.setVisible(!reorderMode && form.mayChangePermissions(Security.getLoggedUser()));
+        btnAnalyze.setVisible(!reorderMode);
+        btnClose.setVisible(!reorderMode);
+            //Read only
+            btnClear.setVisible(!reorderMode && form.isUsed());
+            btnTogglePublic.setVisible(!reorderMode && form.isUsed())
+                    .setLabel(form.getIsPublic() ? "Make Private" : "Make Public");
+            //Editable
+            btnAdd.setVisible(!reorderMode && !form.isUsed());
+            btnEdit.setVisible(!reorderMode && !form.isUsed());
+            btnReorder.setVisible(!reorderMode && !form.isUsed() && form.getQuestions().size() > 1);
+
+        //Reorder mode
+        btnSave.setVisible(reorderMode);
+        btnCancel.setVisible(reorderMode);
     }
 
     private void addQuestion() {
