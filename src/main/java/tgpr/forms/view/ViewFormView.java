@@ -4,6 +4,7 @@ import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
+import com.googlecode.lanterna.input.KeyStroke;
 import tgpr.forms.controller.ViewFormController;
 import tgpr.forms.model.Form;
 import tgpr.forms.model.Question;
@@ -152,12 +153,18 @@ public class ViewFormView extends DialogWindow {
             questionTable.add(questions);
         }
         if(reorderMode)
-            questionTable.setSelectAction(this::reorderSelected);
+            questionTable.setSelectAction(this::reorderSelected)
+                    .setKeyStrokeHandler(null);
         else
             if(form.isUsed())
-                questionTable.setSelectAction(null);
+                questionTable.setSelectAction(null)
+                        .setKeyStrokeHandler(null);
             else
-                questionTable.setSelectAction(this::editQuestion);
+                questionTable.setSelectAction(this::editDeleteQuestion)
+                        .setKeyStrokeHandler(ks -> {
+                            if(ks.equals(KeyStroke.fromString("<del>")))
+                                editDeleteQuestion(true);
+                        });
     }
 
     private void refreshButtons() {
@@ -254,12 +261,27 @@ public class ViewFormView extends DialogWindow {
         btnReorder.takeFocus();
     }
 
-    private void editQuestion() {
+    private void editDeleteQuestion() {
+        editDeleteQuestion(false);
+    }
+
+    private void editDeleteQuestion(boolean delete) {
         int selectedRow = questionTable.getSelectedRow();
-        controller.editQuestion(questionTable.getSelected());
-        refresh();
-        questionTable.takeFocus();
-        questionTable.setSelectedRow(selectedRow);
+
+        if (delete)
+            controller.deleteQuestion(questionTable.getSelected());
+        else
+            controller.editQuestion(questionTable.getSelected());
+
+        if(form.getQuestions().isEmpty()) {
+            btnAdd.takeFocus();
+            refresh();
+        }
+        else {
+            refresh();
+            questionTable.takeFocus();
+            questionTable.setSelectedRow(selectedRow);
+        }
     }
 
     private void reorderSelected() {
