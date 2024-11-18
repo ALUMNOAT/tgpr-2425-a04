@@ -38,6 +38,11 @@ public class ViewFormController extends Controller<ViewFormView> {
        form.reorderQuestions(questions);
     }
 
+    public void deleteQuestion(Question question) {
+        if(askConfirmation("Are you sure you want to delete this question?", "Delete Question"))
+            question.delete();
+    }
+
     public void deleteForm() {
         if(askConfirmation("Are you sure you want to delete this form?", "Delete Form")) {
             form.delete();
